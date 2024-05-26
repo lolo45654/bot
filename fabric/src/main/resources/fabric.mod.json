@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "blade",
+  "version": "${version}",
+  "name": "Blade",
+  "description": "",
+  "authors": [ "loloed" ],
+  "contact": {},
+  "license": "All-Rights-Reserved",
+  "icon": "assets/blade/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "me.loloed.bot.blade.user.BotMod"
+    ]
+  },
+  "mixins": [
+    "blade.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}

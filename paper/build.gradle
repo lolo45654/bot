@@ -1,0 +1,54 @@
+plugins {
+    id 'java-library'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id 'io.papermc.paperweight.userdev' version '1.7.1'
+}
+
+var archives_base_name = "bot-paper"
+paperweight.reobfArtifactConfiguration = io.papermc.paperweight.userdev.ReobfArtifactConfiguration.Companion.MOJANG_PRODUCTION
+
+repositories {
+    mavenCentral()
+    // PaperMC
+    maven { url "https://repo.papermc.io/repository/maven-public/" }
+    // Command API via maven central snapshots
+    maven { url "https://s01.oss.sonatype.org/content/repositories/snapshots/" }
+    // InvUI
+    maven { url "https://repo.xenondevs.xyz/releases" }
+}
+
+dependencies {
+    paperweight.paperDevBundle(project.paper_version)
+
+    implementation "dev.jorel:commandapi-bukkit-shade-mojang-mapped:9.5.0-SNAPSHOT"
+    implementation "xyz.xenondevs.invui:invui:1.30"
+    implementation project(path: ":common", configuration: "namedElements")
+}
+
+shadowJar {
+    archiveFileName = "${archives_base_name}.jar"
+
+    relocate("xyz.xenondevs.invui", "me.loloed.bot.libs.invui")
+    relocate("dev.jorel.commandapi", "me.loloed.bot.libs.commandapi")
+}
+
+artifacts {
+    archives shadowJar
+}
+
+java {
+    archivesBaseName = archives_base_name
+}
+
+base {
+    archivesName = archives_base_name
+}
+
+processResources {
+    def props = [version: version, description: project.description]
+    inputs.properties props
+    filteringCharset 'UTF-8'
+    filesMatching('plugin.yml') {
+        expand props
+    }
+}
