@@ -41,7 +41,7 @@ public class FakePlayer extends ServerPlayer {
         platform.declareFakePlayer(this);
         fakePlayerEntry = new ClientboundPlayerInfoUpdatePacket.Entry(getUUID(), getGameProfile(), false, 0,
                 GameType.SURVIVAL, getDisplayName(), null);
-        connection = new ServerGamePacketListenerImpl(server, new FakeConnection(), this, CommonListenerCookie.createInitial(profile, false));
+        connection = new ServerGamePacketListenerImpl(server, new FakeConnection(), this, CommonListenerCookie.createInitial(profile));
         PlayerList playerList = server.getPlayerList();
         for (ServerPlayer player : playerList.getPlayers()) {
             update(player);

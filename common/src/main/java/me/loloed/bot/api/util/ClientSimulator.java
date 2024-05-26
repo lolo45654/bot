@@ -110,7 +110,9 @@ public class ClientSimulator {
     }
 
     public void ensureVariables() {
-        player.getAttribute(Attributes.STEP_HEIGHT).setBaseValue(0.6);
+        player.setMaxUpStep(0.6F);
+        // 1.20.6
+        // player.getAttribute(Attributes.STEP_HEIGHT).setBaseValue(0.6);
     }
 
     public void tickMove() {
@@ -228,7 +230,7 @@ public class ClientSimulator {
 
         if (player.getMainHandItem().isEmpty() && player.getOffhandItem().isEmpty() && !player.isSecondaryUseActive()) {
             BlockState blockState = player.level().getBlockState(hit.getBlockPos());
-            InteractionResult use = blockState.useWithoutItem(player.level(), player, hit);
+            InteractionResult use = blockState.use(player.level(), player, InteractionHand.MAIN_HAND, hit);
             if (use.consumesAction()) {
                 return use;
             }
@@ -282,7 +284,7 @@ public class ClientSimulator {
             return;
         }
 
-        if (breakingBlock && (pos.equals(currentBreakingPos) || ItemStack.isSameItemSameComponents(player.getItemInHand(InteractionHand.MAIN_HAND), previousStack))) {
+        if (breakingBlock && (pos.equals(currentBreakingPos) || ItemStack.isSameItemSameTags(player.getItemInHand(InteractionHand.MAIN_HAND), previousStack))) {
             player.gameMode.handleBlockBreakAction(pos, ServerboundPlayerActionPacket.Action.ABORT_DESTROY_BLOCK, direction, level.getMaxBuildHeight(), -1);
         }
 
@@ -347,7 +349,7 @@ public class ClientSimulator {
             return true;
         }
 
-        if (!pos.equals(currentBreakingPos) || !ItemStack.isSameItemSameComponents(previousStack, player.getItemInHand(InteractionHand.MAIN_HAND))) {
+        if (!pos.equals(currentBreakingPos) || !ItemStack.isSameItemSameTags(previousStack, player.getItemInHand(InteractionHand.MAIN_HAND))) {
             attackBlockInternal(pos, direction);
             return true;
         }

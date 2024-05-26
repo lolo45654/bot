@@ -9,6 +9,7 @@ import me.loloed.bot.api.inventory.Slot;
 import me.loloed.bot.api.inventory.SlotFlag;
 import me.loloed.bot.api.util.BotMath;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 
 public class UseBow extends ScoreAction {
@@ -48,6 +49,6 @@ public class UseBow extends ScoreAction {
     }
 
     private Slot getHotBar() {
-        return bot.getInventory().findFirst(stack -> stack.is(Items.BOW) && stack.getEnchantments().getLevel(Enchantments.FLAME) > 0, SlotFlag.HOT_BAR);
+        return bot.getInventory().findFirst(stack -> stack.is(Items.BOW) && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.FLAMING_ARROWS, stack) > 0, SlotFlag.HOT_BAR);
     }
 }

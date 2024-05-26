@@ -19,13 +19,12 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.phys.Vec3;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.CraftWorld;
-import org.bukkit.craftbukkit.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.entity.CraftPlayer;
-import org.bukkit.craftbukkit.util.CraftLocation;
+import org.bukkit.craftbukkit.v1_20_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_20_R3.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_20_R3.util.CraftLocation;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -168,7 +167,7 @@ public class BladePlugin extends JavaPlugin {
 
                                     PlayerInventory inv = bot.getVanillaPlayer().getBukkitEntity().getInventory();
                                     inv.addItem(new ItemBuilder(Material.BOW)
-                                            .addEnchantment(Enchantment.FLAME, 1, true).get());
+                                            .addEnchantment(Enchantment.ARROW_FIRE, 1, true).get());
                                     for (int i = 0; i < 5; i++) {
                                         inv.addItem(new ItemStack(Material.TNT_MINECART));
                                     }
@@ -193,13 +192,13 @@ public class BladePlugin extends JavaPlugin {
                                     inv.addItem(new ItemStack(Material.OBSIDIAN, 64));
                                     inv.addItem(new ItemStack(Material.ENDER_PEARL, 16));
                                     inv.setHelmet(new ItemBuilder(Material.NETHERITE_HELMET)
-                                            .addEnchantment(Enchantment.PROTECTION, 4, true).get());
+                                            .addEnchantment(Enchantment.DAMAGE_ALL, 4, true).get());
                                     inv.setChestplate(new ItemBuilder(Material.NETHERITE_CHESTPLATE)
-                                            .addEnchantment(Enchantment.PROTECTION, 4, true).get());
+                                            .addEnchantment(Enchantment.DAMAGE_ALL, 4, true).get());
                                     inv.setLeggings(new ItemBuilder(Material.NETHERITE_LEGGINGS)
-                                            .addEnchantment(Enchantment.BLAST_PROTECTION, 4, true).get());
+                                            .addEnchantment(Enchantment.PROTECTION_EXPLOSIONS, 4, true).get());
                                     inv.setBoots(new ItemBuilder(Material.NETHERITE_BOOTS)
-                                            .addEnchantment(Enchantment.PROTECTION, 4, true).get());
+                                            .addEnchantment(Enchantment.DAMAGE_ALL, 4, true).get());
                                     for (int i = 0; i < 12; i++) {
                                         inv.addItem(new ItemStack(Material.TOTEM_OF_UNDYING));
                                     }
