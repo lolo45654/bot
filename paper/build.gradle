@@ -5,7 +5,7 @@ plugins {
 }
 
 var archives_base_name = "bot-paper"
-paperweight.reobfArtifactConfiguration = io.papermc.paperweight.userdev.ReobfArtifactConfiguration.Companion.MOJANG_PRODUCTION
+paperweight.reobfArtifactConfiguration = io.papermc.paperweight.userdev.ReobfArtifactConfiguration.Companion.REOBF_PRODUCTION
 
 repositories {
     mavenCentral()
