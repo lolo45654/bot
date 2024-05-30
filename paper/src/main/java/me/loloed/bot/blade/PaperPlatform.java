@@ -3,9 +3,11 @@ package me.loloed.bot.blade;
 import com.destroystokyo.paper.event.server.ServerTickEndEvent;
 import me.loloed.bot.api.Bot;
 import me.loloed.bot.api.platform.Platform;
+import me.loloed.bot.api.util.ClientSimulator;
 import me.loloed.bot.api.util.fake.FakePlayer;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer;
 import org.bukkit.event.EventHandler;
@@ -32,6 +34,27 @@ public class PaperPlatform extends Platform {
 
     public void register(JavaPlugin plugin) {
         PLUGIN = plugin;
+
+        try {
+            Class<FakePlayer> a = FakePlayer.class;
+        } catch (RuntimeException exception) {
+            try {
+                FakePlayer.ServerPlayer$spawnInvulnerableTime = ServerPlayer.class.getDeclaredField("cC");
+            } catch (NoSuchFieldException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        try {
+            Class<ClientSimulator> a = ClientSimulator.class;
+        } catch (RuntimeException exception) {
+            try {
+                ClientSimulator.LivingEntity$updatingUsingItem = LivingEntity.class.getDeclaredMethod("I");
+            } catch (NoSuchMethodException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
         Bukkit.getPluginManager().registerEvents(new Listener() {
             @EventHandler
             public void onTick(ServerTickEndEvent event) {

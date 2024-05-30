@@ -19,7 +19,7 @@ import java.lang.reflect.Field;
 import java.util.EnumSet;
 
 public class FakePlayer extends ServerPlayer {
-    public static final Field ServerPlayer$spawnInvulnerableTime;
+    public static Field ServerPlayer$spawnInvulnerableTime;
     static {
         try {
             ServerPlayer$spawnInvulnerableTime = ServerPlayer.class.getDeclaredField("spawnInvulnerableTime");

@@ -27,7 +27,7 @@ import java.lang.reflect.Method;
 import java.util.function.BiConsumer;
 
 public class ClientSimulator {
-    public static final Method LivingEntity$updatingUsingItem;
+    public static Method LivingEntity$updatingUsingItem;
 
     static {
         try {
