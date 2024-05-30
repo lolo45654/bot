@@ -22,10 +22,11 @@ if ! [[ "$?" == "0" ]]; then
   exit -1
 fi
 
-cp "$WF_REPO/paper/build/libs/PersonalKits.jar" "$WF_SERVER/plugins"
+cp "$WF_REPO/paper/build/libs/bot-paper.jar" "$WF_SERVER/plugins"
 echo "$REF" > $WF_SERVER/DEVELOPMENT
 sudo systemctl restart minecraft@prac.service
 
+mkdir -p "$WF_CACHE/bot"
 rm -rf "$WF_CACHE/bot/build"
 rm -rf "$WF_CACHE/bot/.gradle"
 mv "$WF_REPO/paper/build" "$WF_CACHE/bot/build"
