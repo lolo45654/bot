@@ -20,7 +20,7 @@ repositories {
 dependencies {
     paperweight.paperDevBundle(project.paper_version)
 
-    implementation "dev.jorel:commandapi-bukkit-shade-mojang-mapped:9.5.0-SNAPSHOT"
+    implementation "dev.jorel:commandapi-bukkit-shade:9.4.1"
     implementation "xyz.xenondevs.invui:invui:1.30"
     implementation project(path: ":common", configuration: "namedElements")
 }
