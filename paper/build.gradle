@@ -26,10 +26,14 @@ dependencies {
 }
 
 shadowJar {
-    archiveFileName = "${archives_base_name}.jar"
+    // archiveFileName = "${archives_base_name}.jar"
 
     relocate("xyz.xenondevs.invui", "me.loloed.bot.libs.invui")
     relocate("dev.jorel.commandapi", "me.loloed.bot.libs.commandapi")
+}
+
+reobfJar {
+    outputJar = layout.buildDirectory.file("libs/bot-paper.jar")
 }
 
 assemble {
