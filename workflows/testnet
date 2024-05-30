@@ -1,0 +1,32 @@
+#!/bin/bash
+
+if [[ "$REF" =~ chore ]]; then
+  exit 0
+fi
+
+if [[ -d "$WF_CACHE/bot/.gradle" ]]; then
+  cp -r "$WF_CACHE/bot/.gradle" "$WF_REPO/.gradle"
+fi
+
+if [[ -d "$WF_CACHE/bot/build" ]]; then
+  cp -r "$WF_CACHE/bot/build" "$WF_REPO/paper/build"
+  rm -rf "$WF_REPO/paper/build/libs"
+fi
+
+cd "$WF_REPO"
+chmod +x gradlew
+./gradlew paper:build > $WF_DIR/build.log
+if ! [[ "$?" == "0" ]]; then
+  cp "$WF_DIR/build.log" "$WF_ERROR/build.$(tr -dc '0-9a-zA-Z' < /dev/urandom | head -c 6).log"
+  echo "Failed to build! Saved logs!"
+  exit -1
+fi
+
+cp "$WF_REPO/paper/build/libs/PersonalKits.jar" "$WF_SERVER/plugins"
+echo "$REF" > $WF_SERVER/DEVELOPMENT
+sudo systemctl restart minecraft@prac.service
+
+rm -rf "$WF_CACHE/bot/build"
+rm -rf "$WF_CACHE/bot/.gradle"
+mv "$WF_REPO/paper/build" "$WF_CACHE/bot/build"
+mv "$WF_REPO/.gradle" "$WF_CACHE/bot/.gradle"

@@ -1,0 +1,7 @@
+#!/bin/bash
+
+if [[ "$WF_ENV" == "testnet" ]]; then
+  chmod +x testnet
+  ./testnet
+fi
+
