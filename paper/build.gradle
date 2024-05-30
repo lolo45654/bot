@@ -32,6 +32,10 @@ shadowJar {
     relocate("dev.jorel.commandapi", "me.loloed.bot.libs.commandapi")
 }
 
+assemble {
+    dependsOn(reobfJar)
+}
+
 artifacts {
     archives shadowJar
 }
