@@ -32,12 +32,7 @@ public class ShieldBot extends Bot implements IServerBot {
         super.tick();
         ServerPlayer player = (ServerPlayer) getVanillaPlayer();
         Inventory inventory = player.getInventory();
-        if (!player.server.getPlayerList().getPlayers().contains(spawner)) {
-            destroy();
-            return;
-        }
-
-        if (player.distanceToSqr(spawner) > 120*120) {
+        if (player.touchingUnloadedChunk() || player.distanceToSqr(spawner) > 120*120 || !player.server.getPlayerList().getPlayers().contains(spawner)) {
             destroy();
             return;
         }
