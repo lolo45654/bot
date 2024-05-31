@@ -127,7 +127,7 @@ public class ClientSimulator {
         if (forwardKey) {
             player.zza += 1;
         }
-        if (leftKey) {
+        if (backKey) {
             player.zza -= 1;
         }
     }
