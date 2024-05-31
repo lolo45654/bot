@@ -76,13 +76,13 @@ public class FakePlayer extends ServerPlayer {
         double shieldDeltaX = shieldDelta.x;
         double shieldDeltaY = shieldDelta.y;
         double shieldDeltaZ = shieldDelta.z;
-        if (shieldDeltaX < 0.03) {
+        if (Math.abs(shieldDeltaX) < 0.003) {
             shieldDeltaX = 0.0;
         }
-        if (shieldDeltaY < 0.03) {
+        if (Math.abs(shieldDeltaY) < 0.003) {
             shieldDeltaY = 0.0;
         }
-        if (shieldDeltaZ < 0.03) {
+        if (Math.abs(shieldDeltaZ) < 0.003) {
             shieldDeltaZ = 0.0;
         }
         shieldDelta = new Vec3(shieldDeltaX, shieldDeltaY, shieldDeltaZ);
