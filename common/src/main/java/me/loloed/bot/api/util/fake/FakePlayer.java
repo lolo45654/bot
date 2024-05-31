@@ -136,6 +136,7 @@ public class FakePlayer extends ServerPlayer {
     public void setDeltaMovement(Vec3 vec3) {
         if (uglyAttackFix) {
             uglyAttackFix = false;
+            hurtMarked = true;
             return;
         }
         super.setDeltaMovement(vec3);
