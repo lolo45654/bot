@@ -4,7 +4,9 @@ import com.destroystokyo.paper.event.server.ServerTickEndEvent;
 import me.loloed.bot.api.Bot;
 import me.loloed.bot.api.platform.Platform;
 import me.loloed.bot.api.util.ClientSimulator;
+import me.loloed.bot.api.util.fake.FakeConnection;
 import me.loloed.bot.api.util.fake.FakePlayer;
+import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
@@ -40,6 +42,7 @@ public class PaperPlatform extends Platform {
         try {
             FakePlayer.ServerPlayer$spawnInvulnerableTime = ServerPlayer.class.getDeclaredField("cC");
             ClientSimulator.LivingEntity$updatingUsingItem = LivingEntity.class.getDeclaredMethod("I");
+            FakeConnection.Connection$channel = Connection.class.getDeclaredField("n");
         } catch (NoSuchFieldException | NoSuchMethodException e) {
             throw new RuntimeException(e);
         }

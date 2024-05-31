@@ -9,20 +9,19 @@ import net.minecraft.network.protocol.PacketFlow;
 import java.lang.reflect.Field;
 
 public class FakeConnection extends Connection {
-    private static final Field CHANNEL_FIELD;
+    public static Field Connection$channel;
 
     static {
         try {
-            CHANNEL_FIELD = Connection.class.getDeclaredField("channel");
+            Connection$channel = Connection.class.getDeclaredField("channel");
         } catch (NoSuchFieldException e) {
-            throw new RuntimeException(e);
         }
     }
 
     public FakeConnection() {
         super(PacketFlow.SERVERBOUND);
         try {
-            CHANNEL_FIELD.set(this, new EmbeddedChannel());
+            Connection$channel.set(this, new EmbeddedChannel());
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
