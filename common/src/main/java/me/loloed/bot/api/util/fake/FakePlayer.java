@@ -144,7 +144,7 @@ public class FakePlayer extends ServerPlayer {
 
     @Override
     public boolean hurt(DamageSource damageSource, float f) {
-        if (Math.abs(shieldDelta.x) > 0.03 && Math.abs(shieldDelta.y) > 0.03 && Math.abs(shieldDelta.z) > 0.03) {
+        if (Math.abs(shieldDelta.x) > 0.003 || Math.abs(shieldDelta.y) > 0.003 || Math.abs(shieldDelta.z) > 0.003) {
             setDeltaMovement(shieldDelta);
             shieldDelta = Vec3.ZERO;
         }
