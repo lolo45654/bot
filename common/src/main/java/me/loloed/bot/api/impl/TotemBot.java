@@ -34,6 +34,11 @@ public class TotemBot extends Bot implements IServerBot {
             return;
         }
 
+        if (player.distanceToSqr(spawner) > 120*120) {
+            destroy();
+            return;
+        }
+
         player.lookAt(EntityAnchorArgument.Anchor.EYES, spawner.getEyePosition());
         inventory.setItem(40, new ItemStack(Items.TOTEM_OF_UNDYING));
 
