@@ -71,6 +71,8 @@ public class PaperPlatform extends Platform {
             }
 
             public String normalizeNum(double num) {
+                if (Double.isInfinite(num)) return "Infinite";
+                if (Double.isNaN(num)) return "NaN";
                 return BigDecimal.valueOf(num).setScale(4, RoundingMode.HALF_UP).toPlainString();
             }
 
