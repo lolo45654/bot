@@ -1,17 +1,21 @@
 package me.loloed.bot.blade;
 
 import com.destroystokyo.paper.event.server.ServerTickEndEvent;
+import io.papermc.paper.event.player.PlayerShieldDisableEvent;
 import me.loloed.bot.api.Bot;
 import me.loloed.bot.api.platform.Platform;
 import me.loloed.bot.api.util.ClientSimulator;
 import me.loloed.bot.api.util.fake.FakeConnection;
 import me.loloed.bot.api.util.fake.FakePlayer;
+import net.kyori.adventure.text.Component;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.phys.Vec3;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -21,6 +25,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -56,18 +62,6 @@ public class PaperPlatform extends Platform {
                 List<Bot> bots = new ArrayList<>(BOTS);
                 for (Bot bot : bots) {
                     bot.doTick();
-                }
-            }
-
-            /**
-             * okay, why this? if we cancel the event, the velocity gets processed server side, which would
-             * normally do nothing, but we tick the players when they're bots.
-             */
-            @EventHandler
-            public void onVelocity(PlayerVelocityEvent event) {
-                List<Bot> bots = new ArrayList<>(BOTS);
-                for (Bot bot : bots) {
-                    if (bot.getVanillaPlayer().getBukkitEntity().equals(event.getPlayer())) event.setCancelled(true);
                 }
             }
 

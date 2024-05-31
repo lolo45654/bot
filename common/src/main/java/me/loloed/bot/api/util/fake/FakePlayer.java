@@ -11,6 +11,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.server.players.PlayerList;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.phys.Vec3;
@@ -32,6 +33,15 @@ public class FakePlayer extends ServerPlayer {
     private final ClientboundPlayerInfoUpdatePacket.Entry fakePlayerEntry;
     private final Platform platform;
 
+    public Vec3 shieldDelta = Vec3.ZERO;
+    /**
+     * When attacked, a player receives a ClientboundSetEntityMotionPacket for themselves and the server sets
+     * the server side velocity to zero (or the velocity before the attack). For the shield, it sets the delta movement
+     * on the server, without telling the client. If you stun (shield break and attack at the same time, double click)
+     * then the velocity of the shield is saved and sent due to the attack.
+     */
+    public boolean uglyAttackFix = false;
+
     public FakePlayer(Platform platform, MinecraftServer server, Vec3 pos, float yaw, float pitch, ServerLevel world, GameProfile profile) {
         super(server, world, profile, ClientInformation.createDefault());
         this.platform = platform;
@@ -41,7 +51,7 @@ public class FakePlayer extends ServerPlayer {
         platform.declareFakePlayer(this);
         fakePlayerEntry = new ClientboundPlayerInfoUpdatePacket.Entry(getUUID(), getGameProfile(), false, 0,
                 GameType.SURVIVAL, getDisplayName(), null);
-        connection = new ServerGamePacketListenerImpl(server, new FakeConnection(), this, CommonListenerCookie.createInitial(profile));
+        connection = new ServerGamePacketListenerImpl(server, new FakeConnection(this), this, CommonListenerCookie.createInitial(profile));
         PlayerList playerList = server.getPlayerList();
         for (ServerPlayer player : playerList.getPlayers()) {
             update(player);
@@ -61,6 +71,8 @@ public class FakePlayer extends ServerPlayer {
     public void tick() {
         super.tick();
         platform.detectEquipmentUpdates(this);
+        uglyAttackFix = false;
+        shieldDelta = Vec3.ZERO;
     }
 
     /**
@@ -100,9 +112,28 @@ public class FakePlayer extends ServerPlayer {
 
     @Override
     protected void blockUsingShield(LivingEntity livingEntity) {
-        // Prevents LivingEntity#blockedByShield
-        if (livingEntity.canDisableShield()) {
-            this.disableShield(true);
+        Vec3 a = getDeltaMovement();
+        super.blockUsingShield(livingEntity);
+        Vec3 b = getDeltaMovement();
+        setDeltaMovement(a);
+        shieldDelta = b.subtract(a);
+    }
+
+    @Override
+    public void setDeltaMovement(Vec3 vec3) {
+        if (uglyAttackFix) {
+            uglyAttackFix = false;
+            return;
         }
+        super.setDeltaMovement(vec3);
+    }
+
+    @Override
+    public boolean hurt(DamageSource damageSource, float f) {
+        if (shieldDelta != Vec3.ZERO) {
+            setDeltaMovement(shieldDelta);
+            shieldDelta = Vec3.ZERO;
+        }
+        return super.hurt(damageSource, f);
     }
 }

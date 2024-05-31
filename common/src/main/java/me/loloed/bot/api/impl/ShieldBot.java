@@ -12,8 +12,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantments;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 public class ShieldBot extends Bot {
     private final ServerPlayer spawner;
+    private int noShieldTicks = 0;
     private int healTicks = 0;
 
     public ShieldBot(Player vanillaPlayer, Platform platform, ServerPlayer spawner) {
@@ -33,6 +36,7 @@ public class ShieldBot extends Bot {
             destroy();
             return;
         }
+        boolean shieldCooldown = getVanillaPlayer().getCooldowns().isOnCooldown(Items.SHIELD);
 
         player.lookAt(EntityAnchorArgument.Anchor.EYES, spawner.getEyePosition());
         inventory.setItem(40, new ItemStack(Items.TOTEM_OF_UNDYING));
@@ -44,7 +48,7 @@ public class ShieldBot extends Bot {
         shield.enchant(Enchantments.MENDING, 1);
         shield.getTag().putBoolean("Unbreakable", true);
         inventory.setItem(inventory.selected, shield);
-        interact(!player.getCooldowns().isOnCooldown(Items.SHIELD));
+        interact(!shieldCooldown && noShieldTicks <= 0);
 
         if (healTicks > 200) {
             player.setHealth(player.getMaxHealth());
@@ -53,6 +57,12 @@ public class ShieldBot extends Bot {
 
         player.removeEffect(MobEffects.REGENERATION);
         healTicks++;
+        if (!shieldCooldown && noShieldTicks > 0) {
+            noShieldTicks--;
+        }
+        if (shieldCooldown && noShieldTicks <= 0) {
+            noShieldTicks = ThreadLocalRandom.current().nextInt(42);
+        }
     }
 
     private void applyArmor(Inventory inventory) {
