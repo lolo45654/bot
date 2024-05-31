@@ -28,6 +28,10 @@ public class FakeConnection extends Connection {
     }
 
     @Override
+    public void setListener(PacketListener packetListener) {
+    }
+
+    @Override
     public void channelActive(ChannelHandlerContext channelhandlercontext) {
     }
 
