@@ -53,27 +53,12 @@ public class PaperPlatform extends Platform {
         }
 
         Bukkit.getPluginManager().registerEvents(new Listener() {
-            private Vec3 prev = Vec3.ZERO;
-
             @EventHandler
             public void onTick(ServerTickEndEvent event) {
                 List<Bot> bots = new ArrayList<>(BOTS);
                 for (Bot bot : bots) {
                     bot.doTick();
                 }
-
-                Player loloed = Bukkit.getPlayer("loloed");
-                if (loloed == null) return;
-                ServerPlayer handle = ((CraftPlayer) loloed).getHandle();
-                Vec3 delta = handle.getDeltaMovement();
-                loloed.sendActionBar(Component.text("Diff: [" + normalizeNum(delta.x / prev.x) + ", " + normalizeNum(delta.y / prev.y) + ", " + normalizeNum(delta.z / prev.z) + "]"));
-                prev = delta;
-            }
-
-            public String normalizeNum(double num) {
-                if (Double.isInfinite(num)) return "0.0000";
-                if (Double.isNaN(num)) return "0.0000";
-                return BigDecimal.valueOf(num).setScale(4, RoundingMode.HALF_UP).toPlainString();
             }
 
             @EventHandler
