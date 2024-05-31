@@ -2,6 +2,7 @@ package me.loloed.bot.api.util.fake;
 
 import com.mojang.authlib.GameProfile;
 import me.loloed.bot.api.platform.Platform;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket.Action;
 import net.minecraft.server.MinecraftServer;
@@ -74,9 +75,13 @@ public class FakePlayer extends ServerPlayer {
         platform.detectEquipmentUpdates(this);
         uglyAttackFix = false;
 
-        double shieldDeltaX = shieldDelta.x * 0.91;
-        double shieldDeltaY = shieldDelta.y * 0.91;
-        double shieldDeltaZ = shieldDelta.z * 0.91;
+        BlockPos blockBelow = this.getBlockPosBelowThatAffectsMyMovement();
+        float f4 = level().getBlockState(blockBelow).getBlock().getFriction();
+
+        double f = onGround() ? f4 * 0.91F : 0.91F;
+        double shieldDeltaX = shieldDelta.x * f;
+        double shieldDeltaY = shieldDelta.y * f;
+        double shieldDeltaZ = shieldDelta.z * f;
         if (Math.abs(shieldDeltaX) < 0.003) {
             shieldDeltaX = 0.0;
         }
