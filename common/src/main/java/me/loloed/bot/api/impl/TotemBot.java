@@ -12,7 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantments;
 
-public class TotemBot extends Bot {
+public class TotemBot extends Bot implements IServerBot {
     private final ServerPlayer spawner;
     private int healTicks = 0;
 
@@ -29,12 +29,7 @@ public class TotemBot extends Bot {
         super.tick();
         ServerPlayer player = (ServerPlayer) getVanillaPlayer();
         Inventory inventory = player.getInventory();
-        if (!player.server.getPlayerList().getPlayers().contains(spawner)) {
-            destroy();
-            return;
-        }
-
-        if (player.distanceToSqr(spawner) > 120*120) {
+        if (player.touchingUnloadedChunk() || player.distanceToSqr(spawner) > 120*120 || !player.server.getPlayerList().getPlayers().contains(spawner)) {
             destroy();
             return;
         }
@@ -79,6 +74,7 @@ public class TotemBot extends Bot {
         inventory.setItem(36, boots);
     }
 
+    @Override
     public ServerPlayer getSpawner() {
         return spawner;
     }

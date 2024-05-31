@@ -2,6 +2,7 @@ package me.loloed.bot.api.util.fake;
 
 import com.mojang.authlib.GameProfile;
 import me.loloed.bot.api.platform.Platform;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket.Action;
 import net.minecraft.server.MinecraftServer;
@@ -13,6 +14,7 @@ import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
@@ -72,7 +74,24 @@ public class FakePlayer extends ServerPlayer {
         super.tick();
         platform.detectEquipmentUpdates(this);
         uglyAttackFix = false;
-        shieldDelta = Vec3.ZERO;
+
+        BlockPos blockBelow = this.getBlockPosBelowThatAffectsMyMovement();
+        float f4 = level().getBlockState(blockBelow).getBlock().getFriction();
+
+        double f = onGround() ? f4 * 0.91F : 0.91F;
+        double shieldDeltaX = shieldDelta.x * f;
+        double shieldDeltaY = shieldDelta.y * f;
+        double shieldDeltaZ = shieldDelta.z * f;
+        if (Math.abs(shieldDeltaX) < 0.003) {
+            shieldDeltaX = 0.0;
+        }
+        if (Math.abs(shieldDeltaY) < 0.003) {
+            shieldDeltaY = 0.0;
+        }
+        if (Math.abs(shieldDeltaZ) < 0.003) {
+            shieldDeltaZ = 0.0;
+        }
+        shieldDelta = new Vec3(shieldDeltaX, shieldDeltaY, shieldDeltaZ);
     }
 
     /**
@@ -116,7 +135,9 @@ public class FakePlayer extends ServerPlayer {
         super.blockUsingShield(livingEntity);
         Vec3 b = getDeltaMovement();
         setDeltaMovement(a);
-        shieldDelta = b.subtract(a);
+        if (getCooldowns().isOnCooldown(Items.SHIELD)) {
+            shieldDelta = b.subtract(a);
+        }
     }
 
     @Override
@@ -130,7 +151,7 @@ public class FakePlayer extends ServerPlayer {
 
     @Override
     public boolean hurt(DamageSource damageSource, float f) {
-        if (shieldDelta != Vec3.ZERO) {
+        if (Math.abs(shieldDelta.x) > 0.003 || Math.abs(shieldDelta.y) > 0.003 || Math.abs(shieldDelta.z) > 0.003) {
             setDeltaMovement(shieldDelta);
             shieldDelta = Vec3.ZERO;
         }

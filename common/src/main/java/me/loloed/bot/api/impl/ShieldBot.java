@@ -14,7 +14,7 @@ import net.minecraft.world.item.enchantment.Enchantments;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-public class ShieldBot extends Bot {
+public class ShieldBot extends Bot implements IServerBot {
     private final ServerPlayer spawner;
     private int noShieldTicks = 0;
     private int healTicks = 0;
@@ -32,12 +32,7 @@ public class ShieldBot extends Bot {
         super.tick();
         ServerPlayer player = (ServerPlayer) getVanillaPlayer();
         Inventory inventory = player.getInventory();
-        if (!player.server.getPlayerList().getPlayers().contains(spawner)) {
-            destroy();
-            return;
-        }
-
-        if (player.distanceToSqr(spawner) > 120*120) {
+        if (player.touchingUnloadedChunk() || player.distanceToSqr(spawner) > 120*120 || !player.server.getPlayerList().getPlayers().contains(spawner)) {
             destroy();
             return;
         }
@@ -90,6 +85,7 @@ public class ShieldBot extends Bot {
         inventory.setItem(36, boots);
     }
 
+    @Override
     public ServerPlayer getSpawner() {
         return spawner;
     }
