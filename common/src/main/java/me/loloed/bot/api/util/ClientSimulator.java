@@ -100,9 +100,9 @@ public class ClientSimulator {
         tickMove();
         tickUsingItem();
         tickMouse();
-        player.getCooldowns().tick();
-        player.tick();
-        player.aiStep();
+        // player.getCooldowns().tick();
+        player.doTick();
+        // player.aiStep();
         if (itemUseCooldown > 0) {
             itemUseCooldown--;
         }
