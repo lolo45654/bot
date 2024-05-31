@@ -21,6 +21,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -64,8 +66,12 @@ public class PaperPlatform extends Platform {
                 if (loloed == null) return;
                 ServerPlayer handle = ((CraftPlayer) loloed).getHandle();
                 Vec3 delta = handle.getDeltaMovement();
-                loloed.sendActionBar(Component.text("Diff: [" + (delta.x / prev.x) + ", " + (delta.y / prev.y) + ", " + (delta.z / prev.z) + "]"));
+                loloed.sendActionBar(Component.text("Diff: [" + normalizeNum(delta.x / prev.x) + ", " + normalizeNum(delta.y / prev.y) + ", " + normalizeNum(delta.z / prev.z) + "]"));
                 prev = delta;
+            }
+
+            public String normalizeNum(double num) {
+                return BigDecimal.valueOf(num).setScale(4, RoundingMode.HALF_UP).toPlainString();
             }
 
             @EventHandler
