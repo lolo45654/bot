@@ -13,6 +13,7 @@ import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
@@ -129,14 +130,15 @@ public class FakePlayer extends ServerPlayer {
         super.blockUsingShield(livingEntity);
         Vec3 b = getDeltaMovement();
         setDeltaMovement(a);
-        shieldDelta = b.subtract(a);
+        if (getCooldowns().isOnCooldown(Items.SHIELD)) {
+            shieldDelta = b.subtract(a);
+        }
     }
 
     @Override
     public void setDeltaMovement(Vec3 vec3) {
         if (uglyAttackFix) {
             uglyAttackFix = false;
-            hurtMarked = true;
             return;
         }
         super.setDeltaMovement(vec3);
