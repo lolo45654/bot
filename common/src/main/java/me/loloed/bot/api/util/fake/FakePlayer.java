@@ -72,7 +72,20 @@ public class FakePlayer extends ServerPlayer {
         super.tick();
         platform.detectEquipmentUpdates(this);
         uglyAttackFix = false;
-        shieldDelta = Vec3.ZERO;
+
+        double shieldDeltaX = shieldDelta.x;
+        double shieldDeltaY = shieldDelta.y;
+        double shieldDeltaZ = shieldDelta.z;
+        if (shieldDeltaX < 0.03) {
+            shieldDeltaX = 0.0;
+        }
+        if (shieldDeltaY < 0.03) {
+            shieldDeltaY = 0.0;
+        }
+        if (shieldDeltaZ < 0.03) {
+            shieldDeltaZ = 0.0;
+        }
+        shieldDelta = new Vec3(shieldDeltaX, shieldDeltaY, shieldDeltaZ);
     }
 
     /**
@@ -130,7 +143,7 @@ public class FakePlayer extends ServerPlayer {
 
     @Override
     public boolean hurt(DamageSource damageSource, float f) {
-        if (shieldDelta != Vec3.ZERO) {
+        if (!Vec3.ZERO.equals(shieldDelta)) {
             setDeltaMovement(shieldDelta);
             shieldDelta = Vec3.ZERO;
         }
