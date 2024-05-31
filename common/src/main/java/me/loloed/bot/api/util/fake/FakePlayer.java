@@ -11,6 +11,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.server.players.PlayerList;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
@@ -95,5 +96,13 @@ public class FakePlayer extends ServerPlayer {
 
     public void update(ServerPlayer player) {
         player.connection.send(platform.buildPlayerInfoPacket(EnumSet.of(Action.ADD_PLAYER, Action.UPDATE_LISTED), fakePlayerEntry));
+    }
+
+    @Override
+    protected void blockUsingShield(LivingEntity livingEntity) {
+        // Prevents LivingEntity#blockedByShield
+        if (livingEntity.canDisableShield()) {
+            this.disableShield(true);
+        }
     }
 }
