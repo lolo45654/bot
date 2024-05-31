@@ -36,6 +36,12 @@ public class ShieldBot extends Bot {
             destroy();
             return;
         }
+
+        if (player.distanceToSqr(spawner) > 120*120) {
+            destroy();
+            return;
+        }
+
         boolean shieldCooldown = getVanillaPlayer().getCooldowns().isOnCooldown(Items.SHIELD);
 
         player.lookAt(EntityAnchorArgument.Anchor.EYES, spawner.getEyePosition());
