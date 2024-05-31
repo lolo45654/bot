@@ -1,7 +1,6 @@
 package me.loloed.bot.blade;
 
 import com.destroystokyo.paper.event.server.ServerTickEndEvent;
-import io.papermc.paper.event.player.PlayerShieldDisableEvent;
 import me.loloed.bot.api.Bot;
 import me.loloed.bot.api.platform.Platform;
 import me.loloed.bot.api.util.ClientSimulator;
@@ -19,14 +18,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerVelocityEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -57,12 +51,21 @@ public class PaperPlatform extends Platform {
         }
 
         Bukkit.getPluginManager().registerEvents(new Listener() {
+            private Vec3 prev = Vec3.ZERO;
+
             @EventHandler
             public void onTick(ServerTickEndEvent event) {
                 List<Bot> bots = new ArrayList<>(BOTS);
                 for (Bot bot : bots) {
                     bot.doTick();
                 }
+
+                Player loloed = Bukkit.getPlayer("loloed");
+                if (loloed == null) return;
+                ServerPlayer handle = ((CraftPlayer) loloed).getHandle();
+                Vec3 delta = handle.getDeltaMovement();
+                loloed.sendActionBar(Component.text("Diff: [" + (delta.x / prev.x) + ", " + (delta.y / prev.y) + ", " + (delta.z / prev.z) + "]"));
+                prev = delta;
             }
 
             @EventHandler
