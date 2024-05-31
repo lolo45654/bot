@@ -73,9 +73,9 @@ public class FakePlayer extends ServerPlayer {
         platform.detectEquipmentUpdates(this);
         uglyAttackFix = false;
 
-        double shieldDeltaX = shieldDelta.x;
-        double shieldDeltaY = shieldDelta.y;
-        double shieldDeltaZ = shieldDelta.z;
+        double shieldDeltaX = shieldDelta.x * 0.98;
+        double shieldDeltaY = shieldDelta.y * 0.98;
+        double shieldDeltaZ = shieldDelta.z * 0.98;
         if (Math.abs(shieldDeltaX) < 0.003) {
             shieldDeltaX = 0.0;
         }
@@ -144,7 +144,7 @@ public class FakePlayer extends ServerPlayer {
 
     @Override
     public boolean hurt(DamageSource damageSource, float f) {
-        if (!Vec3.ZERO.equals(shieldDelta)) {
+        if (Math.abs(shieldDelta.x) > 0.03 && Math.abs(shieldDelta.y) > 0.03 && Math.abs(shieldDelta.z) > 0.03) {
             setDeltaMovement(shieldDelta);
             shieldDelta = Vec3.ZERO;
         }
