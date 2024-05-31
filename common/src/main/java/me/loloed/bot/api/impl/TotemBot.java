@@ -12,7 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantments;
 
-public class TotemBot extends Bot {
+public class TotemBot extends Bot implements IServerBot {
     private final ServerPlayer spawner;
     private int healTicks = 0;
 
@@ -74,6 +74,7 @@ public class TotemBot extends Bot {
         inventory.setItem(36, boots);
     }
 
+    @Override
     public ServerPlayer getSpawner() {
         return spawner;
     }
