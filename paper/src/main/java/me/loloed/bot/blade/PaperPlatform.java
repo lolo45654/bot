@@ -17,6 +17,7 @@ import org.bukkit.event.player.PlayerVelocityEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -36,7 +37,7 @@ public class PaperPlatform extends Platform {
         PLUGIN = plugin;
 
         try {
-            Class<FakePlayer> a = FakePlayer.class;
+            Annotation[] a = FakePlayer.class.getAnnotations();
         } catch (RuntimeException exception) {
             try {
                 FakePlayer.ServerPlayer$spawnInvulnerableTime = ServerPlayer.class.getDeclaredField("cC");
@@ -46,7 +47,7 @@ public class PaperPlatform extends Platform {
         }
 
         try {
-            Class<ClientSimulator> a = ClientSimulator.class;
+            Annotation[] a = ClientSimulator.class.getAnnotations();
         } catch (RuntimeException exception) {
             try {
                 ClientSimulator.LivingEntity$updatingUsingItem = LivingEntity.class.getDeclaredMethod("I");
