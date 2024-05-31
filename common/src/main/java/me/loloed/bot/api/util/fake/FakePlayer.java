@@ -24,8 +24,7 @@ public class FakePlayer extends ServerPlayer {
         try {
             ServerPlayer$spawnInvulnerableTime = ServerPlayer.class.getDeclaredField("spawnInvulnerableTime");
             ServerPlayer$spawnInvulnerableTime.setAccessible(true);
-        } catch (NoSuchFieldException e) {
-            throw new RuntimeException(e);
+        } catch (NoSuchFieldException ignored) {
         }
     }
 

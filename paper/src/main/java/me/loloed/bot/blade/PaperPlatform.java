@@ -18,6 +18,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -37,23 +38,10 @@ public class PaperPlatform extends Platform {
         PLUGIN = plugin;
 
         try {
-            Annotation[] a = FakePlayer.class.getAnnotations();
-        } catch (RuntimeException exception) {
-            try {
-                FakePlayer.ServerPlayer$spawnInvulnerableTime = ServerPlayer.class.getDeclaredField("cC");
-            } catch (NoSuchFieldException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        try {
-            Annotation[] a = ClientSimulator.class.getAnnotations();
-        } catch (RuntimeException exception) {
-            try {
-                ClientSimulator.LivingEntity$updatingUsingItem = LivingEntity.class.getDeclaredMethod("I");
-            } catch (NoSuchMethodException e) {
-                throw new RuntimeException(e);
-            }
+            FakePlayer.ServerPlayer$spawnInvulnerableTime = ServerPlayer.class.getDeclaredField("cC");
+            ClientSimulator.LivingEntity$updatingUsingItem = LivingEntity.class.getDeclaredMethod("I");
+        } catch (NoSuchFieldException | NoSuchMethodException e) {
+            throw new RuntimeException(e);
         }
 
         Bukkit.getPluginManager().registerEvents(new Listener() {

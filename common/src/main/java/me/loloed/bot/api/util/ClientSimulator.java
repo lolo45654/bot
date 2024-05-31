@@ -33,8 +33,7 @@ public class ClientSimulator {
         try {
             LivingEntity$updatingUsingItem = LivingEntity.class.getDeclaredMethod("updatingUsingItem");
             LivingEntity$updatingUsingItem.setAccessible(true);
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
+        } catch (NoSuchMethodException ignored) {
         }
     }
 
