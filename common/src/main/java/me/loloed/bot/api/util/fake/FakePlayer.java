@@ -74,9 +74,9 @@ public class FakePlayer extends ServerPlayer {
         platform.detectEquipmentUpdates(this);
         uglyAttackFix = false;
 
-        double shieldDeltaX = shieldDelta.x * 0.98;
-        double shieldDeltaY = shieldDelta.y * 0.98;
-        double shieldDeltaZ = shieldDelta.z * 0.98;
+        double shieldDeltaX = shieldDelta.x * 0.91;
+        double shieldDeltaY = shieldDelta.y * 0.91;
+        double shieldDeltaZ = shieldDelta.z * 0.91;
         if (Math.abs(shieldDeltaX) < 0.003) {
             shieldDeltaX = 0.0;
         }
