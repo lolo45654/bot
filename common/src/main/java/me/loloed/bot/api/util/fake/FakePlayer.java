@@ -12,6 +12,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.server.players.PlayerList;
+import net.minecraft.stats.Stat;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Items;
@@ -156,5 +157,12 @@ public class FakePlayer extends ServerPlayer {
             shieldDelta = Vec3.ZERO;
         }
         return super.hurt(damageSource, f);
+    }
+
+    /**
+     * performance
+     */
+    @Override
+    public void awardStat(Stat<?> stat, int i) {
     }
 }

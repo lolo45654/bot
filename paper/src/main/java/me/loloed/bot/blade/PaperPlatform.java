@@ -21,6 +21,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
+import java.beans.PersistenceDelegate;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -54,14 +55,6 @@ public class PaperPlatform extends Platform {
 
         Bukkit.getPluginManager().registerEvents(new Listener() {
             @EventHandler
-            public void onTick(ServerTickEndEvent event) {
-                List<Bot> bots = new ArrayList<>(BOTS);
-                for (Bot bot : bots) {
-                    bot.doTick();
-                }
-            }
-
-            @EventHandler
             public void onJoin(PlayerJoinEvent event) {
                 for (Bot bot : BOTS) {
                     if (bot.getVanillaPlayer() instanceof FakePlayer fakePlayer) {
@@ -74,6 +67,13 @@ public class PaperPlatform extends Platform {
 
     public void addBot(Bot bot) {
         BOTS.add(bot);
+        bot.getVanillaPlayer().getBukkitEntity().getScheduler().runAtFixedRate(PLUGIN, task -> {
+            bot.doTick();
+            if (bot.isDestroyed()) {
+                bot.destroy();
+                task.cancel();
+            }
+        }, null, 1L, 1L);
     }
 
     public void removeAll() {
