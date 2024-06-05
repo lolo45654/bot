@@ -1,35 +1,35 @@
 #!/bin/bash
 
-echo "say [WF-$WF_PROJECT] Started workflow for bot project" > $WF_COMMAND &
+echo "say [WF-$WF_PROJECT] Started workflow for bot project" > $WF_COMMAND
 
 if [[ "$REF" =~ chore ]]; then
-  echo "say [WF-$WF_PROJECT] Ignoring chore push" > $WF_COMMAND &
+  echo "say [WF-$WF_PROJECT] Ignoring chore push" > $WF_COMMAND
   exit 0
 fi
 
 if [[ -d "$WF_CACHE/bot/.gradle" ]]; then
-  echo "say [WF-$WF_PROJECT] Restoring .gradle directory" > $WF_COMMAND &
+  echo "say [WF-$WF_PROJECT] Restoring .gradle directory" > $WF_COMMAND
   cp -r "$WF_CACHE/bot/.gradle" "$WF_REPO/.gradle"
 fi
 
 if [[ -d "$WF_CACHE/bot/build" ]]; then
-  echo "say [WF-$WF_PROJECT] Restoring build directory" > $WF_COMMAND &
+  echo "say [WF-$WF_PROJECT] Restoring build directory" > $WF_COMMAND
   cp -r "$WF_CACHE/bot/build" "$WF_REPO/paper/build"
   rm -rf "$WF_REPO/paper/build/libs"
 fi
 
 cd "$WF_REPO"
 chmod +x gradlew
-echo "say [WF-$WF_PROJECT] Started build!" > $WF_COMMAND &
-./gradlew build | tee $WF_DIR/build.log | sed -e 's/^/say \[WF\-'$WF_PROJECT'\] \[BUILD\] /' > $WF_COMMAND &
+echo "say [WF-$WF_PROJECT] Started build!" > $WF_COMMAND
+./gradlew build | tee $WF_DIR/build.log | sed -e 's/^/say \[WF\-'$WF_PROJECT'\] \[BUILD\] /' > $WF_COMMAND
 if ! [[ "$?" == "0" ]]; then
   cp "$WF_DIR/build.log" "$WF_ERROR/build.$(tr -dc '0-9a-zA-Z' < /dev/urandom | head -c 6).log"
   echo "Failed to build! Saved logs."
-  echo "say [WF-$WF_PROJECT] Failed build! Saved logs." > $WF_COMMAND &
+  echo "say [WF-$WF_PROJECT] Failed build! Saved logs." > $WF_COMMAND
   exit -1
 fi
 
-echo "say [WF-$WF_PROJECT] Done." > $WF_COMMAND &
+echo "say [WF-$WF_PROJECT] Done." > $WF_COMMAND
 cp "$WF_REPO/paper/build/libs/bot-paper.jar" "$WF_SERVER/plugins"
 echo "$REF" > $WF_SERVER/DEVELOPMENT
 sudo systemctl restart minecraft@prac.service
