@@ -51,7 +51,6 @@ public class TotemBot extends Bot implements IServerBot {
             healTicks = 0;
         }
 
-        player.removeEffect(MobEffects.REGENERATION);
         healTicks++;
     }
 

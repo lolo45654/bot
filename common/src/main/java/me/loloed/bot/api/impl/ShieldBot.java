@@ -56,7 +56,6 @@ public class ShieldBot extends Bot implements IServerBot {
             healTicks = 0;
         }
 
-        player.removeEffect(MobEffects.REGENERATION);
         healTicks++;
         if (!shieldCooldown && noShieldTicks > 0) {
             noShieldTicks--;
