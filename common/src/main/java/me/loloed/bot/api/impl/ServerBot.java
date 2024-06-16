@@ -48,6 +48,8 @@ public class ServerBot extends Bot {
         if (settings.shield) {
             tickShield(player, inventory);
         }
+
+        applyArmor(vanillaPlayer.getInventory());
     }
 
     protected void tickShield(ServerPlayer player, Inventory inventory) {

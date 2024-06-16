@@ -68,7 +68,7 @@ public class BladePlugin extends JavaPlugin {
                                 }
                             }
 
-                            FakePlayer fakePlayer = new FakePlayer(platform, MinecraftServer.getServer(), CraftLocation.toVec3D(pos), pos.getYaw(), pos.getPitch(), ((CraftWorld) pos.getWorld()).getHandle(), new GameProfile(UUID.randomUUID(), "ShieldBot"));
+                            FakePlayer fakePlayer = new FakePlayer(platform, MinecraftServer.getServer(), CraftLocation.toVec3D(pos), pos.getYaw(), pos.getPitch(), ((CraftWorld) pos.getWorld()).getHandle(), new GameProfile(UUID.randomUUID(), "TotemBot"));
                             ServerBot bot = new ServerBot(fakePlayer, platform, ((CraftPlayer) sender).getHandle(), ServerBotSettings.TOTEM.clone());
                             platform.addBot(bot);
                             sender.sendMessage(Component.text("Spawned a totem bot!", PRIMARY));
@@ -94,11 +94,13 @@ public class BladePlugin extends JavaPlugin {
                 .executesPlayer((sender, args) -> {
                     for (Bot b : PaperPlatform.BOTS) {
                         if (b instanceof ServerBot bot && bot.getSpawner().getUUID().equals(sender.getUniqueId())) {
+                            sender.sendMessage("1");
                             BotSettingGui.show(((CraftPlayer) sender).getHandle(), platform, bot.getSettings(), bot);
                             return;
                         }
                     }
 
+                    sender.sendMessage("2");
                     BotSettingGui.show(((CraftPlayer) sender).getHandle(), platform, new ServerBotSettings(), null);
                 })
                 .register();
