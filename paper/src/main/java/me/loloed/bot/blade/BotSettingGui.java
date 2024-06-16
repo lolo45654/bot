@@ -75,10 +75,6 @@ public class BotSettingGui {
             }));
         }
 
-        gui.setItem(4, 5, new SimpleItem(new ItemBuilder(Material.BARRIER)
-                .setDisplayName(new AdventureComponentWrapper(Component.text("Close", NamedTextColor.RED))),
-                click -> click.getPlayer().closeInventory()));
-
         Window.single()
                 .setGui(gui)
                 .setTitle(new AdventureComponentWrapper(Component.text("Bot Settings", NamedTextColor.GREEN)))
