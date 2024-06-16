@@ -12,8 +12,8 @@ import me.loloed.bot.api.blade.BladeMachine;
 import me.loloed.bot.api.blade.debug.BladeDebug;
 import me.loloed.bot.api.blade.impl.ConfigKeys;
 import me.loloed.bot.api.blade.impl.goal.KillTargetGoal;
-import me.loloed.bot.api.impl.ShieldBot;
-import me.loloed.bot.api.impl.TotemBot;
+import me.loloed.bot.api.impl.ServerBot;
+import me.loloed.bot.api.impl.ServerBotSettings;
 import me.loloed.bot.api.util.fake.FakePlayer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
@@ -61,15 +61,15 @@ public class BladePlugin extends JavaPlugin {
                             Location pos = sender.getLocation();
                             List<Bot> bots = new ArrayList<>(PaperPlatform.BOTS);
                             for (Bot bot : bots) {
-                                if (bot instanceof TotemBot totemBot && totemBot.getSpawner().getUUID().equals(sender.getUniqueId())) {
+                                if (bot instanceof ServerBot sBot && sBot.getSpawner().getUUID().equals(sender.getUniqueId())) {
                                     bot.destroy();
-                                    sender.sendMessage(Component.text("Removed your totem bot!", PRIMARY));
+                                    sender.sendMessage(Component.text("Removed your simple bot!", PRIMARY));
                                     return;
                                 }
                             }
 
-                            FakePlayer fakePlayer = new FakePlayer(platform, MinecraftServer.getServer(), CraftLocation.toVec3D(pos), pos.getYaw(), pos.getPitch(), ((CraftWorld) pos.getWorld()).getHandle(), new GameProfile(UUID.randomUUID(), "TotemBot"));
-                            TotemBot bot = new TotemBot(fakePlayer, platform, ((CraftPlayer) sender).getHandle());
+                            FakePlayer fakePlayer = new FakePlayer(platform, MinecraftServer.getServer(), CraftLocation.toVec3D(pos), pos.getYaw(), pos.getPitch(), ((CraftWorld) pos.getWorld()).getHandle(), new GameProfile(UUID.randomUUID(), "ShieldBot"));
+                            ServerBot bot = new ServerBot(fakePlayer, platform, ((CraftPlayer) sender).getHandle(), ServerBotSettings.TOTEM.clone());
                             platform.addBot(bot);
                             sender.sendMessage(Component.text("Spawned a totem bot!", PRIMARY));
                         }))
@@ -79,18 +79,28 @@ public class BladePlugin extends JavaPlugin {
                             Location pos = sender.getLocation();
                             List<Bot> bots = new ArrayList<>(PaperPlatform.BOTS);
                             for (Bot bot : bots) {
-                                if (bot instanceof ShieldBot totemBot && totemBot.getSpawner().getUUID().equals(sender.getUniqueId())) {
+                                if (bot instanceof ServerBot sBot && sBot.getSpawner().getUUID().equals(sender.getUniqueId())) {
                                     bot.destroy();
-                                    sender.sendMessage(Component.text("Removed your shield bot!", PRIMARY));
+                                    sender.sendMessage(Component.text("Removed your simple bot!", PRIMARY));
                                     return;
                                 }
                             }
 
                             FakePlayer fakePlayer = new FakePlayer(platform, MinecraftServer.getServer(), CraftLocation.toVec3D(pos), pos.getYaw(), pos.getPitch(), ((CraftWorld) pos.getWorld()).getHandle(), new GameProfile(UUID.randomUUID(), "ShieldBot"));
-                            ShieldBot bot = new ShieldBot(fakePlayer, platform, ((CraftPlayer) sender).getHandle());
+                            ServerBot bot = new ServerBot(fakePlayer, platform, ((CraftPlayer) sender).getHandle(), ServerBotSettings.SHIELD.clone());
                             platform.addBot(bot);
                             sender.sendMessage(Component.text("Spawned a shield bot!", PRIMARY));
                         }))
+                .executesPlayer((sender, args) -> {
+                    for (Bot b : PaperPlatform.BOTS) {
+                        if (b instanceof ServerBot bot && bot.getSpawner().getUUID().equals(sender.getUniqueId())) {
+                            BotSettingGui.show(((CraftPlayer) sender).getHandle(), platform, bot.getSettings(), bot);
+                            return;
+                        }
+                    }
+
+                    BotSettingGui.show(((CraftPlayer) sender).getHandle(), platform, new ServerBotSettings(), null);
+                })
                 .register();
 
         new CommandTree("blade")
