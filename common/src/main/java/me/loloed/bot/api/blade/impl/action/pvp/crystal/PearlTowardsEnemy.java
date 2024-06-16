@@ -19,14 +19,12 @@ public class PearlTowardsEnemy extends ScoreAction implements Crystal {
         Slot pearlSlot = getPearlSlot();
         if (pearlSlot == null) return;
         bot.getInventory().setSelectedSlot(pearlSlot.getHotBarIndex());
-        double time = ConfigKeys.getDifficultyReversed(bot) * 2;
+        double time = ConfigKeys.getDifficultyReversed(bot) * 3;
         float[] bow = BotMath.getRotationForBow(bot.getVanillaPlayer().position(), bot.getBlade().get(ConfigKeys.TARGET).position(), 24);
         if (tick < time) {
             bot.lookRealistic(bow[0], bow[1], tick / (float) time, 1f);
         }
         if (tick >= time) {
-            bot.setYaw(bow[0]);
-            bot.setPitch(bow[1]);
             bot.interact();
         }
     }
