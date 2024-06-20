@@ -21,6 +21,8 @@ public class ServerBotSettings implements Cloneable {
     public boolean shield = false;
     public boolean autoHit = false;
 
+    public float reach = 3.0f;
+
     @Override
     public ServerBotSettings clone() {
         try {

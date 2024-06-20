@@ -14,6 +14,7 @@ import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_20_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_20_R3.util.CraftLocation;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import xyz.xenondevs.inventoryaccess.component.AdventureComponentWrapper;
@@ -42,20 +43,92 @@ public class BotSettingGui {
         ItemStack baseItem = new ItemBuilder(Material.OAK_BUTTON)
                 .setDisplayName(wrapMiniMessage("<aqua>Armor"))
                 .get();
-        setCycleItem(gui, show, 1, 2,
+        setCycleItem(gui, show, 2, 2,
                 settings.armor, new ServerBotSettings.Armor[] { ServerBotSettings.Armor.DIAMOND, ServerBotSettings.Armor.NETHERITE },
                 new ItemStack[] {
-                        new ItemBuilder(baseItem.clone())
-                                .setMaterial(Material.DIAMOND_CHESTPLATE)
+                        new ItemBuilder(baseItem.clone().withType(Material.DIAMOND_CHESTPLATE))
+                                .addEnchantment(Enchantment.MENDING, 1, true)
                                 .addLoreLines(empty())
                                 .addLoreLines(wrapMiniMessage("<gray>Selected: <aqua><bold>DIAMOND"))
+                                .addLoreLines(empty())
+                                .addLoreLines(wrapMiniMessage("<yellow>Click to cycle!"))
                                 .get(),
-                        new ItemBuilder(baseItem.clone())
-                                .setMaterial(Material.NETHERITE_CHESTPLATE)
+                        new ItemBuilder(baseItem.clone().withType(Material.NETHERITE_CHESTPLATE))
+                                .addEnchantment(Enchantment.MENDING, 1, true)
                                 .addLoreLines(empty())
                                 .addLoreLines(wrapMiniMessage("<gray>Selected: <light_purple><bold>NETHERITE"))
+                                .addLoreLines(empty())
+                                .addLoreLines(wrapMiniMessage("<yellow>Click to cycle!"))
                                 .get()
                 }, val -> settings.armor = val);
+
+        baseItem = new ItemBuilder(Material.OAK_BUTTON)
+                .setDisplayName(wrapMiniMessage("<aqua>Reach"))
+                .get();
+        setCycleItem(gui, show, 4, 2,
+                settings.reach, new Float[] { 1.0f, 1.5f, 2.0f, 2.5f, 3.0f, 3.5f },
+                new ItemStack[] {
+                        new ItemBuilder(baseItem.clone().withType(Material.LIGHT_BLUE_DYE))
+                                .addLoreLines(empty())
+                                .addLoreLines(wrapMiniMessage("<gray>Selected: <aqua><bold>1"))
+                                .addLoreLines(empty())
+                                .addLoreLines(wrapMiniMessage("<yellow>Click to cycle!"))
+                                .get(),
+                        new ItemBuilder(baseItem.clone().withType(Material.LIME_DYE))
+                                .addLoreLines(empty())
+                                .addLoreLines(wrapMiniMessage("<gray>Selected: <light_purple><bold>1.5"))
+                                .addLoreLines(empty())
+                                .addLoreLines(wrapMiniMessage("<yellow>Click to cycle!"))
+                                .get(),
+                        new ItemBuilder(baseItem.clone().withType(Material.YELLOW_DYE))
+                                .addLoreLines(empty())
+                                .addLoreLines(wrapMiniMessage("<gray>Selected: <light_purple><bold>2"))
+                                .addLoreLines(empty())
+                                .addLoreLines(wrapMiniMessage("<yellow>Click to cycle!"))
+                                .get(),
+                        new ItemBuilder(baseItem.clone().withType(Material.ORANGE_DYE))
+                                .addLoreLines(empty())
+                                .addLoreLines(wrapMiniMessage("<gray>Selected: <light_purple><bold>2.5"))
+                                .addLoreLines(empty())
+                                .addLoreLines(wrapMiniMessage("<yellow>Click to cycle!"))
+                                .get(),
+                        new ItemBuilder(baseItem.clone().withType(Material.RED_DYE))
+                                .addLoreLines(empty())
+                                .addLoreLines(wrapMiniMessage("<gray>Selected: <light_purple><bold>3"))
+                                .addLoreLines(empty())
+                                .addLoreLines(wrapMiniMessage("<yellow>Click to cycle!"))
+                                .get(),
+                        new ItemBuilder(baseItem.clone().withType(Material.PURPLE_DYE))
+                                .addLoreLines(empty())
+                                .addLoreLines(wrapMiniMessage("<gray>Selected: <light_purple><bold>3.5"))
+                                .addLoreLines(empty())
+                                .addLoreLines(wrapMiniMessage("<yellow>Click to cycle!"))
+                                .get()
+                }, val -> settings.reach = val);
+
+        if (settings.shield) {
+            gui.setItem(6, 2, new SimpleItem(new ItemBuilder(Material.SHIELD)
+                    .addEnchantment(Enchantment.MENDING, 1, true)
+                    .setDisplayName(wrapMiniMessage("Shield"))
+                    .addLoreLines(empty())
+                    .addLoreLines(wrapMiniMessage("<gray>Status: <red><bold>ENABLED"))
+                    .addLoreLines(empty())
+                    .addLoreLines(wrapMiniMessage("<yellow>Click to disable!"))
+                    .addLoreLines(wrapMiniMessage("<yellow>Right click to edit! ")), click -> {
+                if (click.getClickType().isRightClick()) {
+                } else {
+                    settings.shield = false;
+                }
+            }));
+        } else {
+            gui.setItem(6, 2, new SimpleItem(new ItemBuilder(Material.SHIELD)
+                    .addEnchantment(Enchantment.MENDING, 1, true)
+                    .setDisplayName(wrapMiniMessage("Shield"))
+                    .addLoreLines(empty())
+                    .addLoreLines(wrapMiniMessage("<gray>Status: <red><bold>DISABLED"))
+                    .addLoreLines(empty())
+                    .addLoreLines(wrapMiniMessage("<yellow>Click to enable!")), click -> settings.shield = true));
+        }
 
         if (bot == null) {
             gui.setItem(4, 5, new SimpleItem(new ItemBuilder(Material.DIAMOND)
@@ -73,11 +146,20 @@ public class BotSettingGui {
                     .setDisplayName(wrapMiniMessage("<red>Close")), click -> {
                 click.getPlayer().closeInventory();
             }));
+            gui.setItem(5, 5, new SimpleItem(new ItemBuilder(Material.TNT)
+                    .setDisplayName(wrapMiniMessage("<aqua>Despawn"))
+                    .addLoreLines(empty())
+                    .addLoreLines(wrapMiniMessage("<gray>No longer want it to exist?"))
+                    .addLoreLines(empty())
+                    .addLoreLines(wrapMiniMessage("<yellow>Click to despawn!")), click -> {
+                bot.destroy();
+                click.getPlayer().closeInventory();
+            }));
         }
 
         Window.single()
                 .setGui(gui)
-                .setTitle(new AdventureComponentWrapper(Component.text("Bot Settings", NamedTextColor.GREEN)))
+                .setTitle(wrapMiniMessage("<green>Bot Settings"))
                 .build(player.getBukkitEntity()).open();
     }
 

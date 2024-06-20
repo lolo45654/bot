@@ -20,6 +20,7 @@ public class ServerBot extends Bot {
 
     private int healTicks = 0;
     private int noShieldTicks = 0;
+    private boolean prevShieldCooldown = false;
 
     public ServerBot(Player vanillaPlayer, Platform platform, ServerPlayer spawner, ServerBotSettings settings) {
         super(vanillaPlayer, platform);
@@ -49,17 +50,24 @@ public class ServerBot extends Bot {
             tickShield(player, inventory);
         }
 
+        clientSimulator.setEntityReach(settings.reach);
+
         applyArmor(vanillaPlayer.getInventory());
     }
 
     protected void tickShield(ServerPlayer player, Inventory inventory) {
         boolean shieldCooldown = getVanillaPlayer().getCooldowns().isOnCooldown(Items.SHIELD);
+        boolean shielding = !shieldCooldown && noShieldTicks <= 0;
 
         ItemStack shield = new ItemStack(Items.SHIELD);
         shield.enchant(Enchantments.MENDING, 1);
         shield.getTag().putBoolean("Unbreakable", true);
         inventory.setItem(inventory.selected, shield);
-        interact(!shieldCooldown && noShieldTicks <= 0);
+        interact(shielding);
+        if (!prevShieldCooldown && shielding && settings.autoHit) {
+            attack();
+        }
+        prevShieldCooldown = shielding;
 
         if (!shieldCooldown && noShieldTicks > 0) {
             noShieldTicks--;
