@@ -32,8 +32,12 @@ public class STap extends ScoreAction implements Sword {
     @Override
     public double getScore() {
         LivingEntity target = bot.getBlade().get(ConfigKeys.TARGET);
+        Vec3 eyePos = bot.getVanillaPlayer().getEyePosition();
+        Vec3 closestPoint = BotMath.getClosestPoint(eyePos, target.getBoundingBox());
+        double distSq = closestPoint.distanceToSqr(eyePos);
         return getSwordScore(bot) +
                 (-target.hurtTime + 20) / 10.0 +
-                ThreadLocalRandom.current().nextDouble() * 0.6;
+                ThreadLocalRandom.current().nextDouble() * 0.6 +
+                (distSq <= 3 * 3 ? -8 : (Math.min(distSq / 3, 3)));
     }
 }
