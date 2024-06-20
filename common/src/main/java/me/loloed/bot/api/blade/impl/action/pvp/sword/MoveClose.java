@@ -16,10 +16,10 @@ public class MoveClose extends ScoreAction implements Sword {
         LivingEntity target = bot.getBlade().get(ConfigKeys.TARGET);
         Vec3 closestPoint = BotMath.getClosestPoint(bot.getVanillaPlayer().getEyePosition(), target.getBoundingBox());
         Vec3 currentPosition = bot.getVanillaPlayer().position();
-        Vec3 direction = currentPosition.subtract(closestPoint);
+        Vec3 direction = closestPoint.subtract(currentPosition);
         float yaw = BotMath.getYaw(direction);
         float pitch = BotMath.getPitch(direction);
-        bot.lookRealistic(yaw, pitch, (tick % time) / time, bot.getBlade().get(ConfigKeys.DIFFICULTY) * 2);
+        bot.lookRealistic(yaw, pitch, (tick % time) / time, bot.getBlade().get(ConfigKeys.DIFFICULTY) * 0.2f);
 
         bot.interact(false);
         bot.attack(false);
