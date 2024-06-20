@@ -70,7 +70,7 @@ public class BotMath {
     }
 
     public static float getPitch(Vec3 vec) {
-        if (vec.x == 0.0 && vec.z == 0.0) return 0.0F;
+        if (vec.x == 0.0 && vec.z == 0.0) return vec.y > 0 ? -90 : 90;
         double xz = Math.sqrt(vec.x * vec.x + vec.z * vec.z);
         return (float) Math.toDegrees(Math.atan(-vec.y / xz));
     }
