@@ -9,6 +9,9 @@ import net.minecraft.world.item.Items;
 public interface Sword {
     static void register(BladeMachine blade) {
         blade.addAction(new HitEnemy());
+        blade.addAction(new STap());
+        blade.addAction(new Jump());
+        blade.addAction(new MoveClose());
     }
 
     default double getSwordScore(Bot bot) {

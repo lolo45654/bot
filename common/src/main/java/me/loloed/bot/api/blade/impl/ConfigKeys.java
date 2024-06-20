@@ -6,9 +6,9 @@ import me.loloed.bot.api.blade.impl.util.MineCartPosition;
 import net.minecraft.world.entity.LivingEntity;
 
 public class ConfigKeys {
-    public static final ConfigKey<Double> DIFFICULTY = ConfigKey.key("difficulty", 0.5);
+    public static final ConfigKey<Float> DIFFICULTY = ConfigKey.key("difficulty", 0.5f);
 
-    public static double getDifficultyReversed(Bot bot) {
+    public static float getDifficultyReversed(Bot bot) {
         return 0 - bot.getBlade().get(DIFFICULTY) + 1;
     }
 

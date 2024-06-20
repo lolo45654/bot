@@ -1,6 +1,8 @@
 package me.loloed.bot.api.util;
 
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.util.Mth;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Map;
@@ -71,5 +73,9 @@ public class BotMath {
         if (vec.x == 0.0 && vec.z == 0.0) return 0.0F;
         double xz = Math.sqrt(vec.x * vec.x + vec.z * vec.z);
         return (float) Math.toDegrees(Math.atan(-vec.y / xz));
+    }
+
+    public static Vec3 getClosestPoint(Vec3 from, AABB boundingBox) {
+        return new Vec3(Mth.clamp(from.x, boundingBox.minX, boundingBox.maxX), Mth.clamp(from.y, boundingBox.minY, boundingBox.maxY), Mth.clamp(from.z, boundingBox.minZ, boundingBox.maxZ));
     }
 }
