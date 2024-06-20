@@ -14,10 +14,11 @@ public class Jump extends ScoreAction implements Sword {
     public void onTick() {
         float time = (float) (ConfigKeys.getDifficultyReversed(bot) * 1.2);
         LivingEntity target = bot.getBlade().get(ConfigKeys.TARGET);
-        Vec3 closestPoint = BotMath.getClosestPoint(bot.getVanillaPlayer().getEyePosition(), target.getBoundingBox());
+        Vec3 eyePos = bot.getVanillaPlayer().getEyePosition();
+        Vec3 closestPoint = BotMath.getClosestPoint(eyePos, target.getBoundingBox());
         bot.setMoveForward(false);
         bot.jump();
-        Vec3 direction = closestPoint.subtract(bot.getVanillaPlayer().position());
+        Vec3 direction = closestPoint.subtract(eyePos);
         float yaw = BotMath.getYaw(direction);
         float pitch = BotMath.getPitch(direction);
         bot.lookRealistic(yaw, pitch, (tick % time) / time, bot.getBlade().get(ConfigKeys.DIFFICULTY) * 0.2f);

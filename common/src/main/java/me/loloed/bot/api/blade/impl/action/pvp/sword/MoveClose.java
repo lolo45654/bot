@@ -14,9 +14,10 @@ public class MoveClose extends ScoreAction implements Sword {
     public void onTick() {
         float time = (float) (ConfigKeys.getDifficultyReversed(bot) * 1.2);
         LivingEntity target = bot.getBlade().get(ConfigKeys.TARGET);
-        Vec3 closestPoint = BotMath.getClosestPoint(bot.getVanillaPlayer().getEyePosition(), target.getBoundingBox());
+        Vec3 eyePos = bot.getVanillaPlayer().getEyePosition();
+        Vec3 closestPoint = BotMath.getClosestPoint(eyePos, target.getBoundingBox());
         Vec3 currentPosition = bot.getVanillaPlayer().position();
-        Vec3 direction = closestPoint.subtract(currentPosition);
+        Vec3 direction = closestPoint.subtract(eyePos);
         float yaw = BotMath.getYaw(direction);
         float pitch = BotMath.getPitch(direction);
         bot.lookRealistic(yaw, pitch, (tick % time) / time, bot.getBlade().get(ConfigKeys.DIFFICULTY) * 0.2f);
@@ -39,8 +40,9 @@ public class MoveClose extends ScoreAction implements Sword {
     @Override
     public double getScore() {
         LivingEntity target = bot.getBlade().get(ConfigKeys.TARGET);
-        Vec3 closestPoint = BotMath.getClosestPoint(bot.getVanillaPlayer().getEyePosition(), target.getBoundingBox());
-        double distSq = closestPoint.distanceToSqr(bot.getVanillaPlayer().getEyePosition());
+        Vec3 eyePos = bot.getVanillaPlayer().getEyePosition();
+        Vec3 closestPoint = BotMath.getClosestPoint(eyePos, target.getBoundingBox());
+        double distSq = closestPoint.distanceToSqr(eyePos);
         return getSwordScore(bot) +
                 (distSq <= 3 * 3 ? -8 : (Math.min(distSq / 3, 6)));
     }
