@@ -32,7 +32,7 @@ public class EquipTotem extends ScoreAction implements Totem {
     public double getScore() {
         BotInventory inv = bot.getInventory();
         Slot hotBarSlot = inv.findFirst(stack -> stack.is(Items.TOTEM_OF_UNDYING), SlotFlag.HOT_BAR);
-        return 1 +
+        return getTotemScore(bot) +
                 (inv.getOffHand().is(Items.TOTEM_OF_UNDYING) ? -5 : 0) +
                 (hotBarSlot != null && inv.getSelectedSlot() == hotBarSlot.getHotBarIndex() ? 0.8 : 0);
     }
