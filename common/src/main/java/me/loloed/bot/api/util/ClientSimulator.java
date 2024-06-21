@@ -261,6 +261,7 @@ public class ClientSimulator {
             EntityHitResult entityHitResult = (EntityHitResult) crosshairTarget;
             if (player.isSpectator()) return false;
             player.attack(entityHitResult.getEntity());
+            player.resetAttackStrengthTicker();
         } else if (crosshairTarget.getType() == HitResult.Type.BLOCK) {
             BlockHitResult blockHitResult = (BlockHitResult) crosshairTarget;
             BlockPos blockPos = blockHitResult.getBlockPos();

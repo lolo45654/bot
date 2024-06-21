@@ -13,10 +13,13 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_20_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
@@ -61,6 +64,13 @@ public class PaperPlatform extends Platform {
                         fakePlayer.update(((CraftPlayer) event.getPlayer()).getHandle());
                     }
                 }
+            }
+
+            @EventHandler
+            public void onDamageDebug(EntityDamageByEntityEvent event) {
+                net.minecraft.world.entity.Entity damager = ((CraftEntity) event.getDamager()).getHandle();
+                if (!(damager instanceof FakePlayer fakePlayer)) return;
+                event.getEntity().sendMessage(Component.text("You took " + event.getDamage() + " [hearts]."));
             }
         }, plugin);
     }
