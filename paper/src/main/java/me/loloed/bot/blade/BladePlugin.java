@@ -187,7 +187,7 @@ public class BladePlugin extends JavaPlugin {
 
                                     PlayerInventory inv = bot.getVanillaPlayer().getBukkitEntity().getInventory();
                                     inv.addItem(new ItemBuilder(Material.NETHERITE_SWORD)
-                                            .addEnchantment(Enchantment.DAMAGE_ALL, 5, true).get());
+                                            .addEnchantment(Enchantment.KNOCKBACK, 1, true).get());
                                     inv.addItem(new ItemStack(Material.END_CRYSTAL, 64));
                                     inv.addItem(new ItemStack(Material.OBSIDIAN, 64));
                                     inv.addItem(new ItemStack(Material.ENDER_PEARL, 16));
@@ -217,7 +217,8 @@ public class BladePlugin extends JavaPlugin {
                                     blade.setGoal(new KillTargetGoal());
 
                                     PlayerInventory inv = bot.getVanillaPlayer().getBukkitEntity().getInventory();
-                                    inv.addItem(new ItemBuilder(Material.DIAMOND_SWORD).get());
+                                    inv.addItem(new ItemBuilder(Material.DIAMOND_SWORD)
+                                            .addEnchantment(Enchantment.DAMAGE_ALL, 5, true).get());
                                     inv.setHelmet(new ItemBuilder(Material.DIAMOND_HELMET)
                                             .addEnchantment(Enchantment.DAMAGE_ALL, 4, true).get());
                                     inv.setChestplate(new ItemBuilder(Material.DIAMOND_CHESTPLATE)
