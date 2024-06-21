@@ -17,17 +17,7 @@ public class HitEnemy extends ScoreAction implements Sword {
 
     @Override
     public void onTick() {
-        float time = ConfigKeys.getDifficultyReversed(bot) * 0.6f;
-        LivingEntity target = bot.getBlade().get(ConfigKeys.TARGET);
-        Vec3 eyePos = bot.getVanillaPlayer().getEyePosition();
-        Vec3 closestPoint = BotMath.getClosestPoint(eyePos, target.getBoundingBox());
-        Vec3 direction = closestPoint.subtract(eyePos);
-        float yaw = BotMath.getYaw(direction);
-        float pitch = BotMath.getPitch(direction);
-        if (tick < time) {
-            bot.lookRealistic(yaw, pitch, tick / time, bot.getBlade().get(ConfigKeys.DIFFICULTY) * 0.2f);
-        }
-        if (tick >= time) {
+        if (lookAtEnemy(bot, tick)) {
             bot.attack();
         }
     }

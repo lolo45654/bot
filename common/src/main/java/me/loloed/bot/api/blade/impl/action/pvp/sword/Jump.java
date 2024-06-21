@@ -12,16 +12,10 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Jump extends ScoreAction implements Sword {
     @Override
     public void onTick() {
-        float time = (float) (ConfigKeys.getDifficultyReversed(bot) * 1.2);
-        LivingEntity target = bot.getBlade().get(ConfigKeys.TARGET);
-        Vec3 eyePos = bot.getVanillaPlayer().getEyePosition();
-        Vec3 closestPoint = BotMath.getClosestPoint(eyePos, target.getBoundingBox());
+        lookAtEnemy(bot, tick);
+
         bot.setMoveForward(false);
         bot.jump();
-        Vec3 direction = closestPoint.subtract(eyePos);
-        float yaw = BotMath.getYaw(direction);
-        float pitch = BotMath.getPitch(direction);
-        bot.lookRealistic(yaw, pitch, (tick % time) / time, bot.getBlade().get(ConfigKeys.DIFFICULTY) * 0.2f);
     }
 
     @Override
