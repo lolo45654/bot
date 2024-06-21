@@ -91,7 +91,7 @@ public class Bot {
     }
 
     public void jump() {
-        if (isOnGround()) return;
+        if (!isOnGround()) return;
         vanillaPlayer.setJumping(true);
         jumped = true;
     }
