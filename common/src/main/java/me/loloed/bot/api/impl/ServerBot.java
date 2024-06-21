@@ -69,7 +69,7 @@ public class ServerBot extends Bot {
         shield.getTag().putBoolean("Unbreakable", true);
         inventory.setItem(inventory.selected, shield);
         interact(shielding);
-        if (!prevShieldCooldown && shielding && settings.autoHit) {
+        if (prevShieldCooldown && !shielding && settings.autoHit) {
             attack();
         }
         prevShieldCooldown = shielding;
