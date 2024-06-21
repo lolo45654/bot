@@ -67,6 +67,26 @@ public class BotSettingGui {
                 }, val -> settings.armor = val);
 
         baseItem = new ItemBuilder(Material.OAK_BUTTON)
+                .setDisplayName(wrapMiniMessage("<aqua>Blast Protection"))
+                .addLoreLines(empty())
+                .addLoreLines(wrapMiniMessage("<gray>Are <aqua>Blast Protection</aqua> Leggings really needed?"))
+                .get();
+        setBoolItem(gui, show, 2, 3,
+                settings.blastProtection,
+                new ItemBuilder(withType(baseItem, Material.LIME_DYE))
+                        .addLoreLines(empty())
+                        .addLoreLines(wrapMiniMessage("<gray>Selected: <green><bold>ON"))
+                        .addLoreLines(empty())
+                        .addLoreLines(wrapMiniMessage("<yellow>Click to toggle!"))
+                        .get(),
+                new ItemBuilder(withType(baseItem, Material.GRAY_DYE))
+                        .addLoreLines(empty())
+                        .addLoreLines(wrapMiniMessage("<gray>Selected: <red><bold>OFF"))
+                        .addLoreLines(empty())
+                        .addLoreLines(wrapMiniMessage("<yellow>Click to toggle!"))
+                        .get(), val -> settings.blastProtection = val);
+
+        baseItem = new ItemBuilder(Material.OAK_BUTTON)
                 .setDisplayName(wrapMiniMessage("<aqua>Reach"))
                 .get();
         setCycleItem(gui, show, 4, 2,
