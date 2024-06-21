@@ -220,13 +220,13 @@ public class BladePlugin extends JavaPlugin {
                                     inv.addItem(new ItemBuilder(Material.DIAMOND_SWORD)
                                             .addEnchantment(Enchantment.DAMAGE_ALL, 5, true).get());
                                     inv.setHelmet(new ItemBuilder(Material.DIAMOND_HELMET)
-                                            .addEnchantment(Enchantment.DAMAGE_ALL, 4, true).get());
+                                            .addEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 4, true).get());
                                     inv.setChestplate(new ItemBuilder(Material.DIAMOND_CHESTPLATE)
-                                            .addEnchantment(Enchantment.DAMAGE_ALL, 4, true).get());
+                                            .addEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 4, true).get());
                                     inv.setLeggings(new ItemBuilder(Material.DIAMOND_LEGGINGS)
-                                            .addEnchantment(Enchantment.PROTECTION_EXPLOSIONS, 4, true).get());
+                                            .addEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 4, true).get());
                                     inv.setBoots(new ItemBuilder(Material.DIAMOND_BOOTS)
-                                            .addEnchantment(Enchantment.DAMAGE_ALL, 4, true)
+                                            .addEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 4, true)
                                             .addEnchantment(Enchantment.PROTECTION_FALL, 4, true).get());
                                     inv.setItemInOffHand(new ItemStack(Material.GOLDEN_APPLE, 64));
                                     sender.sendMessage(Component.text("Spawned a sword bot."));
