@@ -15,6 +15,7 @@ import org.bukkit.craftbukkit.v1_20_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_20_R3.util.CraftLocation;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -49,6 +50,7 @@ public class BotSettingGui {
                 new ItemStack[] {
                         new ItemBuilder(withType(baseItem, Material.DIAMOND_CHESTPLATE))
                                 .addEnchantment(Enchantment.MENDING, 1, true)
+                                .addItemFlags(ItemFlag.HIDE_ENCHANTS)
                                 .addLoreLines(empty())
                                 .addLoreLines(wrapMiniMessage("<gray>Selected: <aqua><bold>DIAMOND"))
                                 .addLoreLines(empty())
@@ -56,6 +58,7 @@ public class BotSettingGui {
                                 .get(),
                         new ItemBuilder(withType(baseItem, Material.NETHERITE_CHESTPLATE))
                                 .addEnchantment(Enchantment.MENDING, 1, true)
+                                .addItemFlags(ItemFlag.HIDE_ENCHANTS)
                                 .addLoreLines(empty())
                                 .addLoreLines(wrapMiniMessage("<gray>Selected: <light_purple><bold>NETHERITE"))
                                 .addLoreLines(empty())
@@ -110,9 +113,10 @@ public class BotSettingGui {
         if (settings.shield) {
             gui.setItem(6, 2, new SimpleItem(new ItemBuilder(Material.SHIELD)
                     .addEnchantment(Enchantment.MENDING, 1, true)
+                    .addItemFlags(ItemFlag.HIDE_ENCHANTS)
                     .setDisplayName(wrapMiniMessage("Shield"))
                     .addLoreLines(empty())
-                    .addLoreLines(wrapMiniMessage("<gray>Status: <red><bold>ENABLED"))
+                    .addLoreLines(wrapMiniMessage("<gray>Status: <green><bold>ENABLED"))
                     .addLoreLines(empty())
                     .addLoreLines(wrapMiniMessage("<yellow>Click to disable!"))
                     .addLoreLines(wrapMiniMessage("<yellow>Right click to edit! ")), click -> {
@@ -126,6 +130,7 @@ public class BotSettingGui {
         } else {
             gui.setItem(6, 2, new SimpleItem(new ItemBuilder(Material.SHIELD)
                     .addEnchantment(Enchantment.MENDING, 1, true)
+                    .addItemFlags(ItemFlag.HIDE_ENCHANTS)
                     .setDisplayName(wrapMiniMessage("Shield"))
                     .addLoreLines(empty())
                     .addLoreLines(wrapMiniMessage("<gray>Status: <red><bold>DISABLED"))
@@ -182,13 +187,13 @@ public class BotSettingGui {
                 settings.autoHit,
                 new ItemBuilder(withType(baseItem, Material.DIAMOND_SWORD))
                         .addEnchantment(Enchantment.MENDING, 1, true)
+                        .addItemFlags(ItemFlag.HIDE_ENCHANTS)
                         .addLoreLines(empty())
                         .addLoreLines(wrapMiniMessage("<gray>Selected: <green><bold>ON"))
                         .addLoreLines(empty())
                         .addLoreLines(wrapMiniMessage("<yellow>Click to toggle!"))
                         .get(),
                 new ItemBuilder(withType(baseItem, Material.WOODEN_SWORD))
-                        .addEnchantment(Enchantment.MENDING, 1, true)
                         .addLoreLines(empty())
                         .addLoreLines(wrapMiniMessage("<gray>Selected: <red><bold>OFF"))
                         .addLoreLines(empty())
