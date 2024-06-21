@@ -57,7 +57,6 @@ public class ServerBot extends Bot {
         food.setSaturation(20.0f);
 
         clientSimulator.setEntityReach(settings.reach);
-
         applyArmor(vanillaPlayer.getInventory());
     }
 
