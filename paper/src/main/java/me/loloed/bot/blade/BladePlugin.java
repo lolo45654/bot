@@ -206,6 +206,30 @@ public class BladePlugin extends JavaPlugin {
                                     inv.setItemInOffHand(new ItemStack(Material.TOTEM_OF_UNDYING));
                                     sender.sendMessage(Component.text("OK!"));
                                 })))
+                .then(new LiteralArgument("sword")
+                        .then(new EntitySelectorArgument.OneEntity("target")
+                                .executesPlayer((sender, args) -> {
+                                    Entity target = (Entity) args.get("target");
+                                    if (!(target instanceof LivingEntity)) return;
+                                    Bot bot = botGetter.apply(args);
+                                    BladeMachine blade = bot.getBlade();
+                                    blade.set(ConfigKeys.TARGET, ((CraftLivingEntity) target).getHandle());
+                                    blade.setGoal(new KillTargetGoal());
+
+                                    PlayerInventory inv = bot.getVanillaPlayer().getBukkitEntity().getInventory();
+                                    inv.addItem(new ItemBuilder(Material.DIAMOND_SWORD).get());
+                                    inv.setHelmet(new ItemBuilder(Material.DIAMOND_HELMET)
+                                            .addEnchantment(Enchantment.DAMAGE_ALL, 4, true).get());
+                                    inv.setChestplate(new ItemBuilder(Material.DIAMOND_CHESTPLATE)
+                                            .addEnchantment(Enchantment.DAMAGE_ALL, 4, true).get());
+                                    inv.setLeggings(new ItemBuilder(Material.DIAMOND_LEGGINGS)
+                                            .addEnchantment(Enchantment.PROTECTION_EXPLOSIONS, 4, true).get());
+                                    inv.setBoots(new ItemBuilder(Material.DIAMOND_BOOTS)
+                                            .addEnchantment(Enchantment.DAMAGE_ALL, 4, true)
+                                            .addEnchantment(Enchantment.PROTECTION_FALL, 4, true).get());
+                                    inv.setItemInOffHand(new ItemStack(Material.GOLDEN_APPLE, 64));
+                                    sender.sendMessage(Component.text("OK!"));
+                                })))
                 .then(new LiteralArgument("test")
                         .then(new LiteralArgument("move_forward")
                                 .executesPlayer((sender, args) -> {
