@@ -8,6 +8,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.food.FoodData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantments;
@@ -49,6 +50,11 @@ public class ServerBot extends Bot {
         if (settings.shield) {
             tickShield(player, inventory);
         }
+
+        FoodData food = player.getFoodData();
+        food.setExhaustion(0.0f);
+        food.setFoodLevel(20);
+        food.setSaturation(20.0f);
 
         clientSimulator.setEntityReach(settings.reach);
 
