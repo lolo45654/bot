@@ -30,8 +30,8 @@ public interface Sword {
         return score / 2;
     }
 
-    default boolean lookAtEnemy(Bot bot, int tick) {
-        float time = (float) (ConfigKeys.getDifficultyReversed(bot) * 1.2);
+    default void lookAtEnemy(Bot bot, int tick) {
+        float time = (float) (ConfigKeys.getDifficultyReversed(bot) * 0.6);
         LivingEntity target = bot.getBlade().get(ConfigKeys.TARGET);
         Vec3 eyePos = bot.getVanillaPlayer().getEyePosition();
         Vec3 closestPoint = BotMath.getClosestPoint(eyePos, target.getBoundingBox());
@@ -39,6 +39,5 @@ public interface Sword {
         float yaw = BotMath.getYaw(direction);
         float pitch = BotMath.getPitch(direction);
         bot.lookRealistic(yaw, pitch, (tick % time) / time, bot.getBlade().get(ConfigKeys.DIFFICULTY) * 0.2f);
-        return tick >= time;
     }
 }
