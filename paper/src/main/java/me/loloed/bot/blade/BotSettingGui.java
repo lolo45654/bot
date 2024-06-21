@@ -117,8 +117,10 @@ public class BotSettingGui {
                     .addLoreLines(wrapMiniMessage("<yellow>Click to disable!"))
                     .addLoreLines(wrapMiniMessage("<yellow>Right click to edit! ")), click -> {
                 if (click.getClickType().isRightClick()) {
+                    showShieldGroup(player, platform, settings, bot, show);
                 } else {
                     settings.shield = false;
+                    show.run();
                 }
             }));
         } else {
@@ -128,7 +130,10 @@ public class BotSettingGui {
                     .addLoreLines(empty())
                     .addLoreLines(wrapMiniMessage("<gray>Status: <red><bold>DISABLED"))
                     .addLoreLines(empty())
-                    .addLoreLines(wrapMiniMessage("<yellow>Click to enable!")), click -> settings.shield = true));
+                    .addLoreLines(wrapMiniMessage("<yellow>Click to enable!")), click -> {
+                settings.shield = true;
+                show.run();
+            }));
         }
 
         if (bot == null) {
@@ -161,6 +166,44 @@ public class BotSettingGui {
         Window.single()
                 .setGui(gui)
                 .setTitle(wrapMiniMessage("<green>Bot Settings"))
+                .build(player.getBukkitEntity()).open();
+    }
+
+    public static void showShieldGroup(ServerPlayer player, PaperPlatform platform, ServerBotSettings settings, @Nullable ServerBot bot, Runnable back) {
+        Runnable show = () -> showShieldGroup(player, platform, settings, bot, back);
+        Gui gui = Gui.empty(9, 6);
+        gui.setBackground(new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE)
+                .setDisplayName(empty()));
+
+        ItemStack baseItem = new ItemBuilder(Material.OAK_BUTTON)
+                .setDisplayName(wrapMiniMessage("<aqua>Auto Hit"))
+                .get();
+        setBoolItem(gui, show, 2, 2,
+                settings.autoHit,
+                new ItemBuilder(withType(baseItem, Material.DIAMOND_SWORD))
+                        .addEnchantment(Enchantment.MENDING, 1, true)
+                        .addLoreLines(empty())
+                        .addLoreLines(wrapMiniMessage("<gray>Selected: <green><bold>ON"))
+                        .addLoreLines(empty())
+                        .addLoreLines(wrapMiniMessage("<yellow>Click to toggle!"))
+                        .get(),
+                new ItemBuilder(withType(baseItem, Material.WOODEN_SWORD))
+                        .addEnchantment(Enchantment.MENDING, 1, true)
+                        .addLoreLines(empty())
+                        .addLoreLines(wrapMiniMessage("<gray>Selected: <red><bold>OFF"))
+                        .addLoreLines(empty())
+                        .addLoreLines(wrapMiniMessage("<yellow>Click to toggle!"))
+                        .get(), val -> settings.autoHit = val);
+
+
+        gui.setItem(4, 5, new SimpleItem(new ItemBuilder(Material.OAK_DOOR)
+                .setDisplayName(wrapMiniMessage("<aqua>Go back")), click -> {
+            back.run();
+        }));
+
+        Window.single()
+                .setGui(gui)
+                .setTitle(wrapMiniMessage("<green>Shield"))
                 .build(player.getBukkitEntity()).open();
     }
 

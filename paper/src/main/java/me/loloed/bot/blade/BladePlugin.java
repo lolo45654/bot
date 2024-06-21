@@ -94,13 +94,11 @@ public class BladePlugin extends JavaPlugin {
                 .executesPlayer((sender, args) -> {
                     for (Bot b : PaperPlatform.BOTS) {
                         if (b instanceof ServerBot bot && bot.getSpawner().getUUID().equals(sender.getUniqueId())) {
-                            sender.sendMessage("1");
                             BotSettingGui.show(((CraftPlayer) sender).getHandle(), platform, bot.getSettings(), bot);
                             return;
                         }
                     }
 
-                    sender.sendMessage("2");
                     BotSettingGui.show(((CraftPlayer) sender).getHandle(), platform, new ServerBotSettings(), null);
                 })
                 .register();
