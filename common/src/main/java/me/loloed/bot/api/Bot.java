@@ -27,6 +27,7 @@ public class Bot {
     protected final ClientSimulator clientSimulator;
     public final boolean isClient;
     protected final BladeMachine blade = new BladeMachine(this);
+    protected boolean jumped = false;
 
     public Bot(Player vanillaPlayer, Platform platform) {
         this.isClient = platform.isClient();
@@ -67,6 +68,9 @@ public class Bot {
     protected void tick() {
         scheduler.tick(this);
         blade.tick();
+        if (jumped) {
+            vanillaPlayer.setJumping(false);
+        }
         if (clientSimulator != null) clientSimulator.tick();
     }
 
@@ -89,6 +93,7 @@ public class Bot {
     public void jump() {
         if (isOnGround()) return;
         vanillaPlayer.setJumping(true);
+        jumped = true;
     }
 
     public void attack() {
