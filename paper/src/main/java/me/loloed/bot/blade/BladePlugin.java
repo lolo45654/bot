@@ -204,7 +204,7 @@ public class BladePlugin extends JavaPlugin {
                                         inv.addItem(new ItemStack(Material.TOTEM_OF_UNDYING));
                                     }
                                     inv.setItemInOffHand(new ItemStack(Material.TOTEM_OF_UNDYING));
-                                    sender.sendMessage(Component.text("OK!"));
+                                    sender.sendMessage(Component.text("Spawned a crystal bot."));
                                 })))
                 .then(new LiteralArgument("sword")
                         .then(new EntitySelectorArgument.OneEntity("target")
@@ -228,7 +228,7 @@ public class BladePlugin extends JavaPlugin {
                                             .addEnchantment(Enchantment.DAMAGE_ALL, 4, true)
                                             .addEnchantment(Enchantment.PROTECTION_FALL, 4, true).get());
                                     inv.setItemInOffHand(new ItemStack(Material.GOLDEN_APPLE, 64));
-                                    sender.sendMessage(Component.text("OK!"));
+                                    sender.sendMessage(Component.text("Spawned a sword bot."));
                                 })))
                 .then(new LiteralArgument("test")
                         .then(new LiteralArgument("move_forward")
