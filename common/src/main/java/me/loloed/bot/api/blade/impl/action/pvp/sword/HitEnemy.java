@@ -38,7 +38,7 @@ public class HitEnemy extends ScoreAction implements Sword {
         double distSq = closestPoint.distanceToSqr(eyePos);
         return getSwordScore(bot) +
                 (distSq > 3 * 3 ? -8 : (Math.min(distSq, 6))) +
-                (bot.getVanillaPlayer().getAttackStrengthScale(1.0f) > 0.96f ? 2 : -6) +
+                (bot.getVanillaPlayer().getAttackStrengthScale(0.5f) > 0.96f ? 2 : -6) +
                 (getSwordSlot() == null ? -4 : 0);
     }
 }
