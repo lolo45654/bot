@@ -38,6 +38,6 @@ public class MoveClose extends ScoreAction implements Sword {
         Vec3 closestPoint = BotMath.getClosestPoint(eyePos, target.getBoundingBox());
         double distSq = closestPoint.distanceToSqr(eyePos);
         return getSwordScore(bot) +
-                (distSq <= 2.9 * 2.9 ? -8 : (Math.min(distSq * 2, 8)));
+                (distSq <= 2.9 * 2.9 ? -8 : (Math.min(distSq, 6)));
     }
 }
