@@ -68,10 +68,10 @@ public class Bot {
     protected void tick() {
         scheduler.tick(this);
         blade.tick();
+        if (clientSimulator != null) clientSimulator.tick();
         if (jumped) {
             vanillaPlayer.setJumping(false);
         }
-        if (clientSimulator != null) clientSimulator.tick();
     }
 
     public Random getRandom() {
