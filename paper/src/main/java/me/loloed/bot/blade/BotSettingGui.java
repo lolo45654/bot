@@ -16,6 +16,7 @@ import org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_20_R3.util.CraftLocation;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import xyz.xenondevs.inventoryaccess.component.AdventureComponentWrapper;
 import xyz.xenondevs.invui.gui.Gui;
@@ -46,14 +47,14 @@ public class BotSettingGui {
         setCycleItem(gui, show, 2, 2,
                 settings.armor, new ServerBotSettings.Armor[] { ServerBotSettings.Armor.DIAMOND, ServerBotSettings.Armor.NETHERITE },
                 new ItemStack[] {
-                        new ItemBuilder(baseItem.clone().withType(Material.DIAMOND_CHESTPLATE))
+                        new ItemBuilder(withType(baseItem, Material.DIAMOND_CHESTPLATE))
                                 .addEnchantment(Enchantment.MENDING, 1, true)
                                 .addLoreLines(empty())
                                 .addLoreLines(wrapMiniMessage("<gray>Selected: <aqua><bold>DIAMOND"))
                                 .addLoreLines(empty())
                                 .addLoreLines(wrapMiniMessage("<yellow>Click to cycle!"))
                                 .get(),
-                        new ItemBuilder(baseItem.clone().withType(Material.NETHERITE_CHESTPLATE))
+                        new ItemBuilder(withType(baseItem, Material.NETHERITE_CHESTPLATE))
                                 .addEnchantment(Enchantment.MENDING, 1, true)
                                 .addLoreLines(empty())
                                 .addLoreLines(wrapMiniMessage("<gray>Selected: <light_purple><bold>NETHERITE"))
@@ -68,37 +69,37 @@ public class BotSettingGui {
         setCycleItem(gui, show, 4, 2,
                 settings.reach, new Float[] { 1.0f, 1.5f, 2.0f, 2.5f, 3.0f, 3.5f },
                 new ItemStack[] {
-                        new ItemBuilder(baseItem.clone().withType(Material.LIGHT_BLUE_DYE))
+                        new ItemBuilder(withType(baseItem, Material.LIGHT_BLUE_DYE))
                                 .addLoreLines(empty())
                                 .addLoreLines(wrapMiniMessage("<gray>Selected: <aqua><bold>1"))
                                 .addLoreLines(empty())
                                 .addLoreLines(wrapMiniMessage("<yellow>Click to cycle!"))
                                 .get(),
-                        new ItemBuilder(baseItem.clone().withType(Material.LIME_DYE))
+                        new ItemBuilder(withType(baseItem, Material.LIME_DYE))
                                 .addLoreLines(empty())
                                 .addLoreLines(wrapMiniMessage("<gray>Selected: <light_purple><bold>1.5"))
                                 .addLoreLines(empty())
                                 .addLoreLines(wrapMiniMessage("<yellow>Click to cycle!"))
                                 .get(),
-                        new ItemBuilder(baseItem.clone().withType(Material.YELLOW_DYE))
+                        new ItemBuilder(withType(baseItem, Material.YELLOW_DYE))
                                 .addLoreLines(empty())
                                 .addLoreLines(wrapMiniMessage("<gray>Selected: <light_purple><bold>2"))
                                 .addLoreLines(empty())
                                 .addLoreLines(wrapMiniMessage("<yellow>Click to cycle!"))
                                 .get(),
-                        new ItemBuilder(baseItem.clone().withType(Material.ORANGE_DYE))
+                        new ItemBuilder(withType(baseItem, Material.ORANGE_DYE))
                                 .addLoreLines(empty())
                                 .addLoreLines(wrapMiniMessage("<gray>Selected: <light_purple><bold>2.5"))
                                 .addLoreLines(empty())
                                 .addLoreLines(wrapMiniMessage("<yellow>Click to cycle!"))
                                 .get(),
-                        new ItemBuilder(baseItem.clone().withType(Material.RED_DYE))
+                        new ItemBuilder(withType(baseItem, Material.RED_DYE))
                                 .addLoreLines(empty())
                                 .addLoreLines(wrapMiniMessage("<gray>Selected: <light_purple><bold>3"))
                                 .addLoreLines(empty())
                                 .addLoreLines(wrapMiniMessage("<yellow>Click to cycle!"))
                                 .get(),
-                        new ItemBuilder(baseItem.clone().withType(Material.PURPLE_DYE))
+                        new ItemBuilder(withType(baseItem, Material.PURPLE_DYE))
                                 .addLoreLines(empty())
                                 .addLoreLines(wrapMiniMessage("<gray>Selected: <light_purple><bold>3.5"))
                                 .addLoreLines(empty())
@@ -181,5 +182,14 @@ public class BotSettingGui {
             setter.accept(!currently);
             show.run();
         }));
+    }
+    
+    private static ItemStack withType(ItemStack stack, Material type) {
+        ItemStack itemStack = new ItemStack(type, stack.getAmount());
+        if (stack.hasItemMeta()) {
+            itemStack.setItemMeta(stack.getItemMeta());
+        }
+
+        return itemStack;
     }
 }
