@@ -1,5 +1,6 @@
 package me.loloed.bot.api.util;
 
+import me.loloed.bot.api.util.fake.FakePlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
@@ -101,7 +102,10 @@ public class ClientSimulator {
         tickUsingItem();
         tickMouse();
         // player.getCooldowns().tick();
-        player.doTick();
+        if (!(player instanceof FakePlayer)) {
+            player.tick();
+            player.doTick();
+        }
         // player.aiStep();
         if (itemUseCooldown > 0) {
             itemUseCooldown--;

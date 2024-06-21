@@ -73,6 +73,7 @@ public class FakePlayer extends ServerPlayer {
     @Override
     public void tick() {
         super.tick();
+        this.doTick();
         platform.detectEquipmentUpdates(this);
         uglyAttackFix = false;
 
@@ -164,5 +165,10 @@ public class FakePlayer extends ServerPlayer {
      */
     @Override
     public void awardStat(Stat<?> stat, int i) {
+    }
+
+    @Override
+    public @NotNull String getIpAddress() {
+        return "127.0.0.1";
     }
 }
