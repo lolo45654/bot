@@ -66,15 +66,6 @@ public class PaperPlatform extends Platform {
                     }
                 }
             }
-
-            @EventHandler
-            public void onDamageDebug(EntityDamageByEntityEvent event) {
-                net.minecraft.world.entity.Entity damager = ((CraftEntity) event.getDamager()).getHandle();
-                if (!(damager instanceof FakePlayer fakePlayer)) return;
-                for (EntityDamageEvent.DamageModifier modifier : EntityDamageEvent.DamageModifier.values()) {
-                    event.getEntity().sendMessage(Component.text("You took " + event.getDamage(modifier) + " [hearts] for " + modifier + "."));
-                }
-            }
         }, plugin);
     }
 
