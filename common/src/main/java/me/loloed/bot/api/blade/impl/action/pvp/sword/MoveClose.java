@@ -18,6 +18,7 @@ public class MoveClose extends ScoreAction implements Sword {
         bot.interact(false);
         bot.attack(false);
         bot.setMoveForward(true);
+        bot.setMoveBackward(false);
         bot.setSprint(true);
         if (previousPos != null && (previousPos.x() == currentPosition.x() || previousPos.z() == currentPosition.z())) {
             bot.jump();
