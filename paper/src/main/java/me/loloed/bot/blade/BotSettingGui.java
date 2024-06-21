@@ -170,7 +170,7 @@ public class BotSettingGui {
 
         Window.single()
                 .setGui(gui)
-                .setTitle(wrapMiniMessage("<green>Bot Settings"))
+                .setTitle(wrapMiniMessage("<aqua>Bot Settings"))
                 .build(player.getBukkitEntity()).open();
     }
 
@@ -208,7 +208,7 @@ public class BotSettingGui {
 
         Window.single()
                 .setGui(gui)
-                .setTitle(wrapMiniMessage("<green>Shield"))
+                .setTitle(wrapMiniMessage("<aqua>Shield"))
                 .build(player.getBukkitEntity()).open();
     }
 
