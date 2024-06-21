@@ -198,7 +198,8 @@ public class BladePlugin extends JavaPlugin {
                                     inv.setLeggings(new ItemBuilder(Material.NETHERITE_LEGGINGS)
                                             .addEnchantment(Enchantment.PROTECTION_EXPLOSIONS, 4, true).get());
                                     inv.setBoots(new ItemBuilder(Material.NETHERITE_BOOTS)
-                                            .addEnchantment(Enchantment.DAMAGE_ALL, 4, true).get());
+                                            .addEnchantment(Enchantment.DAMAGE_ALL, 4, true)
+                                            .addEnchantment(Enchantment.PROTECTION_FALL, 4, true).get());
                                     for (int i = 0; i < 12; i++) {
                                         inv.addItem(new ItemStack(Material.TOTEM_OF_UNDYING));
                                     }
