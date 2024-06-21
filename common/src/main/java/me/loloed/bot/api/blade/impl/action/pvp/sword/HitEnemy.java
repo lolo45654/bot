@@ -43,7 +43,7 @@ public class HitEnemy extends ScoreAction implements Sword {
         float attackStrength = bot.getVanillaPlayer().getAttackStrengthScale(0.5f);
         return getSwordScore(bot) +
                 (distSq > 3 * 3 ? -8 : (Math.min(distSq, 6))) +
-                (attackStrength < 0.4f ? -8 : attackStrength * 2) +
+                (attackStrength < 0.4f ? -8 : attackStrength * 4 - 2) +
                 (getSwordSlot() == null ? -4 : 0);
     }
 }
