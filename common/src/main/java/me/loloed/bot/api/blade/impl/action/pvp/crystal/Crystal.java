@@ -19,6 +19,6 @@ public interface Crystal {
         score += inv.findFirst(stack -> stack.is(Items.GLOWSTONE)) != null ? 1 : 0;
         score += inv.findFirst(stack -> stack.is(Items.ENDER_PEARL)) != null ? 1 : 0;
         score += inv.findFirst(stack -> stack.is(Items.TOTEM_OF_UNDYING)) != null ? 1 : 0;
-        return Math.min(score / 5, 1);
+        return Math.min(score / 3, 1);
     }
 }
