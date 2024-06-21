@@ -410,4 +410,8 @@ public class ClientSimulator {
     public void attack() {
         attackTimes++;
     }
+
+    public HitResult getCrossHairTarget() {
+        return crosshairTarget;
+    }
 }

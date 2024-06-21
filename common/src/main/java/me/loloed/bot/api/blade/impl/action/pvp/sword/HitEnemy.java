@@ -8,6 +8,7 @@ import me.loloed.bot.api.inventory.SlotFlag;
 import me.loloed.bot.api.util.BotMath;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 
 public class HitEnemy extends ScoreAction implements Sword {
@@ -17,7 +18,9 @@ public class HitEnemy extends ScoreAction implements Sword {
 
     @Override
     public void onTick() {
-        if (lookAtEnemy(bot, tick)) {
+        lookAtEnemy(bot, tick);
+        LivingEntity target = bot.getBlade().get(ConfigKeys.TARGET);
+        if (bot.getCrossHairTarget() instanceof EntityHitResult entityHitResult && entityHitResult.getEntity() == target) {
             bot.attack();
         }
     }

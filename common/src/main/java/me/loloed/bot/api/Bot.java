@@ -12,6 +12,7 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Random;
@@ -206,5 +207,12 @@ public class Bot {
 
     public Platform getPlatform() {
         return platform;
+    }
+
+    public HitResult getCrossHairTarget() {
+        if (isClient) {
+            return Minecraft.getInstance().hitResult;
+        }
+        return clientSimulator.getCrossHairTarget();
     }
 }
