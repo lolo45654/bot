@@ -142,7 +142,7 @@ public class BotSettingGui {
         }
 
         if (bot == null) {
-            gui.setItem(4, 5, new SimpleItem(new ItemBuilder(Material.DIAMOND)
+            gui.setItem(5, 5, new SimpleItem(new ItemBuilder(Material.DIAMOND)
                     .setDisplayName(wrapMiniMessage("<aqua>Spawn Bot"))
                     .addLoreLines(empty())
                     .addLoreLines(wrapMiniMessage("<yellow>Click to spawn!")), click -> {
@@ -153,10 +153,6 @@ public class BotSettingGui {
                 click.getPlayer().closeInventory();
             }));
         } else {
-            gui.setItem(4, 5, new SimpleItem(new ItemBuilder(Material.BARRIER)
-                    .setDisplayName(wrapMiniMessage("<red>Close")), click -> {
-                click.getPlayer().closeInventory();
-            }));
             gui.setItem(5, 5, new SimpleItem(new ItemBuilder(Material.TNT)
                     .setDisplayName(wrapMiniMessage("<aqua>Despawn"))
                     .addLoreLines(empty())
@@ -167,6 +163,10 @@ public class BotSettingGui {
                 click.getPlayer().closeInventory();
             }));
         }
+        gui.setItem(4, 5, new SimpleItem(new ItemBuilder(Material.BARRIER)
+                .setDisplayName(wrapMiniMessage("<red>Close")), click -> {
+            click.getPlayer().closeInventory();
+        }));
 
         Window.single()
                 .setGui(gui)
