@@ -34,7 +34,8 @@ public class KitBot extends Bot implements IServerBot {
      * @return the newly spawned bot as a bukkit player
      */
     public static org.bukkit.entity.Player create(Location pos, org.bukkit.entity.Player spawner, LivingEntity target) {
-        for (Bot bot : PaperPlatform.BOTS) {
+        for (int i = 0; i < PaperPlatform.BOTS.size(); i++) {
+            Bot bot = PaperPlatform.BOTS.get(i);
             if (bot instanceof IServerBot sBot && sBot.getSpawner().getUUID().equals(spawner.getUniqueId())) {
                 bot.destroy();
             }
