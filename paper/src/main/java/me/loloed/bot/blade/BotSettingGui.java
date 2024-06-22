@@ -185,6 +185,7 @@ public class BotSettingGui {
                     .addLoreLines(empty())
                     .addLoreLines(wrapMiniMessage("<yellow>Click to teleport!")), click -> {
                 bot.getVanillaPlayer().teleportTo(player.serverLevel(), player.position());
+                click.getPlayer().closeInventory();
             }));
             gui.setItem(5, 5, new SimpleItem(new ItemBuilder(Material.TNT)
                     .setDisplayName(wrapMiniMessage("<aqua>Despawn"))
