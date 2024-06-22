@@ -172,7 +172,7 @@ public class BotSettingGui {
                     .addLoreLines(empty())
                     .addLoreLines(wrapMiniMessage("<yellow>Click to spawn!")), click -> {
                 Location pos = click.getPlayer().getLocation();
-                FakePlayer fakePlayer = new FakePlayer(platform, MinecraftServer.getServer(), CraftLocation.toVec3D(pos), pos.getYaw(), pos.getPitch(), ((CraftWorld) pos.getWorld()).getHandle(), new GameProfile(UUID.randomUUID(), "ShieldBot"));
+                FakePlayer fakePlayer = new FakePlayer(platform, MinecraftServer.getServer(), CraftLocation.toVec3D(pos), pos.getYaw(), pos.getPitch(), ((CraftWorld) pos.getWorld()).getHandle(), new GameProfile(UUID.randomUUID(), "SimpleBot"));
                 ServerBot spawningBot = new ServerBot(fakePlayer, platform, player, settings);
                 platform.addBot(spawningBot);
                 click.getPlayer().closeInventory();
