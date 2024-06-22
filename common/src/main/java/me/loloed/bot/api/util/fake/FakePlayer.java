@@ -182,10 +182,12 @@ public class FakePlayer extends ServerPlayer {
     public void attack(Entity entity) {
 
         float f = (float)this.getAttributeValue(Attributes.ATTACK_DAMAGE);
+        System.out.println("attack damage : " + f);
         float g = entity instanceof LivingEntity ? EnchantmentHelper.getDamageBonus(this.getMainHandItem(), ((LivingEntity)entity).getMobType()) : EnchantmentHelper.getDamageBonus(this.getMainHandItem(), MobType.UNDEFINED);
         float h = this.getAttackStrengthScale(0.5f);
         g *= h;
         f *= 0.2f + h * h * 0.8f;
+        System.out.println("damage 2 : " + f);
         boolean bl = h > 0.9f;
         boolean bl3 = bl && this.fallDistance > 0.0f && !this.onGround() && !this.onClimbable() && !this.isInWater() && !this.hasEffect(MobEffects.BLINDNESS) && !this.isPassenger() && entity instanceof LivingEntity;
         boolean bl4 = bl3 = bl3 && !this.isSprinting();

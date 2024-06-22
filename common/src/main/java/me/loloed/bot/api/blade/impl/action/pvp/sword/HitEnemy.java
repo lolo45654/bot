@@ -24,7 +24,6 @@ public class HitEnemy extends ScoreAction implements Sword {
         bot.setSprint(true);
         LivingEntity target = bot.getBlade().get(ConfigKeys.TARGET);
         if (bot.getCrossHairTarget() instanceof EntityHitResult entityHitResult && entityHitResult.getEntity() == target) {
-            System.out.println(bot.getVanillaPlayer().getAttackStrengthScale(0.5f) + " strength!");
             bot.attack();
         }
     }
