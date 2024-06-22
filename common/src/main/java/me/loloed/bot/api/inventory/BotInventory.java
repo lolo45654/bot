@@ -2,11 +2,10 @@ package me.loloed.bot.api.inventory;
 
 import me.loloed.bot.api.Bot;
 import me.loloed.bot.api.event.InventoryEvents;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
@@ -104,5 +103,26 @@ public class BotInventory {
 
     public Inventory getVanilla() {
         return inventory;
+    }
+
+    public Slot getBestFood(Predicate<FoodProperties> tester, SlotFlag... order) {
+        Slot bestSlot = null;
+        float bestNum = Float.MIN_NORMAL;
+        for (SlotFlag flag : order) {
+            for (int i = 0; i < Slot.MAX_INDEX; i++) {
+                Slot slot = new Slot(i);
+                if (!flag.matchesSlot(slot)) continue;
+                ItemStack stack = getItem(slot);
+                if (!stack.isEdible()) continue;
+                FoodProperties foodProperties = stack.getItem().getFoodProperties();
+                if (foodProperties == null) continue;
+                float num = foodProperties.getNutrition() + foodProperties.getSaturationModifier();
+                if (stack.isEdible() && num > bestNum && tester.test(foodProperties)) {
+                    bestNum = num;
+                    bestSlot = slot;
+                }
+            }
+        }
+        return bestSlot;
     }
 }

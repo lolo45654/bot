@@ -5,7 +5,6 @@ import me.loloed.bot.api.blade.BladeMachine;
 import me.loloed.bot.api.blade.impl.ConfigKeys;
 import me.loloed.bot.api.inventory.BotInventory;
 import me.loloed.bot.api.util.BotMath;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.Vec3;
@@ -16,6 +15,7 @@ public interface Sword {
         blade.addAction(new STap());
         blade.addAction(new Jump());
         blade.addAction(new MoveClose());
+        blade.addAction(new UseHealing());
     }
 
     default double getSwordScore(Bot bot) {
