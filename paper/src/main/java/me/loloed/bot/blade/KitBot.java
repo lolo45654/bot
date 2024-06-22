@@ -1,18 +1,17 @@
 package me.loloed.bot.blade;
 
 import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.PropertyMap;
 import me.loloed.bot.api.Bot;
 import me.loloed.bot.api.blade.BladeMachine;
 import me.loloed.bot.api.blade.impl.ConfigKeys;
 import me.loloed.bot.api.blade.impl.goal.KillTargetGoal;
 import me.loloed.bot.api.impl.IServerBot;
-import me.loloed.bot.api.impl.ServerBot;
 import me.loloed.bot.api.impl.ServerBotSettings;
 import me.loloed.bot.api.platform.Platform;
 import me.loloed.bot.api.util.fake.FakePlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_20_R3.CraftWorld;
@@ -22,6 +21,7 @@ import org.bukkit.craftbukkit.v1_20_R3.util.CraftLocation;
 import org.bukkit.entity.LivingEntity;
 
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class KitBot extends Bot implements IServerBot {
     /**
@@ -69,6 +69,7 @@ public class KitBot extends Bot implements IServerBot {
         super(vanillaPlayer, platform);
         this.spawner = spawner;
         this.settings = new ServerBotSettings();
+        if (vanillaPlayer instanceof FakePlayer fakePlayer) applySkin(fakePlayer);
     }
 
     @Override

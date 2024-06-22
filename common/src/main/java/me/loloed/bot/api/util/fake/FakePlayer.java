@@ -61,10 +61,7 @@ public class FakePlayer extends ServerPlayer {
         fakePlayerEntry = new ClientboundPlayerInfoUpdatePacket.Entry(getUUID(), getGameProfile(), false, 0,
                 GameType.SURVIVAL, getDisplayName(), null);
         connection = new ServerGamePacketListenerImpl(server, new FakeConnection(this), this, CommonListenerCookie.createInitial(profile));
-        PlayerList playerList = server.getPlayerList();
-        for (ServerPlayer player : playerList.getPlayers()) {
-            update(player);
-        }
+        updateAll();
 
         // Bukkit.getPluginManager().registerEvents(this, PaperPlatform.PLUGIN);
         world.addNewPlayer(this);
@@ -135,6 +132,13 @@ public class FakePlayer extends ServerPlayer {
 
     public void update(ServerPlayer player) {
         player.connection.send(platform.buildPlayerInfoPacket(EnumSet.of(Action.ADD_PLAYER, Action.UPDATE_LISTED), fakePlayerEntry));
+    }
+
+    public void updateAll() {
+        PlayerList playerList = server.getPlayerList();
+        for (ServerPlayer player : playerList.getPlayers()) {
+            update(player);
+        }
     }
 
     @Override
