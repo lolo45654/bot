@@ -268,7 +268,10 @@ public class ClientSimulator {
             BlockHitResult blockHitResult = (BlockHitResult) crosshairTarget;
             BlockPos blockPos = blockHitResult.getBlockPos();
             Level level = player.level();
-            if (level.getBlockState(blockPos).isAir()) return false;
+            if (level.getBlockState(blockPos).isAir()) {
+                player.swing(InteractionHand.MAIN_HAND);
+                return false;
+            }
             attackBlockInternal(blockPos, blockHitResult.getDirection());
             return level.getBlockState(blockPos).isAir();
         } else if (crosshairTarget.getType() == HitResult.Type.MISS) {
