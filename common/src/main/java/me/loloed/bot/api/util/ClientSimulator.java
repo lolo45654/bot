@@ -256,7 +256,6 @@ public class ClientSimulator {
         if (attackCooldown > 0) return false;
         if (crosshairTarget == null) return false;
         ItemStack stack = player.getItemInHand(InteractionHand.MAIN_HAND);
-        player.swing(InteractionHand.MAIN_HAND);
         if (crosshairTarget.getType() == HitResult.Type.ENTITY) {
             EntityHitResult entityHitResult = (EntityHitResult) crosshairTarget;
             if (player.isSpectator()) return false;
@@ -273,6 +272,7 @@ public class ClientSimulator {
             attackCooldown = 10;
             player.resetAttackStrengthTicker();
         }
+        player.swing(InteractionHand.MAIN_HAND);
         return false;
     }
 
