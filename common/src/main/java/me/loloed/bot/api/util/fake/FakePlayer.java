@@ -15,9 +15,13 @@ import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.stats.Stat;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobType;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
@@ -172,5 +176,24 @@ public class FakePlayer extends ServerPlayer {
     @Override
     public @NotNull String getIpAddress() {
         return "127.0.0.1";
+    }
+
+    @Override
+    public void attack(Entity entity) {
+
+        float f = (float)this.getAttributeValue(Attributes.ATTACK_DAMAGE);
+        float g = entity instanceof LivingEntity ? EnchantmentHelper.getDamageBonus(this.getMainHandItem(), ((LivingEntity)entity).getMobType()) : EnchantmentHelper.getDamageBonus(this.getMainHandItem(), MobType.UNDEFINED);
+        float h = this.getAttackStrengthScale(0.5f);
+        g *= h;
+        f *= 0.2f + h * h * 0.8f;
+        boolean bl = h > 0.9f;
+        boolean bl3 = bl && this.fallDistance > 0.0f && !this.onGround() && !this.onClimbable() && !this.isInWater() && !this.hasEffect(MobEffects.BLINDNESS) && !this.isPassenger() && entity instanceof LivingEntity;
+        boolean bl4 = bl3 = bl3 && !this.isSprinting();
+        if (bl3) {
+            f *= 1.5f;
+        }
+        f += g;
+        System.out.println("final damage : " + f);
+        super.attack(entity);
     }
 }
