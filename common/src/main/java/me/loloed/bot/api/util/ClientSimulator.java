@@ -432,6 +432,7 @@ public class ClientSimulator {
 
     public float getEntityReach() {
         return entityReach;
+    }
 
     public HitResult getCrossHairTarget() {
         return crosshairTarget;
