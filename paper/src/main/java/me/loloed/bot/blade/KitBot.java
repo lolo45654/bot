@@ -28,7 +28,7 @@ public class KitBot extends ServerBot {
      */
     public static org.bukkit.entity.Player create(Location pos, org.bukkit.entity.Player spawner) {
         for (Bot bot : PaperPlatform.BOTS) {
-            if (bot instanceof ServerBot serverBot && serverBot.getSpawner().getUUID() == spawner.getUniqueId()) {
+            if (bot instanceof ServerBot serverBot && serverBot.getSpawner().getUUID().equals(spawner.getUniqueId())) {
                 bot.destroy();
             }
         }
