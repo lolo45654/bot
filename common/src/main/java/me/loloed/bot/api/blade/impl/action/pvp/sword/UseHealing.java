@@ -54,7 +54,7 @@ public class UseHealing extends ScoreAction implements Sword {
         float targetHealthRatio = target.getHealth() / target.getMaxHealth();
         return getSwordScore(bot) +
                 Math.min(distSq / 6, 6) +
-                ((-bot.getVanillaPlayer().getUseItemRemainingTicks() + 16) / 8.0) +
+                ((-bot.getVanillaPlayer().getUseItemRemainingTicks() + 16) / 3.0) +
                 ((targetHealthRatio - ourHealthRatio) * 4 + 1.0f) +
                 (getHealingSlot() == null ? -12 : 0);
     }
