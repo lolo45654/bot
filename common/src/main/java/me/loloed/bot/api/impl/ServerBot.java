@@ -15,7 +15,7 @@ import net.minecraft.world.item.enchantment.Enchantments;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-public class ServerBot extends Bot {
+public class ServerBot extends Bot implements IServerBot {
     private final ServerPlayer spawner;
     private ServerBotSettings settings;
 
@@ -33,7 +33,7 @@ public class ServerBot extends Bot {
     @Override
     protected void tick() {
         super.tick();
-        ServerPlayer player = (ServerPlayer) getVanillaPlayer();
+        ServerPlayer player = getVanillaPlayer();
         Inventory inventory = player.getInventory();
         if (player.touchingUnloadedChunk() || player.distanceToSqr(spawner) > 120*120 || !player.server.getPlayerList().getPlayers().contains(spawner)) {
             destroy();
@@ -114,11 +114,18 @@ public class ServerBot extends Bot {
         inventory.setItem(36, boots);
     }
 
+    @Override
     public ServerPlayer getSpawner() {
         return spawner;
     }
 
+    @Override
     public ServerBotSettings getSettings() {
         return settings;
+    }
+
+    @Override
+    public ServerPlayer getVanillaPlayer() {
+        return (ServerPlayer) super.getVanillaPlayer();
     }
 }

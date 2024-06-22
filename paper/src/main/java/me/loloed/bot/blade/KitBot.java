@@ -5,6 +5,7 @@ import me.loloed.bot.api.Bot;
 import me.loloed.bot.api.blade.BladeMachine;
 import me.loloed.bot.api.blade.impl.ConfigKeys;
 import me.loloed.bot.api.blade.impl.goal.KillTargetGoal;
+import me.loloed.bot.api.impl.IServerBot;
 import me.loloed.bot.api.impl.ServerBot;
 import me.loloed.bot.api.impl.ServerBotSettings;
 import me.loloed.bot.api.platform.Platform;
@@ -22,7 +23,7 @@ import org.bukkit.entity.LivingEntity;
 
 import java.util.UUID;
 
-public class KitBot extends ServerBot {
+public class KitBot extends Bot implements IServerBot {
     /**
      * This is used by the companion plugin "PersonalKits" for my practice server.
      * It will be called using reflection. Will be removing any other server bots.
@@ -34,7 +35,7 @@ public class KitBot extends ServerBot {
      */
     public static org.bukkit.entity.Player create(Location pos, org.bukkit.entity.Player spawner, LivingEntity target) {
         for (Bot bot : PaperPlatform.BOTS) {
-            if (bot instanceof ServerBot serverBot && serverBot.getSpawner().getUUID().equals(spawner.getUniqueId())) {
+            if (bot instanceof IServerBot sBot && sBot.getSpawner().getUUID().equals(spawner.getUniqueId())) {
                 bot.destroy();
             }
         }
@@ -50,7 +51,7 @@ public class KitBot extends ServerBot {
     @Deprecated(forRemoval = true)
     public static org.bukkit.entity.Player create(Location pos, org.bukkit.entity.Player spawner) {
         for (Bot bot : PaperPlatform.BOTS) {
-            if (bot instanceof ServerBot serverBot && serverBot.getSpawner().getUUID().equals(spawner.getUniqueId())) {
+            if (bot instanceof IServerBot sBot && sBot.getSpawner().getUUID().equals(spawner.getUniqueId())) {
                 bot.destroy();
             }
         }
@@ -60,19 +61,39 @@ public class KitBot extends ServerBot {
         return fakePlayer.getBukkitEntity();
     }
 
+    private final ServerPlayer spawner;
+    private final ServerBotSettings settings;
+
     public KitBot(Player vanillaPlayer, Platform platform, ServerPlayer spawner) {
-        super(vanillaPlayer, platform, spawner, new ServerBotSettings());
+        super(vanillaPlayer, platform);
+        this.spawner = spawner;
+        this.settings = new ServerBotSettings();
     }
 
     @Override
-    protected void tickShield(ServerPlayer player, Inventory inventory) {
+    protected void tick() {
+        super.tick();
+        ServerPlayer player = getVanillaPlayer();
+        if (player.touchingUnloadedChunk() || player.distanceToSqr(spawner) > 120*120 || !player.server.getPlayerList().getPlayers().contains(spawner)) {
+            destroy();
+            return;
+        }
+
+        clientSimulator.setEntityReach(settings.reach);
     }
 
     @Override
-    protected void tickHealing(ServerPlayer player) {
+    public ServerPlayer getSpawner() {
+        return spawner;
     }
 
     @Override
-    protected void applyArmor(Inventory inventory) {
+    public ServerBotSettings getSettings() {
+        return settings;
+    }
+
+    @Override
+    public ServerPlayer getVanillaPlayer() {
+        return (ServerPlayer) super.getVanillaPlayer();
     }
 }

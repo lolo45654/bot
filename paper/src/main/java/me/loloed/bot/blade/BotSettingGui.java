@@ -1,6 +1,7 @@
 package me.loloed.bot.blade;
 
 import com.mojang.authlib.GameProfile;
+import me.loloed.bot.api.impl.IServerBot;
 import me.loloed.bot.api.impl.ServerBot;
 import me.loloed.bot.api.impl.ServerBotSettings;
 import me.loloed.bot.api.util.fake.FakePlayer;
@@ -36,7 +37,7 @@ import static me.loloed.bot.blade.MenuUtils.empty;
 import static me.loloed.bot.blade.MenuUtils.wrapMiniMessage;
 
 public class BotSettingGui {
-    public static void show(ServerPlayer player, PaperPlatform platform, ServerBotSettings settings, @Nullable ServerBot bot) {
+    public static void show(ServerPlayer player, PaperPlatform platform, ServerBotSettings settings, @Nullable IServerBot bot) {
         Runnable show = () -> show(player, platform, settings, bot);
         Gui gui = Gui.empty(9, 6);
         gui.setBackground(new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE)
@@ -208,7 +209,7 @@ public class BotSettingGui {
                 .build(player.getBukkitEntity()).open();
     }
 
-    public static void showShieldGroup(ServerPlayer player, PaperPlatform platform, ServerBotSettings settings, @Nullable ServerBot bot, Runnable back) {
+    public static void showShieldGroup(ServerPlayer player, PaperPlatform platform, ServerBotSettings settings, @Nullable IServerBot bot, Runnable back) {
         Runnable show = () -> showShieldGroup(player, platform, settings, bot, back);
         Gui gui = Gui.empty(9, 6);
         gui.setBackground(new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE)

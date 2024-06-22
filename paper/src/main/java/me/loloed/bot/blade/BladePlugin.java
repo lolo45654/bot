@@ -12,6 +12,7 @@ import me.loloed.bot.api.blade.BladeMachine;
 import me.loloed.bot.api.blade.debug.BladeDebug;
 import me.loloed.bot.api.blade.impl.ConfigKeys;
 import me.loloed.bot.api.blade.impl.goal.KillTargetGoal;
+import me.loloed.bot.api.impl.IServerBot;
 import me.loloed.bot.api.impl.ServerBot;
 import me.loloed.bot.api.impl.ServerBotSettings;
 import me.loloed.bot.api.util.fake.FakePlayer;
@@ -61,7 +62,7 @@ public class BladePlugin extends JavaPlugin {
                             Location pos = sender.getLocation();
                             List<Bot> bots = new ArrayList<>(PaperPlatform.BOTS);
                             for (Bot bot : bots) {
-                                if (bot instanceof ServerBot sBot && sBot.getSpawner().getUUID().equals(sender.getUniqueId())) {
+                                if (bot instanceof IServerBot sBot && sBot.getSpawner().getUUID().equals(sender.getUniqueId())) {
                                     bot.destroy();
                                     sender.sendMessage(Component.text("Removed your simple bot!", PRIMARY));
                                     return;
@@ -79,7 +80,7 @@ public class BladePlugin extends JavaPlugin {
                             Location pos = sender.getLocation();
                             List<Bot> bots = new ArrayList<>(PaperPlatform.BOTS);
                             for (Bot bot : bots) {
-                                if (bot instanceof ServerBot sBot && sBot.getSpawner().getUUID().equals(sender.getUniqueId())) {
+                                if (bot instanceof IServerBot sBot && sBot.getSpawner().getUUID().equals(sender.getUniqueId())) {
                                     bot.destroy();
                                     sender.sendMessage(Component.text("Removed your simple bot!", PRIMARY));
                                     return;
@@ -93,7 +94,7 @@ public class BladePlugin extends JavaPlugin {
                         }))
                 .executesPlayer((sender, args) -> {
                     for (Bot b : PaperPlatform.BOTS) {
-                        if (b instanceof ServerBot bot && bot.getSpawner().getUUID().equals(sender.getUniqueId())) {
+                        if (b instanceof IServerBot bot && bot.getSpawner().getUUID().equals(sender.getUniqueId())) {
                             BotSettingGui.show(((CraftPlayer) sender).getHandle(), platform, bot.getSettings(), bot);
                             return;
                         }
