@@ -72,7 +72,7 @@ public class PaperPlatform extends Platform {
                 if (((CraftEntity) event.getDamager()).getHandle() instanceof FakePlayer fakePlayer) {
                     event.getEntity().sendMessage(Component.text("You got hit with " + event.getDamage() + "."));
                 } else if (((CraftEntity) event.getEntity()).getHandle() instanceof FakePlayer fakePlayer) {
-                    event.getDamager().sendMessage(Component.text("You got hit with " + event.getDamage() + "."));
+                    event.getDamager().sendMessage(Component.text("You hit with " + event.getDamage() + "."));
                 }
             }
         }, plugin);
