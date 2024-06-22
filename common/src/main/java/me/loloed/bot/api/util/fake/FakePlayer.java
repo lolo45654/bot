@@ -199,4 +199,10 @@ public class FakePlayer extends ServerPlayer {
         System.out.println("final damage : " + f);
         super.attack(entity);
     }
+
+    @Override
+    public void resetAttackStrengthTicker() {
+        Thread.dumpStack();
+        super.resetAttackStrengthTicker();
+    }
 }
