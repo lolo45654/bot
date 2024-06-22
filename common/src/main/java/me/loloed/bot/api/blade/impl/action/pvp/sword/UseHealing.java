@@ -37,9 +37,6 @@ public class UseHealing extends ScoreAction implements Sword {
         bot.setMoveBackward(false);
         bot.setSprint(false);
         bot.interact(true);
-        if (bot.getVanillaPlayer().getUseItemRemainingTicks() <= 0) {
-            bot.interact(false);
-        }
     }
 
     @Override
@@ -53,7 +50,6 @@ public class UseHealing extends ScoreAction implements Sword {
         Vec3 eyePos = bot.getVanillaPlayer().getEyePosition();
         Vec3 closestPoint = BotMath.getClosestPoint(eyePos, target.getBoundingBox());
         double distSq = closestPoint.distanceToSqr(eyePos);
-        float attackStrength = bot.getVanillaPlayer().getAttackStrengthScale(0.5f);
         float ourHealthRatio = bot.getVanillaPlayer().getHealth() / bot.getVanillaPlayer().getMaxHealth();
         float targetHealthRatio = target.getHealth() / target.getMaxHealth();
         return getSwordScore(bot) +
@@ -61,5 +57,11 @@ public class UseHealing extends ScoreAction implements Sword {
                 ((-bot.getVanillaPlayer().getUseItemRemainingTicks() + 16) / 8.0) +
                 ((targetHealthRatio - ourHealthRatio) * 4 + 1.0f) +
                 (getHealingSlot() == null ? -12 : 0);
+    }
+
+    @Override
+    public void onRelease(ScoreAction next) {
+        super.onRelease(next);
+        bot.interact(false);
     }
 }
