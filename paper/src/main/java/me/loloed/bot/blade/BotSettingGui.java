@@ -88,6 +88,8 @@ public class BotSettingGui {
 
         baseItem = new ItemBuilder(Material.OAK_BUTTON)
                 .setDisplayName(wrapMiniMessage("<aqua>Reach"))
+                .addLoreLines(empty())
+                .addLoreLines(wrapMiniMessage("<gray>This only affects auto hit."))
                 .get();
         setCycleItem(gui, show, 4, 2,
                 settings.reach, new Float[] { 1.0f, 1.5f, 2.0f, 2.5f, 3.0f, 3.5f },
@@ -138,14 +140,17 @@ public class BotSettingGui {
                     .addLoreLines(empty())
                     .addLoreLines(wrapMiniMessage("<gray>Status: <green><bold>ENABLED"))
                     .addLoreLines(empty())
-                    .addLoreLines(wrapMiniMessage("<yellow>Click to disable!"))
-                    .addLoreLines(wrapMiniMessage("<yellow>Right click to edit! ")), click -> {
-                if (click.getClickType().isRightClick()) {
-                    showShieldGroup(player, platform, settings, bot, show);
-                } else {
-                    settings.shield = false;
-                    show.run();
-                }
+                    .addLoreLines(wrapMiniMessage("<yellow>Click to disable!")), click -> {
+                settings.shield = false;
+                show.run();
+            }));
+            gui.setItem(6, 3, new SimpleItem(new ItemBuilder(Material.REDSTONE)
+                    .setDisplayName(wrapMiniMessage("<aqua>Shield Settings"))
+                    .addLoreLines(empty())
+                    .addLoreLines(wrapMiniMessage("<gray>That's more settings."))
+                    .addLoreLines(empty())
+                    .addLoreLines(wrapMiniMessage("<yellow>Click to edit! ")), click -> {
+                showShieldGroup(player, platform, settings, bot, show);
             }));
         } else {
             gui.setItem(6, 2, new SimpleItem(new ItemBuilder(Material.SHIELD)
@@ -173,6 +178,14 @@ public class BotSettingGui {
                 click.getPlayer().closeInventory();
             }));
         } else {
+            gui.setItem(3, 5, new SimpleItem(new ItemBuilder(Material.ENDER_PEARL)
+                    .setDisplayName(wrapMiniMessage("<aqua>Teleport to you"))
+                    .addLoreLines(empty())
+                    .addLoreLines(wrapMiniMessage("<gray>We lost contact, reconnecting..."))
+                    .addLoreLines(empty())
+                    .addLoreLines(wrapMiniMessage("<yellow>Click to teleport!")), click -> {
+                bot.getVanillaPlayer().teleportTo(player.serverLevel(), player.position());
+            }));
             gui.setItem(5, 5, new SimpleItem(new ItemBuilder(Material.TNT)
                     .setDisplayName(wrapMiniMessage("<aqua>Despawn"))
                     .addLoreLines(empty())
