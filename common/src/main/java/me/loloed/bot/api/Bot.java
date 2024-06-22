@@ -12,6 +12,7 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Random;
@@ -26,6 +27,7 @@ public class Bot {
     protected final ClientSimulator clientSimulator;
     public final boolean isClient;
     protected final BladeMachine blade = new BladeMachine(this);
+    protected boolean jumped = false;
 
     public Bot(Player vanillaPlayer, Platform platform) {
         this.isClient = platform.isClient();
@@ -64,6 +66,9 @@ public class Bot {
     }
 
     protected void tick() {
+        if (jumped) {
+            vanillaPlayer.setJumping(false);
+        }
         scheduler.tick(this);
         blade.tick();
         if (clientSimulator != null) clientSimulator.tick();
@@ -86,8 +91,8 @@ public class Bot {
     }
 
     public void jump() {
-        if (isOnGround()) return;
         vanillaPlayer.setJumping(true);
+        jumped = true;
     }
 
     public void attack() {
@@ -206,5 +211,12 @@ public class Bot {
 
     public Platform getPlatform() {
         return platform;
+    }
+
+    public HitResult getCrossHairTarget() {
+        if (isClient) {
+            return Minecraft.getInstance().hitResult;
+        }
+        return clientSimulator.getCrossHairTarget();
     }
 }

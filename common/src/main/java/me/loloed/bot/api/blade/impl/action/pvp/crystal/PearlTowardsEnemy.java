@@ -19,14 +19,12 @@ public class PearlTowardsEnemy extends ScoreAction implements Crystal {
         Slot pearlSlot = getPearlSlot();
         if (pearlSlot == null) return;
         bot.getInventory().setSelectedSlot(pearlSlot.getHotBarIndex());
-        double time = ConfigKeys.getDifficultyReversed(bot) * 2;
-        float[] bow = BotMath.getRotationForBow(bot.getVanillaPlayer().position(), bot.getBlade().get(ConfigKeys.TARGET).position(), 24);
+        float time = ConfigKeys.getDifficultyReversed(bot) * 0.3f;
+        float[] bow = BotMath.getRotationForBow(bot.getVanillaPlayer().getEyePosition(), bot.getBlade().get(ConfigKeys.TARGET).position(), 24);
         if (tick < time) {
-            bot.lookRealistic(bow[0], bow[1], tick / (float) time, 1f);
+            bot.lookRealistic(bow[0], bow[1], tick / time, 0.3f);
         }
         if (tick >= time) {
-            bot.setYaw(bow[0]);
-            bot.setPitch(bow[1]);
             bot.interact();
         }
     }
@@ -40,8 +38,9 @@ public class PearlTowardsEnemy extends ScoreAction implements Crystal {
     public double getScore() {
         LivingEntity target = bot.getBlade().get(ConfigKeys.TARGET);
         double distSq = target.distanceToSqr(bot.getVanillaPlayer());
+        double dist = Math.min(distSq / 96, 4);
         return getCrystalScore(bot) +
-                Math.min(distSq / 96, 4) +
+                dist * dist +
                 (getPearlSlot() == null ? -8 : 0) +
                 (bot.getVanillaPlayer().getCooldowns().isOnCooldown(Items.ENDER_PEARL) ? -4 : 0);
     }

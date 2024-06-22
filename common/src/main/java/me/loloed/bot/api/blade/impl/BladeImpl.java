@@ -2,11 +2,15 @@ package me.loloed.bot.api.blade.impl;
 
 import me.loloed.bot.api.blade.BladeMachine;
 import me.loloed.bot.api.blade.impl.action.pvp.cart.UseBow;
+import me.loloed.bot.api.blade.impl.action.pvp.crystal.Crystal;
+import me.loloed.bot.api.blade.impl.action.pvp.sword.Sword;
 import me.loloed.bot.api.blade.impl.action.pvp.totem.Totem;
 
 public class BladeImpl {
     public static void register(BladeMachine blade) {
         Totem.register(blade);
+        Crystal.register(blade);
+        Sword.register(blade);
         blade.addAction(new UseBow());
         /*blade.addAction(new MineCartEnemy.Bow());
         blade.addAction(new MineCartEnemy.PlaceRail());

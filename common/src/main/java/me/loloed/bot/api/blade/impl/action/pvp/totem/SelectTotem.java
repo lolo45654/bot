@@ -26,6 +26,7 @@ public class SelectTotem extends ScoreAction implements Totem {
 
     @Override
     public double getScore() {
-        return 0.7 + Math.min(bot.getVanillaPlayer().getDeltaMovement().y * 4, 2) + (getTotemSlot() == null ? -5 : 0);
+        return getTotemScore(bot) +
+                Math.min(bot.getVanillaPlayer().getDeltaMovement().y * 4, 2) + (getTotemSlot() == null ? -5 : 0);
     }
 }

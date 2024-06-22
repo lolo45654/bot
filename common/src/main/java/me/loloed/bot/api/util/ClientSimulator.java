@@ -1,5 +1,6 @@
 package me.loloed.bot.api.util;
 
+import me.loloed.bot.api.util.fake.FakePlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
@@ -103,7 +104,10 @@ public class ClientSimulator {
         tickUsingItem();
         tickMouse();
         // player.getCooldowns().tick();
-        player.doTick();
+        if (!(player instanceof FakePlayer)) {
+            player.tick();
+            player.doTick();
+        }
         // player.aiStep();
         if (itemUseCooldown > 0) {
             itemUseCooldown--;
@@ -255,11 +259,11 @@ public class ClientSimulator {
         if (attackCooldown > 0) return false;
         if (crosshairTarget == null) return false;
         ItemStack stack = player.getItemInHand(InteractionHand.MAIN_HAND);
-        player.swing(InteractionHand.MAIN_HAND);
         if (crosshairTarget.getType() == HitResult.Type.ENTITY) {
             EntityHitResult entityHitResult = (EntityHitResult) crosshairTarget;
             if (player.isSpectator()) return false;
             player.attack(entityHitResult.getEntity());
+            player.resetAttackStrengthTicker();
         } else if (crosshairTarget.getType() == HitResult.Type.BLOCK) {
             BlockHitResult blockHitResult = (BlockHitResult) crosshairTarget;
             BlockPos blockPos = blockHitResult.getBlockPos();
@@ -271,6 +275,7 @@ public class ClientSimulator {
             attackCooldown = 10;
             player.resetAttackStrengthTicker();
         }
+        player.swing(InteractionHand.MAIN_HAND);
         return false;
     }
 
@@ -427,5 +432,8 @@ public class ClientSimulator {
 
     public float getEntityReach() {
         return entityReach;
+
+    public HitResult getCrossHairTarget() {
+        return crosshairTarget;
     }
 }

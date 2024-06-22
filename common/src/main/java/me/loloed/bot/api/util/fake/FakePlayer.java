@@ -3,6 +3,7 @@ package me.loloed.bot.api.util.fake;
 import com.mojang.authlib.GameProfile;
 import me.loloed.bot.api.platform.Platform;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket.Action;
 import net.minecraft.server.MinecraftServer;
@@ -14,8 +15,13 @@ import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.stats.Stat;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobType;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
@@ -73,6 +79,7 @@ public class FakePlayer extends ServerPlayer {
     @Override
     public void tick() {
         super.tick();
+        this.doTick();
         platform.detectEquipmentUpdates(this);
         uglyAttackFix = false;
 
@@ -164,5 +171,10 @@ public class FakePlayer extends ServerPlayer {
      */
     @Override
     public void awardStat(Stat<?> stat, int i) {
+    }
+
+    @Override
+    public @NotNull String getIpAddress() {
+        return "127.0.0.1";
     }
 }
