@@ -187,6 +187,7 @@ public class FakePlayer extends ServerPlayer {
         float h = this.getAttackStrengthScale(0.5f);
         g *= h;
         f *= 0.2f + h * h * 0.8f;
+        System.out.println("strength : " + h);
         System.out.println("damage 2 : " + f);
         boolean bl = h > 0.9f;
         boolean bl3 = bl && this.fallDistance > 0.0f && !this.onGround() && !this.onClimbable() && !this.isInWater() && !this.hasEffect(MobEffects.BLINDNESS) && !this.isPassenger() && entity instanceof LivingEntity;
