@@ -1,39 +1,28 @@
-package me.loloed.bot.blade;
+package me.loloed.bot;
 
-import com.destroystokyo.paper.event.server.ServerTickEndEvent;
 import me.loloed.bot.api.Bot;
-import me.loloed.bot.api.platform.Platform;
+import me.loloed.bot.api.platform.ServerPlatform;
 import me.loloed.bot.api.util.ClientSimulator;
 import me.loloed.bot.api.util.fake.FakeConnection;
 import me.loloed.bot.api.util.fake.FakePlayer;
-import net.kyori.adventure.text.Component;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.phys.Vec3;
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_20_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
+import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.beans.PersistenceDelegate;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.concurrent.Executor;
 
-public class PaperPlatform extends Platform {
+public class PaperPlatform implements ServerPlatform {
     public static JavaPlugin PLUGIN;
     public static final List<Bot> BOTS = new ArrayList<>();
     public static final Executor EXECUTOR = new Executor() {
@@ -90,21 +79,6 @@ public class PaperPlatform extends Platform {
     @Override
     public Executor getExecutor() {
         return EXECUTOR;
-    }
-
-    @Override
-    public boolean isClient() {
-        return false;
-    }
-
-    @Override
-    public ClientPlatform getClient() {
-        return null;
-    }
-
-    @Override
-    public void detectEquipmentUpdates(ServerPlayer player) {
-        player.detectEquipmentUpdatesPublic();
     }
 
     @Override

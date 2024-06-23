@@ -1,6 +1,7 @@
 package me.loloed.bot.api.blade.planner;
 
 import me.loloed.bot.api.Bot;
+import me.loloed.bot.api.blade.BladeGoal;
 import me.loloed.bot.api.blade.BladePlannedAction;
 import me.loloed.bot.api.blade.debug.DebugPlanner;
 import me.loloed.bot.api.blade.BladeAction;
@@ -11,11 +12,11 @@ public interface Planner<Debug extends DebugPlanner, Action extends BladeAction<
 
     Debug createDebug();
 
-    default BladePlannedAction<Action> plan(BladeState state, DebugPlanner parent) {
+    default BladePlannedAction<Action> plan(BladeGoal goal, BladeState state, DebugPlanner parent) {
         Debug debug = createDebug();
         parent.setChildren(debug);
-        return planInternal(state, debug);
+        return planInternal(goal, state, debug);
     }
 
-    BladePlannedAction<Action> planInternal(BladeState state, Debug debug);
+    BladePlannedAction<Action> planInternal(BladeGoal goal, BladeState state, Debug debug);
 }

@@ -1,6 +1,6 @@
 name: blade
 version: '${version}'
-main: me.loloed.bot.blade.BladePlugin
+main: me.loloed.bot.BotPlugin
 api-version: '1.20'
 description: '${description}'
 authors: [ loloed ]

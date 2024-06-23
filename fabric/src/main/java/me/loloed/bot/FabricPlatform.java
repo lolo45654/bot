@@ -1,9 +1,11 @@
-package me.loloed.bot.blade.user;
+package me.loloed.bot;
 
 import me.loloed.bot.api.Bot;
-import me.loloed.bot.api.platform.Platform;
+import me.loloed.bot.api.platform.ServerPlatform;
 import me.loloed.bot.api.util.fake.FakePlayer;
+import me.loloed.bot.mixin.ClientboundPlayerInfoUpdatePacketAccessor;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -11,7 +13,7 @@ import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-public class FabricPlatform extends Platform {
+public class FabricPlatform implements ServerPlatform {
     public static final Executor EXECUTOR = Executors.newCachedThreadPool();
 
     public static final List<Bot> BOTS = new ArrayList<>();
@@ -42,31 +44,18 @@ public class FabricPlatform extends Platform {
     }
 
     @Override
-    public boolean isClient() {
-        return false;
-    }
-
-    @Override
-    public ClientPlatform getClient() {
-        return null;
-    }
-
-    @Override
     public void declareFakePlayer(FakePlayer player) {
     }
 
     @Override
-    public net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket buildPlayerInfoPacket(EnumSet<net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket.Action> actions, net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket.Entry entry) {
-        return null;
+    public ClientboundPlayerInfoUpdatePacket buildPlayerInfoPacket(EnumSet<ClientboundPlayerInfoUpdatePacket.Action> actions, ClientboundPlayerInfoUpdatePacket.Entry entry) {
+        ClientboundPlayerInfoUpdatePacket packet = new ClientboundPlayerInfoUpdatePacket(actions, List.of());
+        ((ClientboundPlayerInfoUpdatePacketAccessor) packet).setEntries(List.of(entry));
+        return packet;
     }
 
     @Override
     public void destroyBot(Bot bot) {
         BOTS.remove(bot);
-    }
-
-    @Override
-    public void detectEquipmentUpdates(net.minecraft.server.level.ServerPlayer player) {
-
     }
 }

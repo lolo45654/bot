@@ -1,4 +1,4 @@
-package me.loloed.bot.blade;
+package me.loloed.bot;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;

@@ -35,7 +35,7 @@ public class FakeConnection extends Connection {
     }
 
     @Override
-    public void setListener(PacketListener packetListener) {
+    public void setListenerForServerboundHandshake(PacketListener packetListener) {
     }
 
     @Override
@@ -47,9 +47,5 @@ public class FakeConnection extends Connection {
 
     @Override
     public void channelActive(ChannelHandlerContext channelhandlercontext) {
-    }
-
-    @Override
-    public void setListenerForServerboundHandshake(PacketListener packetListener) {
     }
 }

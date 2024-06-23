@@ -1,9 +1,11 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "me.loloed.bot.blade.user.mixin",
+  "package": "me.loloed.bot.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "ClientboundPlayerInfoUpdatePacketAccessor",
+    "GuiMixin"
   ],
   "client": [
   ],

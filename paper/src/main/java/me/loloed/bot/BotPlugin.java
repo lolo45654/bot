@@ -1,4 +1,4 @@
-package me.loloed.bot.blade;
+package me.loloed.bot;
 
 import com.mojang.authlib.GameProfile;
 import dev.jorel.commandapi.CommandAPI;
@@ -10,7 +10,6 @@ import me.loloed.bot.api.Bot;
 import me.loloed.bot.api.BuildConstants;
 import me.loloed.bot.api.blade.BladeMachine;
 import me.loloed.bot.api.blade.debug.BladeDebug;
-import me.loloed.bot.api.blade.impl.ConfigKeys;
 import me.loloed.bot.api.blade.impl.goal.KillTargetGoal;
 import me.loloed.bot.api.impl.IServerBot;
 import me.loloed.bot.api.impl.ServerBot;
@@ -22,22 +21,24 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_20_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_20_R3.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_20_R3.util.CraftLocation;
+import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.craftbukkit.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.entity.CraftPlayer;
+import org.bukkit.craftbukkit.util.CraftLocation;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.java.JavaPlugin;
 import xyz.xenondevs.invui.item.builder.ItemBuilder;
 
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
-public class BladePlugin extends JavaPlugin {
+public class BotPlugin extends JavaPlugin {
     public static final TextColor PRIMARY = TextColor.color(0xFFCBD5);
     public static PaperPlatform platform;
     private static final Map<String, BladeDebug> reports = new HashMap<>();
@@ -92,34 +93,22 @@ public class BladePlugin extends JavaPlugin {
                             platform.addBot(bot);
                             sender.sendMessage(Component.text("Spawned a shield bot!", PRIMARY));
                         }))
-                .executesPlayer((sender, args) -> {
-                    for (Bot b : PaperPlatform.BOTS) {
-                        if (b instanceof IServerBot bot && bot.getSpawner().getUUID().equals(sender.getUniqueId())) {
-                            BotSettingGui.show(((CraftPlayer) sender).getHandle(), platform, bot.getSettings(), bot);
-                            return;
-                        }
-                    }
-
-                    BotSettingGui.show(((CraftPlayer) sender).getHandle(), platform, new ServerBotSettings(), null);
-                })
-                .register();
-
-        new CommandTree("blade")
-                .withPermission("bot.blade.use")
                 .then(new LiteralArgument("control")
-                        .withPermission("blade.control")
+                        .withPermission("bot.control")
                         .then(createPossibleBots(new PlayerArgument("who"), args -> ((CraftPlayer) args.get("who")).getHandle())))
                 .then(new LiteralArgument("spawn")
-                        .withPermission("blade.spawn")
+                        .withPermission("bot.spawn")
                         .then(createPossibleBots(new LocationArgument("where"), args -> {
                             Location pos = (Location) args.get("where");
                             return new FakePlayer(platform, MinecraftServer.getServer(), CraftLocation.toVec3D(pos), pos.getYaw(), pos.getPitch(), ((CraftWorld) pos.getWorld()).getHandle(), new GameProfile(UUID.randomUUID(), BuildConstants.CENSOR_NAMES ? "BOT" : "Blade"));
                         })))
                 .then(new LiteralArgument("removeall")
+                        .withPermission("bot.removeall")
                         .executes((sender, args) -> {
                             platform.removeAll();
                         }))
                 .then(new LiteralArgument("debug")
+                        .withPermission("bot.debug")
                         .then(new LiteralArgument("save")
                                 .then(new GreedyStringArgument("name")
                                         .executes((sender, args) -> {
@@ -136,9 +125,20 @@ public class BladePlugin extends JavaPlugin {
                                             // DebugGui.showMain(sender, reports.get(name));
                                         }))))
                 .then(new LiteralArgument("count")
+                        .withPermission("bot.count")
                         .executes((sender, args) -> {
                             sender.sendMessage(Component.text("There are currently " + PaperPlatform.BOTS.size() + " blade bot(s)."));
                         }))
+                .executesPlayer((sender, args) -> {
+                    for (Bot b : PaperPlatform.BOTS) {
+                        if (b instanceof IServerBot bot && bot.getSpawner().getUUID().equals(sender.getUniqueId())) {
+                            BotSettingGui.show(((CraftPlayer) sender).getHandle(), platform, bot.getSettings(), bot);
+                            return;
+                        }
+                    }
+
+                    BotSettingGui.show(((CraftPlayer) sender).getHandle(), platform, new ServerBotSettings(), null);
+                })
                 .register();
     }
 
@@ -154,31 +154,37 @@ public class BladePlugin extends JavaPlugin {
             platform.addBot(bot);
             return bot;
         };
+        BiFunction<Player, CommandArguments, Bot> kill = (sender, args) -> {
+            Entity target = (Entity) args.get("target");
+            if (!(target instanceof LivingEntity)) return null;
+            Bot bot = botGetter.apply(args);
+            BladeMachine blade = bot.getBlade();
+            blade.setGoal(new KillTargetGoal(() -> {
+                Entity entity = (Entity) args.get("target");
+                if (entity instanceof LivingEntity) return ((CraftLivingEntity) entity).getHandle();
+                bot.destroy();
+                return null;
+            }));
+            return bot;
+        };
 
-        return tree.then(new LiteralArgument("kill")
-                .then(new EntitySelectorArgument.OneEntity("target")
-                        .executesPlayer((sender, args) -> {
-                            Entity target = (Entity) args.get("target");
-                            if (!(target instanceof LivingEntity)) return;
-                            Bot bot = botGetter.apply(args);
-                            BladeMachine blade = bot.getBlade();
-                            blade.set(ConfigKeys.TARGET, ((CraftLivingEntity) target).getHandle());
-                            blade.setGoal(new KillTargetGoal());
-                            sender.sendMessage(Component.text("Spawned a killer bot."));
-                        })))
+        return tree
+                .then(new LiteralArgument("kill")
+                        .then(new EntitySelectorArgument.OneEntity("target")
+                                .executesPlayer((sender, args) -> {
+                                    Bot bot = kill.apply(sender, args);
+                                    if (bot == null) return;
+                                    sender.sendMessage(Component.text("Spawned a killing bot."));
+                                })))
                 .then(new LiteralArgument("cart")
                         .then(new EntitySelectorArgument.OneEntity("target")
                                 .executesPlayer((sender, args) -> {
-                                    Entity target = (Entity) args.get("target");
-                                    if (!(target instanceof LivingEntity)) return;
-                                    Bot bot = botGetter.apply(args);
-                                    BladeMachine blade = bot.getBlade();
-                                    blade.set(ConfigKeys.TARGET, ((CraftLivingEntity) target).getHandle());
-                                    blade.setGoal(new KillTargetGoal());
+                                    Bot bot = kill.apply(sender, args);
+                                    if (bot == null) return;
 
                                     PlayerInventory inv = bot.getVanillaPlayer().getBukkitEntity().getInventory();
                                     inv.addItem(new ItemBuilder(Material.BOW)
-                                            .addEnchantment(Enchantment.ARROW_FIRE, 1, true).get());
+                                            .addEnchantment(Enchantment.FLAME, 1, true).get());
                                     for (int i = 0; i < 5; i++) {
                                         inv.addItem(new ItemStack(Material.TNT_MINECART));
                                     }
@@ -189,12 +195,8 @@ public class BladePlugin extends JavaPlugin {
                 .then(new LiteralArgument("crystal")
                         .then(new EntitySelectorArgument.OneEntity("target")
                                 .executesPlayer((sender, args) -> {
-                                    Entity target = (Entity) args.get("target");
-                                    if (!(target instanceof LivingEntity)) return;
-                                    Bot bot = botGetter.apply(args);
-                                    BladeMachine blade = bot.getBlade();
-                                    blade.set(ConfigKeys.TARGET, ((CraftLivingEntity) target).getHandle());
-                                    blade.setGoal(new KillTargetGoal());
+                                    Bot bot = kill.apply(sender, args);
+                                    if (bot == null) return;
 
                                     PlayerInventory inv = bot.getVanillaPlayer().getBukkitEntity().getInventory();
                                     inv.addItem(new ItemBuilder(Material.NETHERITE_SWORD)
@@ -203,14 +205,14 @@ public class BladePlugin extends JavaPlugin {
                                     inv.addItem(new ItemStack(Material.OBSIDIAN, 64));
                                     inv.addItem(new ItemStack(Material.ENDER_PEARL, 16));
                                     inv.setHelmet(new ItemBuilder(Material.NETHERITE_HELMET)
-                                            .addEnchantment(Enchantment.DAMAGE_ALL, 4, true).get());
+                                            .addEnchantment(Enchantment.PROTECTION, 4, true).get());
                                     inv.setChestplate(new ItemBuilder(Material.NETHERITE_CHESTPLATE)
-                                            .addEnchantment(Enchantment.DAMAGE_ALL, 4, true).get());
+                                            .addEnchantment(Enchantment.PROTECTION, 4, true).get());
                                     inv.setLeggings(new ItemBuilder(Material.NETHERITE_LEGGINGS)
-                                            .addEnchantment(Enchantment.PROTECTION_EXPLOSIONS, 4, true).get());
+                                            .addEnchantment(Enchantment.BLAST_PROTECTION, 4, true).get());
                                     inv.setBoots(new ItemBuilder(Material.NETHERITE_BOOTS)
-                                            .addEnchantment(Enchantment.DAMAGE_ALL, 4, true)
-                                            .addEnchantment(Enchantment.PROTECTION_FALL, 4, true).get());
+                                            .addEnchantment(Enchantment.PROTECTION, 4, true)
+                                            .addEnchantment(Enchantment.FEATHER_FALLING, 4, true).get());
                                     for (int i = 0; i < 12; i++) {
                                         inv.addItem(new ItemStack(Material.TOTEM_OF_UNDYING));
                                     }
@@ -220,25 +222,21 @@ public class BladePlugin extends JavaPlugin {
                 .then(new LiteralArgument("sword")
                         .then(new EntitySelectorArgument.OneEntity("target")
                                 .executesPlayer((sender, args) -> {
-                                    Entity target = (Entity) args.get("target");
-                                    if (!(target instanceof LivingEntity)) return;
-                                    Bot bot = botGetter.apply(args);
-                                    BladeMachine blade = bot.getBlade();
-                                    blade.set(ConfigKeys.TARGET, ((CraftLivingEntity) target).getHandle());
-                                    blade.setGoal(new KillTargetGoal());
+                                    Bot bot = kill.apply(sender, args);
+                                    if (bot == null) return;
 
                                     PlayerInventory inv = bot.getVanillaPlayer().getBukkitEntity().getInventory();
                                     inv.addItem(new ItemBuilder(Material.DIAMOND_SWORD)
-                                            .addEnchantment(Enchantment.DAMAGE_ALL, 5, true).get());
+                                            .addEnchantment(Enchantment.SHARPNESS, 5, true).get());
                                     inv.setHelmet(new ItemBuilder(Material.DIAMOND_HELMET)
-                                            .addEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 4, true).get());
+                                            .addEnchantment(Enchantment.PROTECTION, 4, true).get());
                                     inv.setChestplate(new ItemBuilder(Material.DIAMOND_CHESTPLATE)
-                                            .addEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 4, true).get());
+                                            .addEnchantment(Enchantment.PROTECTION, 4, true).get());
                                     inv.setLeggings(new ItemBuilder(Material.DIAMOND_LEGGINGS)
-                                            .addEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 4, true).get());
+                                            .addEnchantment(Enchantment.PROTECTION, 4, true).get());
                                     inv.setBoots(new ItemBuilder(Material.DIAMOND_BOOTS)
-                                            .addEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 4, true)
-                                            .addEnchantment(Enchantment.PROTECTION_FALL, 4, true).get());
+                                            .addEnchantment(Enchantment.PROTECTION, 4, true)
+                                            .addEnchantment(Enchantment.FEATHER_FALLING, 4, true).get());
                                     inv.setItemInOffHand(new ItemStack(Material.GOLDEN_APPLE, 64));
                                     sender.sendMessage(Component.text("Spawned a sword bot."));
                                 })))
@@ -266,7 +264,7 @@ public class BladePlugin extends JavaPlugin {
                                     inv.addItem(new ItemStack(Material.ARROW, 64));
                                     platform.addBot(bot);
                                     bot.interact(true);
-                                    bot.getVanillaPlayer().getBukkitEntity().getScheduler().runDelayed(BladePlugin.this, task -> {
+                                    bot.getVanillaPlayer().getBukkitEntity().getScheduler().runDelayed(BotPlugin.this, task -> {
                                         bot.interact(false);
                                     }, null, 40L);
                                 })));

@@ -1,9 +1,11 @@
 package me.loloed.bot.api;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import me.loloed.bot.api.blade.BladeMachine;
 import me.loloed.bot.api.event.BotLifecycleEvents;
 import me.loloed.bot.api.inventory.BotClientInventory;
 import me.loloed.bot.api.inventory.BotInventory;
+import me.loloed.bot.api.platform.ClientPlatform;
 import me.loloed.bot.api.platform.Platform;
 import me.loloed.bot.api.scheduler.BotScheduler;
 import me.loloed.bot.api.util.ClientSimulator;
@@ -97,8 +99,8 @@ public class Bot {
 
     public void attack() {
         if (isClient) {
-            Platform.ClientPlatform client = platform.getClient();
-            KeyMapping.click(client.getKey(Minecraft.getInstance().options.keyAttack));
+            InputConstants.Key key = ((ClientPlatform) platform).getKey(Minecraft.getInstance().options.keyAttack);
+            KeyMapping.click(key);
             return;
         }
         clientSimulator.attack();
@@ -106,8 +108,8 @@ public class Bot {
 
     public void interact() {
         if (isClient) {
-            Platform.ClientPlatform client = platform.getClient();
-            KeyMapping.click(client.getKey(Minecraft.getInstance().options.keyUse));
+            InputConstants.Key key = ((ClientPlatform) platform).getKey(Minecraft.getInstance().options.keyAttack);
+            KeyMapping.click(key);
             return;
         }
         clientSimulator.use();

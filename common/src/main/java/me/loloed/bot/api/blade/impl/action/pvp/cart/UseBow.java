@@ -49,6 +49,6 @@ public class UseBow extends ScoreAction {
     }
 
     private Slot getHotBar() {
-        return bot.getInventory().findFirst(stack -> stack.is(Items.BOW) && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.FLAMING_ARROWS, stack) > 0, SlotFlag.HOT_BAR);
+        return bot.getInventory().findFirst(stack -> stack.is(Items.BOW) && EnchantmentHelper.getItemEnchantmentLevel(Enchantments.FLAME, stack) > 0, SlotFlag.HOT_BAR);
     }
 }

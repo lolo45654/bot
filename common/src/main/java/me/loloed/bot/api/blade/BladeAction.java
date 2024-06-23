@@ -37,4 +37,9 @@ public abstract class BladeAction<T extends BladeAction<T>> {
     protected void panic(String detailedReason) {
         bot.getBlade().causePanic(detailedReason);
     }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName();
+    }
 }

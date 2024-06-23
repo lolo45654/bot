@@ -7,6 +7,7 @@ import me.loloed.bot.api.platform.Platform;
 import me.loloed.bot.api.util.BotMath;
 import me.loloed.bot.api.util.fake.FakePlayer;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Inventory;
@@ -14,6 +15,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.Unbreakable;
 import net.minecraft.world.item.enchantment.Enchantments;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -70,7 +72,7 @@ public class ServerBot extends Bot implements IServerBot {
 
         ItemStack shield = new ItemStack(Items.SHIELD);
         shield.enchant(Enchantments.MENDING, 1);
-        shield.getTag().putBoolean("Unbreakable", true);
+        shield.set(DataComponents.UNBREAKABLE, new Unbreakable(true));
         inventory.setItem(inventory.selected, shield);
         interact(shielding);
         if (prevShieldCooldown && !shielding && settings.autoHit) {
@@ -101,20 +103,20 @@ public class ServerBot extends Bot implements IServerBot {
 
     protected void applyArmor(Inventory inventory) {
         ItemStack helmet = new ItemStack(settings.armor.itemTypes.get(EquipmentSlot.HEAD));
-        helmet.enchant(Enchantments.ALL_DAMAGE_PROTECTION, 4);
-        helmet.getTag().putBoolean("Unbreakable", true);
+        helmet.enchant(Enchantments.PROTECTION, 4);
+        helmet.set(DataComponents.UNBREAKABLE, new Unbreakable(true));
         inventory.setItem(39, helmet);
         ItemStack chestplate = new ItemStack(settings.armor.itemTypes.get(EquipmentSlot.CHEST));
-        chestplate.enchant(Enchantments.ALL_DAMAGE_PROTECTION, 4);
-        chestplate.getTag().putBoolean("Unbreakable", true);
+        chestplate.enchant(Enchantments.PROTECTION, 4);
+        chestplate.set(DataComponents.UNBREAKABLE, new Unbreakable(true));
         inventory.setItem(38, chestplate);
         ItemStack leggings = new ItemStack(settings.armor.itemTypes.get(EquipmentSlot.LEGS));
-        leggings.enchant(settings.blastProtection ? Enchantments.BLAST_PROTECTION : Enchantments.ALL_DAMAGE_PROTECTION, 4);
-        leggings.getTag().putBoolean("Unbreakable", true);
+        leggings.enchant(settings.blastProtection ? Enchantments.BLAST_PROTECTION : Enchantments.PROTECTION, 4);
+        leggings.set(DataComponents.UNBREAKABLE, new Unbreakable(true));
         inventory.setItem(37, leggings);
         ItemStack boots = new ItemStack(settings.armor.itemTypes.get(EquipmentSlot.FEET));
-        boots.enchant(Enchantments.ALL_DAMAGE_PROTECTION, 4);
-        boots.getTag().putBoolean("Unbreakable", true);
+        boots.enchant(Enchantments.PROTECTION, 4);
+        boots.set(DataComponents.UNBREAKABLE, new Unbreakable(true));
         inventory.setItem(36, boots);
     }
 
