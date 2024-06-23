@@ -8,10 +8,10 @@
   "contact": {},
   "license": "All-Rights-Reserved",
   "icon": "assets/blade/icon.png",
-  "environment": "client",
+  "environment": "*",
   "entrypoints": {
     "client": [
-      "me.loloed.bot.blade.user.BotMod"
+      "me.loloed.bot.blade.user.BotClientMod"
     ]
   },
   "mixins": [
