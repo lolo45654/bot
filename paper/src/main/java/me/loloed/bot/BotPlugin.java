@@ -140,6 +140,7 @@ public class BotPlugin extends JavaPlugin {
                                     Vec3 explosion = handle.position().add(1, 0, 0);
                                     Vec3 pos = handle.position();
                                     handle.level().explode(null, handle.position().x + 1, explosion.y, explosion.z, 6.0f, false, Level.ExplosionInteraction.BLOCK);
+                                    sender.sendMessage(Component.text("Vel: " + handle.getDeltaMovement()));
                                     target.getScheduler().runDelayed(this, task -> sender.sendMessage(Component.text("Diff 1 tick: " + handle.position().subtract(pos))), null, 1L);
                                     target.getScheduler().runDelayed(this, task -> sender.sendMessage(Component.text("Diff 2 tick: " + handle.position().subtract(pos))), null, 2L);
                                     target.getScheduler().runDelayed(this, task -> sender.sendMessage(Component.text("Diff 3 tick: " + handle.position().subtract(pos))), null, 3L);
