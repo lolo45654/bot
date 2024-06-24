@@ -91,9 +91,6 @@ public class FakePlayer extends ServerPlayer {
             hiddenDeltaZ = 0.0;
         }
         serverSideDelta = new Vec3(hiddenDeltaX, hiddenDeltaY, hiddenDeltaZ);
-        Vec3 delta = getDeltaMovement(false);
-        System.out.printf("DELTA: x%.03f y%.03f z%.03f %n", delta.x / deltaLastTick.x, delta.y / deltaLastTick.y, delta.z / deltaLastTick.z);
-        deltaLastTick = delta;
     }
 
     @Override
@@ -124,6 +121,11 @@ public class FakePlayer extends ServerPlayer {
     }
 
     public void setDeltaMovement(Vec3 vec3, boolean serverSide) {
+        Vec3 prev = getDeltaMovement(serverSide);
+        System.out.printf("DELTA: x%.03f y%.03f z%.03f %n", vec3.x / prev.x, vec3.y / prev.y, vec3.z / prev.z);
+        if ((vec3.y / prev.y) > 6) {
+            Thread.dumpStack();
+        }
         if (serverSide && !forceClientSideDelta) {
             serverSideDelta = vec3;
         } else {
