@@ -13,6 +13,7 @@ import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.stats.Stat;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.ChatVisiblity;
 import net.minecraft.world.level.GameType;
@@ -42,6 +43,7 @@ public class FakePlayer extends ServerPlayer {
      * then the velocity of the shield is stored and sent due to the attack.
      */
     public Vec3 serverSideDelta = Vec3.ZERO;
+    public Vec3 storedDelta = Vec3.ZERO;
     public boolean forceClientSideDelta = false;
     public Vec3 deltaLastTick = Vec3.ZERO;
 
@@ -91,6 +93,19 @@ public class FakePlayer extends ServerPlayer {
             hiddenDeltaZ = 0.0;
         }
         serverSideDelta = new Vec3(hiddenDeltaX, hiddenDeltaY, hiddenDeltaZ);
+        hiddenDeltaX = storedDelta.x * f;
+        hiddenDeltaY = storedDelta.y * f;
+        hiddenDeltaZ = storedDelta.z * f;
+        if (Math.abs(hiddenDeltaX) < 0.003) {
+            hiddenDeltaX = 0.0;
+        }
+        if (Math.abs(hiddenDeltaY) < 0.003) {
+            hiddenDeltaY = 0.0;
+        }
+        if (Math.abs(hiddenDeltaZ) < 0.003) {
+            hiddenDeltaZ = 0.0;
+        }
+        storedDelta = new Vec3(hiddenDeltaX, hiddenDeltaY, hiddenDeltaZ);
     }
 
     @Override
@@ -135,6 +150,17 @@ public class FakePlayer extends ServerPlayer {
 
     public Vec3 getDeltaMovement(boolean serverSide) {
         return serverSide && !forceClientSideDelta ? serverSideDelta : super.getDeltaMovement();
+    }
+
+    @Override
+    public boolean hurt(DamageSource damageSource, float f) {
+        Vec3 pre = getDeltaMovement();
+        boolean hurt = super.hurt(damageSource, f);
+        Vec3 post = getDeltaMovement();
+        if (!hurtMarked) {
+            storedDelta = post;
+        }
+        return hurt;
     }
 
     /**
