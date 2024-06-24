@@ -68,8 +68,10 @@ public class FakePlayer extends ServerPlayer {
 
     @Override
     public void tick() {
+        forceClientSideDelta = true;
         super.tick();
         this.doTick();
+        forceClientSideDelta = false;
 
         BlockPos blockBelow = this.getBlockPosBelowThatAffectsMyMovement();
         float f4 = level().getBlockState(blockBelow).getBlock().getFriction();
@@ -154,13 +156,6 @@ public class FakePlayer extends ServerPlayer {
     @Override
     public @NotNull String getIpAddress() {
         return "127.0.0.1";
-    }
-
-    @Override
-    public void aiStep() {
-        forceClientSideDelta = true;
-        super.aiStep();
-        forceClientSideDelta = false;
     }
 
     public void sentMotionPacket() {
