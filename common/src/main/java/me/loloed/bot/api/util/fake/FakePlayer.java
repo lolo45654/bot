@@ -69,8 +69,8 @@ public class FakePlayer extends ServerPlayer {
 
     @Override
     public void tick() {
-        forceClientSideDelta = true;
         super.tick();
+        forceClientSideDelta = true;
         this.doTick();
         forceClientSideDelta = false;
 

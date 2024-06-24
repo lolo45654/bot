@@ -57,13 +57,6 @@ public class PaperPlatform implements ServerPlatform {
                     }
                 }
             }
-
-            @EventHandler
-            public void onExplosion(EntityKnockbackEvent event) {
-                if (event.getCause() == EntityKnockbackEvent.Cause.EXPLOSION) {
-                    System.out.println("Player " + event.getEntity().getName() + " took " + event.getKnockback() + " knockback.");
-                }
-            }
         }, plugin);
     }
 

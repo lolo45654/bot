@@ -46,9 +46,8 @@ public class FakeConnection extends Connection {
             player.setDeltaMovement(player.serverSideDelta, false);
             player.setDeltaMovement(Vec3.ZERO, true);
         } else if (obj instanceof ClientboundExplodePacket packet) {
-            Vec3 add = player.getDeltaMovement(false).add(packet.getKnockbackX(), packet.getKnockbackY(), packet.getKnockbackZ());
-            System.out.println("BOT took " + add + " kb.");
-            player.setDeltaMovement(add, false);
+            // player.getDeltaMovement(false).add(packet.getKnockbackX(), packet.getKnockbackY(), packet.getKnockbackZ());
+            player.setDeltaMovement(new Vec3(packet.getKnockbackX(), packet.getKnockbackY(), packet.getKnockbackZ()), false);
         }
     }
 
