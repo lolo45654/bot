@@ -103,16 +103,6 @@ public class FakePlayer extends ServerPlayer {
         return "BOT:" + getUUID();
     }
 
-    @Override
-    public boolean isControlledByLocalInstance() {
-        return true;
-    }
-
-    @Override
-    public boolean isEffectiveAi() {
-        return true;
-    }
-
     public void update(ServerPlayer player) {
         player.connection.send(platform.buildPlayerInfoPacket(EnumSet.of(Action.ADD_PLAYER, Action.UPDATE_LISTED), fakePlayerEntry));
     }
