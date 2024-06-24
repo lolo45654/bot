@@ -27,7 +27,7 @@ public class FakeConnection extends Connection {
     private final FakePlayer player;
 
     public FakeConnection(FakePlayer player) {
-        super(PacketFlow.SERVERBOUND);
+        super(PacketFlow.CLIENTBOUND);
         this.player = player;
         try {
             Connection$channel.set(this, new EmbeddedChannel());
@@ -44,10 +44,9 @@ public class FakeConnection extends Connection {
     public void send(Packet<?> obj, @Nullable PacketSendListener packetSendListener, boolean bl) {
         if (obj instanceof ClientboundSetEntityMotionPacket) {
             player.setDeltaMovement(player.serverSideDelta, false);
-            player.setDeltaMovement(Vec3.ZERO, true);
         } else if (obj instanceof ClientboundExplodePacket packet) {
             // player.getDeltaMovement(false).add(packet.getKnockbackX(), packet.getKnockbackY(), packet.getKnockbackZ());
-            player.setDeltaMovement(new Vec3(packet.getKnockbackX() * 0.75, packet.getKnockbackY() * 0.75, packet.getKnockbackZ() * 0.75), false);
+            player.setDeltaMovement(player.serverSideDelta, false);
         }
     }
 
