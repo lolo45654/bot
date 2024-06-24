@@ -90,6 +90,7 @@ public class FakePlayer extends ServerPlayer {
             hiddenDeltaZ = 0.0;
         }
         serverSideDelta = new Vec3(hiddenDeltaX, hiddenDeltaY, hiddenDeltaZ);
+        setDeltaMovement(getDeltaMovement(false).scale(f), false);
     }
 
     @Override
