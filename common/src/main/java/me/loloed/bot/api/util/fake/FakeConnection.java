@@ -45,7 +45,8 @@ public class FakeConnection extends Connection {
         if (obj instanceof ClientboundSetEntityMotionPacket) {
             player.sentMotionPacket();
         } else if (obj instanceof ClientboundExplodePacket packet) {
-            player.setDeltaMovement(player.getDeltaMovement(false).add(packet.getKnockbackX(), packet.getKnockbackY(), packet.getKnockbackZ()), false);
+            player.sentMotionPacket();
+            // player.setDeltaMovement(player.getDeltaMovement(false).add(packet.getKnockbackX(), packet.getKnockbackY(), packet.getKnockbackZ()), false);
         }
     }
 
