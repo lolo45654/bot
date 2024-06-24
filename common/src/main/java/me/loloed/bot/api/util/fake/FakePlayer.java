@@ -43,6 +43,7 @@ public class FakePlayer extends ServerPlayer {
      */
     public Vec3 serverSideDelta = Vec3.ZERO;
     public boolean forceClientSideDelta = false;
+    public Vec3 deltaLastTick = Vec3.ZERO;
 
     public FakePlayer(ServerPlatform platform, MinecraftServer server, Vec3 pos, float yaw, float pitch, ServerLevel world, GameProfile profile) {
         super(server, world, profile, new ClientInformation("en_us", 2, ChatVisiblity.HIDDEN, true, 0x7F, HumanoidArm.RIGHT, false, false));
@@ -90,7 +91,9 @@ public class FakePlayer extends ServerPlayer {
             hiddenDeltaZ = 0.0;
         }
         serverSideDelta = new Vec3(hiddenDeltaX, hiddenDeltaY, hiddenDeltaZ);
-        setDeltaMovement(getDeltaMovement(false).scale(f), false);
+        Vec3 delta = getDeltaMovement(false);
+        System.out.printf("DELTA: x%.03f y%.03f z%.03f %n", delta.x / deltaLastTick.x, delta.y / deltaLastTick.y, delta.z / deltaLastTick.z);
+        deltaLastTick = delta;
     }
 
     @Override
