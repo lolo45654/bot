@@ -41,8 +41,8 @@ public class FakePlayer extends ServerPlayer {
      * on the server, without telling the client. If you stun (shield break and attack at the same time, double click)
      * then the velocity of the shield is stored and sent due to the attack.
      */
-    public Vec3 hiddenDelta = Vec3.ZERO;
-    public boolean forceNonHidden = false;
+    public Vec3 serverSideDelta = Vec3.ZERO;
+    public boolean forceClientSideDelta = false;
 
     public FakePlayer(ServerPlatform platform, MinecraftServer server, Vec3 pos, float yaw, float pitch, ServerLevel world, GameProfile profile) {
         super(server, world, profile, new ClientInformation("en_us", 2, ChatVisiblity.HIDDEN, true, 0x7F, HumanoidArm.RIGHT, false, false));
@@ -75,9 +75,9 @@ public class FakePlayer extends ServerPlayer {
         float f4 = level().getBlockState(blockBelow).getBlock().getFriction();
 
         double f = onGround() ? f4 * 0.91F : 0.91F;
-        double hiddenDeltaX = hiddenDelta.x * f;
-        double hiddenDeltaY = hiddenDelta.y * f;
-        double hiddenDeltaZ = hiddenDelta.z * f;
+        double hiddenDeltaX = serverSideDelta.x * f;
+        double hiddenDeltaY = serverSideDelta.y * f;
+        double hiddenDeltaZ = serverSideDelta.z * f;
         if (Math.abs(hiddenDeltaX) < 0.003) {
             hiddenDeltaX = 0.0;
         }
@@ -87,7 +87,7 @@ public class FakePlayer extends ServerPlayer {
         if (Math.abs(hiddenDeltaZ) < 0.003) {
             hiddenDeltaZ = 0.0;
         }
-        hiddenDelta = new Vec3(hiddenDeltaX, hiddenDeltaY, hiddenDeltaZ);
+        serverSideDelta = new Vec3(hiddenDeltaX, hiddenDeltaY, hiddenDeltaZ);
     }
 
     @Override
@@ -127,9 +127,9 @@ public class FakePlayer extends ServerPlayer {
         setDeltaMovement(vec3, true);
     }
 
-    public void setDeltaMovement(Vec3 vec3, boolean hidden) {
-        if (hidden && !forceNonHidden) {
-            hiddenDelta = vec3;
+    public void setDeltaMovement(Vec3 vec3, boolean serverSide) {
+        if (serverSide && !forceClientSideDelta) {
+            serverSideDelta = vec3;
         } else {
             super.setDeltaMovement(vec3);
         }
@@ -140,8 +140,8 @@ public class FakePlayer extends ServerPlayer {
         return getDeltaMovement(true);
     }
 
-    public Vec3 getDeltaMovement(boolean hidden) {
-        return hidden && !forceNonHidden ? hiddenDelta : super.getDeltaMovement();
+    public Vec3 getDeltaMovement(boolean serverSide) {
+        return serverSide && !forceClientSideDelta ? serverSideDelta : super.getDeltaMovement();
     }
 
     /**
@@ -158,13 +158,13 @@ public class FakePlayer extends ServerPlayer {
 
     @Override
     public void aiStep() {
-        forceNonHidden = true;
+        forceClientSideDelta = true;
         super.aiStep();
-        forceNonHidden = false;
+        forceClientSideDelta = false;
     }
 
     public void sentMotionPacket() {
-        setDeltaMovement(hiddenDelta, false);
+        setDeltaMovement(serverSideDelta, false);
         setDeltaMovement(Vec3.ZERO, true);
     }
 }
