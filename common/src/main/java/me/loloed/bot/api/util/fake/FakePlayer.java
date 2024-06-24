@@ -158,7 +158,7 @@ public class FakePlayer extends ServerPlayer {
         boolean hurt = super.hurt(damageSource, f);
         Vec3 post = getDeltaMovement();
         if (!hurtMarked) {
-            storedDelta = post;
+            storedDelta = post.subtract(pre);
         }
         return hurt;
     }
