@@ -1,5 +1,6 @@
 package me.loloed.bot;
 
+import io.papermc.paper.event.entity.EntityKnockbackEvent;
 import me.loloed.bot.api.Bot;
 import me.loloed.bot.api.platform.ServerPlatform;
 import me.loloed.bot.api.util.ClientSimulator;
@@ -14,6 +15,7 @@ import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerVelocityEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -53,6 +55,13 @@ public class PaperPlatform implements ServerPlatform {
                     if (bot.getVanillaPlayer() instanceof FakePlayer fakePlayer) {
                         fakePlayer.update(((CraftPlayer) event.getPlayer()).getHandle());
                     }
+                }
+            }
+
+            @EventHandler
+            public void onExplosion(EntityKnockbackEvent event) {
+                if (event.getCause() == EntityKnockbackEvent.Cause.EXPLOSION) {
+                    System.out.println("Player " + event.getEntity().getName() + " took " + event.getKnockback() + " knockback.");
                 }
             }
         }, plugin);
