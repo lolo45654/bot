@@ -123,7 +123,7 @@ public class FakePlayer extends ServerPlayer {
     public void setDeltaMovement(Vec3 vec3, boolean serverSide) {
         Vec3 prev = getDeltaMovement(serverSide);
         System.out.printf("DELTA: x%.03f y%.03f z%.03f %n", vec3.x / prev.x, vec3.y / prev.y, vec3.z / prev.z);
-        if ((vec3.y / prev.y) > 6) {
+        if ((vec3.y / prev.y) > 6 && !Double.isInfinite(vec3.y / prev.y)) {
             Thread.dumpStack();
         }
         if (serverSide && !forceClientSideDelta) {
