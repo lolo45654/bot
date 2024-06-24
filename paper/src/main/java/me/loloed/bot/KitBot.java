@@ -38,7 +38,7 @@ public class KitBot extends Bot implements IServerBot {
                 bot.destroy();
             }
         }
-        FakePlayer fakePlayer = new FakePlayer(BotPlugin.platform, MinecraftServer.getServer(), CraftLocation.toVec3D(pos), pos.getYaw(), pos.getPitch(), ((CraftWorld) pos.getWorld()).getHandle(), new GameProfile(UUID.randomUUID(), "KitBot"));
+        FakePlayer fakePlayer = new FakePlayer(BotPlugin.platform, MinecraftServer.getServer(), CraftLocation.toVec3D(pos), pos.getYaw(), pos.getPitch(), ((CraftWorld) pos.getWorld()).getHandle(), IServerBot.applySkin(new GameProfile(UUID.randomUUID(), "KitBot")));
         KitBot bot = new KitBot(fakePlayer, BotPlugin.platform, ((CraftPlayer) spawner).getHandle());
         BladeMachine blade = bot.getBlade();
         blade.set(ConfigKeys.TARGET, ((CraftLivingEntity) target).getHandle());
@@ -73,7 +73,6 @@ public class KitBot extends Bot implements IServerBot {
         super(vanillaPlayer, platform);
         this.spawner = spawner;
         this.settings = new ServerBotSettings();
-        if (vanillaPlayer instanceof FakePlayer fakePlayer) applySkin(fakePlayer);
     }
 
     @Override

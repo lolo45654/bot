@@ -36,9 +36,9 @@ public class PaperPlatform implements ServerPlatform {
         PLUGIN = plugin;
 
         try {
-            FakePlayer.ServerPlayer$spawnInvulnerableTime = ServerPlayer.class.getDeclaredField("cC");
+            FakePlayer.ServerPlayer$spawnInvulnerableTime = ServerPlayer.class.getDeclaredField("cR");
             FakePlayer.ServerPlayer$spawnInvulnerableTime.setAccessible(true);
-            ClientSimulator.LivingEntity$updatingUsingItem = LivingEntity.class.getDeclaredMethod("I");
+            ClientSimulator.LivingEntity$updatingUsingItem = LivingEntity.class.getDeclaredMethod("H");
             ClientSimulator.LivingEntity$updatingUsingItem.setAccessible(true);
             FakeConnection.Connection$channel = Connection.class.getDeclaredField("n");
             FakeConnection.Connection$channel.setAccessible(true);

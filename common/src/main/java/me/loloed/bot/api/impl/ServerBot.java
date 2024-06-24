@@ -1,11 +1,8 @@
 package me.loloed.bot.api.impl;
 
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.PropertyMap;
 import me.loloed.bot.api.Bot;
 import me.loloed.bot.api.platform.Platform;
 import me.loloed.bot.api.util.BotMath;
-import me.loloed.bot.api.util.fake.FakePlayer;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerPlayer;
@@ -33,7 +30,6 @@ public class ServerBot extends Bot implements IServerBot {
         this.spawner = spawner;
         this.settings = settings;
         applyArmor(vanillaPlayer.getInventory());
-        if (vanillaPlayer instanceof FakePlayer fakePlayer) applySkin(fakePlayer);
     }
 
     @Override

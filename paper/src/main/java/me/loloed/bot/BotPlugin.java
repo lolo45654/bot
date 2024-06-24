@@ -70,7 +70,7 @@ public class BotPlugin extends JavaPlugin {
                                 }
                             }
 
-                            FakePlayer fakePlayer = new FakePlayer(platform, MinecraftServer.getServer(), CraftLocation.toVec3D(pos), pos.getYaw(), pos.getPitch(), ((CraftWorld) pos.getWorld()).getHandle(), new GameProfile(UUID.randomUUID(), "SimpleBot"));
+                            FakePlayer fakePlayer = new FakePlayer(platform, MinecraftServer.getServer(), CraftLocation.toVec3D(pos), pos.getYaw(), pos.getPitch(), ((CraftWorld) pos.getWorld()).getHandle(), IServerBot.applySkin(new GameProfile(UUID.randomUUID(), "SimpleBot")));
                             ServerBot bot = new ServerBot(fakePlayer, platform, ((CraftPlayer) sender).getHandle(), ServerBotSettings.TOTEM.clone());
                             platform.addBot(bot);
                             sender.sendMessage(Component.text("Spawned a totem bot!", PRIMARY));
@@ -88,7 +88,7 @@ public class BotPlugin extends JavaPlugin {
                                 }
                             }
 
-                            FakePlayer fakePlayer = new FakePlayer(platform, MinecraftServer.getServer(), CraftLocation.toVec3D(pos), pos.getYaw(), pos.getPitch(), ((CraftWorld) pos.getWorld()).getHandle(), new GameProfile(UUID.randomUUID(), "SimpleBot"));
+                            FakePlayer fakePlayer = new FakePlayer(platform, MinecraftServer.getServer(), CraftLocation.toVec3D(pos), pos.getYaw(), pos.getPitch(), ((CraftWorld) pos.getWorld()).getHandle(), IServerBot.applySkin(new GameProfile(UUID.randomUUID(), "SimpleBot")));
                             ServerBot bot = new ServerBot(fakePlayer, platform, ((CraftPlayer) sender).getHandle(), ServerBotSettings.SHIELD.clone());
                             platform.addBot(bot);
                             sender.sendMessage(Component.text("Spawned a shield bot!", PRIMARY));
@@ -100,7 +100,7 @@ public class BotPlugin extends JavaPlugin {
                         .withPermission("bot.spawn")
                         .then(createPossibleBots(new LocationArgument("where"), args -> {
                             Location pos = (Location) args.get("where");
-                            return new FakePlayer(platform, MinecraftServer.getServer(), CraftLocation.toVec3D(pos), pos.getYaw(), pos.getPitch(), ((CraftWorld) pos.getWorld()).getHandle(), new GameProfile(UUID.randomUUID(), BuildConstants.CENSOR_NAMES ? "BOT" : "Blade"));
+                            return new FakePlayer(platform, MinecraftServer.getServer(), CraftLocation.toVec3D(pos), pos.getYaw(), pos.getPitch(), ((CraftWorld) pos.getWorld()).getHandle(), IServerBot.applySkin(new GameProfile(UUID.randomUUID(), BuildConstants.CENSOR_NAMES ? "Bot" : "Blade")));
                         })))
                 .then(new LiteralArgument("removeall")
                         .withPermission("bot.removeall")
