@@ -9,8 +9,6 @@ import me.loloed.bot.api.util.BotMath;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.food.FoodProperties;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.Vec3;
 
 public class UseHealing extends ScoreAction implements Sword {
@@ -52,9 +50,11 @@ public class UseHealing extends ScoreAction implements Sword {
         double distSq = closestPoint.distanceToSqr(eyePos);
         float ourHealthRatio = bot.getVanillaPlayer().getHealth() / bot.getVanillaPlayer().getMaxHealth();
         float targetHealthRatio = target.getHealth() / target.getMaxHealth();
+
+        System.out.println("Score for UseHealing's useitemticks: " + ((bot.getVanillaPlayer().isUsingItem() ? (-bot.getVanillaPlayer().getUseItemRemainingTicks() + 16) / 3.0 : 0)));
         return getSwordScore(bot) +
-                Math.min(distSq / 8, 6) +
-                (bot.getVanillaPlayer().isUsingItem() ? (-bot.getVanillaPlayer().getUseItemRemainingTicks() + 16) / 5.0 : 0) +
+                Math.min(distSq / 24, 3) +
+                (bot.getVanillaPlayer().isUsingItem() ? (-bot.getVanillaPlayer().getUseItemRemainingTicks() + 16) / 3.0 : 0) +
                 ((targetHealthRatio - ourHealthRatio) * 2 - bot.getBlade().get(ConfigKeys.DIFFICULTY)) +
                 (getHealingSlot() == null ? -12 : 0);
     }

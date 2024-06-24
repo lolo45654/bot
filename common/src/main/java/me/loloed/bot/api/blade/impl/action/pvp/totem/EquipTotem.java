@@ -18,7 +18,7 @@ public class EquipTotem extends ScoreAction implements Totem {
         if (tick == 0) {
             inv.startAction();
         }
-        if (tick >= ConfigKeys.getDifficultyReversed(bot) * 3) {
+        if (tick >= ConfigKeys.getDifficultyReversedCubic(bot) * 0.8) {
             inv.move(inventorySlot, Slot.fromOffHand(), true);
         }
     }
@@ -34,7 +34,8 @@ public class EquipTotem extends ScoreAction implements Totem {
         Slot hotBarSlot = inv.findFirst(stack -> stack.is(Items.TOTEM_OF_UNDYING), SlotFlag.HOT_BAR);
         return getTotemScore(bot) +
                 (inv.getOffHand().is(Items.TOTEM_OF_UNDYING) ? -5 : 0) +
-                (hotBarSlot != null && inv.getSelectedSlot() == hotBarSlot.getHotBarIndex() ? 0.8 : 0);
+                (hotBarSlot != null && inv.getSelectedSlot() == hotBarSlot.getHotBarIndex() ? 1.4 : 0) +
+                (Math.min(tick / 0.7, 5));
     }
 
     @Override

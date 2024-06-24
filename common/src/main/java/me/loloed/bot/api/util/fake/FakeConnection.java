@@ -7,7 +7,9 @@ import net.minecraft.network.PacketListener;
 import net.minecraft.network.PacketSendListener;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.network.protocol.game.ClientboundExplodePacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
@@ -35,21 +37,19 @@ public class FakeConnection extends Connection {
     }
 
     @Override
-    public void setListener(PacketListener packetListener) {
+    public void setListenerForServerboundHandshake(PacketListener packetListener) {
     }
 
     @Override
     public void send(Packet<?> obj, @Nullable PacketSendListener packetSendListener, boolean bl) {
         if (obj instanceof ClientboundSetEntityMotionPacket) {
-            player.uglyAttackFix = true;
+            player.sentMotionPacket();
+        } else if (obj instanceof ClientboundExplodePacket packet) {
+            player.setDeltaMovement(player.getDeltaMovement(false).add(packet.getKnockbackX(), packet.getKnockbackY(), packet.getKnockbackZ()), false);
         }
     }
 
     @Override
     public void channelActive(ChannelHandlerContext channelhandlercontext) {
-    }
-
-    @Override
-    public void setListenerForServerboundHandshake(PacketListener packetListener) {
     }
 }

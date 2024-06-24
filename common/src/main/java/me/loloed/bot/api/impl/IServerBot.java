@@ -23,10 +23,9 @@ public interface IServerBot {
 
     void destroy();
 
-    default void applySkin(FakePlayer fakePlayer) {
-        GameProfile profile = fakePlayer.getGameProfile();
+    static GameProfile applySkin(GameProfile profile) {
         PropertyMap properties = profile.getProperties();
         properties.put("textures", SKINS[ThreadLocalRandom.current().nextInt(SKINS.length)]);
-        fakePlayer.updateAll();
+        return profile;
     }
 }

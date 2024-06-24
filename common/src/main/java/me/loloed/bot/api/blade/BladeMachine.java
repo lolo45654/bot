@@ -7,7 +7,6 @@ import me.loloed.bot.api.blade.debug.ErrorOccurrence;
 import me.loloed.bot.api.blade.debug.ReportError;
 import me.loloed.bot.api.blade.impl.BladeImpl;
 import me.loloed.bot.api.blade.planner.score.ScoreAction;
-import me.loloed.bot.api.blade.planner.score.ScoreGoal;
 import me.loloed.bot.api.blade.planner.score.ScorePlanner;
 import me.loloed.bot.api.blade.state.BladeState;
 
@@ -21,6 +20,7 @@ public class BladeMachine {
     protected final BladeDebug report = new BladeDebug();
     private final Map<ConfigKey<?>, Object> config = new HashMap<>();
 
+    protected BladeGoal goal = null;
     protected boolean enabled = false;
     protected ScoreAction previousAction;
     protected DebugFrame frame;
@@ -32,12 +32,14 @@ public class BladeMachine {
 
     public void tick() {
         if (!enabled) return;
+        if (goal == null) return;
         frame = report.newFrame();
         ReportError.wrap(() -> {
             planner.refreshAll(bot, state);
+            goal.setBot(bot);
             produceState();
             frame.setState(state.copy());
-            BladePlannedAction<ScoreAction> plan = planner.planInternal(state, frame.getPlanner());
+            BladePlannedAction<ScoreAction> plan = planner.planInternal(goal, state, frame.getPlanner());
             if (plan == null) return;
             previousAction = plan.tick(previousAction, frame);
         }, frame, ErrorOccurrence.OTHER);
@@ -51,9 +53,9 @@ public class BladeMachine {
         return planner;
     }
 
-    public void setGoal(ScoreGoal goal) {
+    public void setGoal(BladeGoal goal) {
         setEnabled(true);
-        planner.setGoal(goal);
+        this.goal = goal;
     }
 
     public void addAction(ScoreAction action) {
@@ -68,7 +70,7 @@ public class BladeMachine {
         return report;
     }
 
-    public DebugFrame getFrame() {
+    public DebugFrame getLastFrame() {
         return frame;
     }
 

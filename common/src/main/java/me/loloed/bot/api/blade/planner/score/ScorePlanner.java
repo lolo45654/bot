@@ -2,8 +2,8 @@ package me.loloed.bot.api.blade.planner.score;
 
 import me.loloed.bot.api.Bot;
 import me.loloed.bot.api.blade.BladeGoal;
-import me.loloed.bot.api.blade.debug.planner.ScoreDebug;
 import me.loloed.bot.api.blade.BladePlannedAction;
+import me.loloed.bot.api.blade.debug.planner.ScoreDebug;
 import me.loloed.bot.api.blade.planner.Planner;
 import me.loloed.bot.api.blade.state.BladeState;
 
@@ -11,7 +11,6 @@ import java.util.*;
 
 public class ScorePlanner implements Planner<ScoreDebug, ScoreAction> {
     private final Set<ScoreAction> actions = new HashSet<>();
-    private ScoreGoal goal = null;
     private double temperature = 1.0;
     private Random random = new Random();
 
@@ -33,8 +32,10 @@ public class ScorePlanner implements Planner<ScoreDebug, ScoreAction> {
     }
 
     @Override
-    public BladePlannedAction<ScoreAction> planInternal(BladeState state, ScoreDebug debug) {
+    public BladePlannedAction<ScoreAction> planInternal(BladeGoal goal, BladeState state, ScoreDebug debug) {
         Objects.requireNonNull(goal);
+        goal.tick();
+        debug.setTemperature(temperature);
         Map<ScoreAction, Score> scores = new HashMap<>();
         double totalWeight = 0.0;
         for (ScoreAction action : actions) {
@@ -51,13 +52,16 @@ public class ScorePlanner implements Planner<ScoreDebug, ScoreAction> {
             Score score = entry.getValue();
             entry.setValue(new Score(score.score, score.scoreWithGoal, score.weight / totalWeight));
         }
+        debug.setScores(scores);
 
         double rand = random.nextDouble();
         double cumulativeWeight = 0.0;
         for (Map.Entry<ScoreAction, Score> entry : scores.entrySet()) {
             cumulativeWeight += entry.getValue().weight;
             if (rand <= cumulativeWeight) {
-                return new BladePlannedAction<>(entry.getKey());
+                ScoreAction action = entry.getKey();
+                debug.setActionTaken(action);
+                return new BladePlannedAction<>(action);
             }
         }
 
@@ -82,10 +86,6 @@ public class ScorePlanner implements Planner<ScoreDebug, ScoreAction> {
 
     public void setTemperature(double temperature) {
         this.temperature = temperature;
-    }
-
-    public void setGoal(ScoreGoal goal) {
-        this.goal = goal;
     }
 
     public static record Score(double score, double scoreWithGoal, double weight) {

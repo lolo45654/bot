@@ -2,6 +2,8 @@ package me.loloed.bot.api.inventory;
 
 import me.loloed.bot.api.Bot;
 import me.loloed.bot.api.event.InventoryEvents;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
@@ -18,7 +20,6 @@ public class BotInventory {
     public BotInventory(Bot bot) {
         this.bot = bot;
         this.inventory = bot.getVanillaPlayer().getInventory();
-        if (bot.isClient) throw new UnsupportedOperationException("use BotClientInventory");
     }
 
 
@@ -80,6 +81,7 @@ public class BotInventory {
     }
 
     public void moveInternally(Slot from, Slot to) {
+        if (bot.isClient) throw new UnsupportedOperationException("use BotClientInventory");
         int fromVanillaIndex = from.getVanillaIndex();
         int toVanillaIndex = to.getVanillaIndex();
         ItemStack tmp = inventory.getItem(fromVanillaIndex);
@@ -105,22 +107,24 @@ public class BotInventory {
         return inventory;
     }
 
-    public Slot getBestFood(Predicate<FoodProperties> tester, SlotFlag... order) {
+    public Slot getBestFood(Predicate<FoodProperties> tester, SlotFlag... slots) {
         Slot bestSlot = null;
         float bestNum = Float.MIN_NORMAL;
-        for (SlotFlag flag : order) {
-            for (int i = 0; i < Slot.MAX_INDEX; i++) {
-                Slot slot = new Slot(i);
-                if (!flag.matchesSlot(slot)) continue;
-                ItemStack stack = getItem(slot);
-                if (!stack.isEdible()) continue;
-                FoodProperties foodProperties = stack.getItem().getFoodProperties();
-                if (foodProperties == null) continue;
-                float num = foodProperties.getNutrition() + foodProperties.getSaturationModifier();
-                if (stack.isEdible() && num > bestNum && tester.test(foodProperties)) {
-                    bestNum = num;
-                    bestSlot = slot;
+        for (int i = 0; i < Slot.MAX_INDEX; i++) {
+            Slot slot = new Slot(i);
+            inner: {
+                for (SlotFlag flag : slots) {
+                    if (flag.matchesSlot(slot)) break inner;
                 }
+                continue;
+            }
+            ItemStack stack = getItem(slot);
+            FoodProperties foodProperties = stack.get(DataComponents.FOOD);
+            if (foodProperties == null) continue;
+            float num = foodProperties.nutrition() + foodProperties.saturation();
+            if (num > bestNum && tester.test(foodProperties)) {
+                bestNum = num;
+                bestSlot = slot;
             }
         }
         return bestSlot;

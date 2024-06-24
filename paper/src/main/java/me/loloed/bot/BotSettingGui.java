@@ -1,26 +1,20 @@
-package me.loloed.bot.blade;
+package me.loloed.bot;
 
 import com.mojang.authlib.GameProfile;
 import me.loloed.bot.api.impl.IServerBot;
 import me.loloed.bot.api.impl.ServerBot;
 import me.loloed.bot.api.impl.ServerBotSettings;
 import me.loloed.bot.api.util.fake.FakePlayer;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_20_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_20_R3.util.CraftLocation;
+import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.craftbukkit.util.CraftLocation;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import xyz.xenondevs.inventoryaccess.component.AdventureComponentWrapper;
 import xyz.xenondevs.invui.gui.Gui;
 import xyz.xenondevs.invui.item.ItemProvider;
 import xyz.xenondevs.invui.item.ItemWrapper;
@@ -33,8 +27,8 @@ import java.util.Arrays;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-import static me.loloed.bot.blade.MenuUtils.empty;
-import static me.loloed.bot.blade.MenuUtils.wrapMiniMessage;
+import static me.loloed.bot.MenuUtils.empty;
+import static me.loloed.bot.MenuUtils.wrapMiniMessage;
 
 public class BotSettingGui {
     public static void show(ServerPlayer player, PaperPlatform platform, ServerBotSettings settings, @Nullable IServerBot bot) {
