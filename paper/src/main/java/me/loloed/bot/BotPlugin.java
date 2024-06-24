@@ -19,9 +19,12 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.craftbukkit.util.CraftLocation;
@@ -129,6 +132,20 @@ public class BotPlugin extends JavaPlugin {
                         .executes((sender, args) -> {
                             sender.sendMessage(Component.text("There are currently " + PaperPlatform.BOTS.size() + " blade bot(s)."));
                         }))
+                .then(new LiteralArgument("explode")
+                        .then(new EntitySelectorArgument.OneEntity("target")
+                                .executes((sender, args) -> {
+                                    Entity target = (Entity) args.get("target");
+                                    net.minecraft.world.entity.Entity handle = ((CraftEntity) target).getHandle();
+                                    Vec3 explosion = handle.position().add(1, 0, 0);
+                                    Vec3 pos = handle.position();
+                                    handle.level().explode(null, handle.position().x + 1, explosion.y, explosion.z, 6.0f, false, Level.ExplosionInteraction.BLOCK);
+                                    target.getScheduler().runDelayed(this, task -> sender.sendMessage(Component.text("Diff 1 tick: " + handle.position().subtract(pos))), null, 1L);
+                                    target.getScheduler().runDelayed(this, task -> sender.sendMessage(Component.text("Diff 2 tick: " + handle.position().subtract(pos))), null, 2L);
+                                    target.getScheduler().runDelayed(this, task -> sender.sendMessage(Component.text("Diff 3 tick: " + handle.position().subtract(pos))), null, 3L);
+                                    target.getScheduler().runDelayed(this, task -> sender.sendMessage(Component.text("Diff 4 tick: " + handle.position().subtract(pos))), null, 4L);
+                                    target.getScheduler().runDelayed(this, task -> sender.sendMessage(Component.text("Diff 5 tick: " + handle.position().subtract(pos))), null, 5L);
+                                })))
                 .executesPlayer((sender, args) -> {
                     for (Bot b : PaperPlatform.BOTS) {
                         if (b instanceof IServerBot bot && bot.getSpawner().getUUID().equals(sender.getUniqueId())) {
