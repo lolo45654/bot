@@ -17,12 +17,20 @@ import me.loloed.bot.api.impl.ServerBotSettings;
 import me.loloed.bot.api.util.fake.FakePlayer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.item.PrimedTnt;
+import net.minecraft.world.item.enchantment.ProtectionEnchantment;
+import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.ExplosionDamageCalculator;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -175,13 +183,30 @@ public class BotPlugin extends JavaPlugin {
                                     net.minecraft.world.entity.Entity handle = ((CraftEntity) target).getHandle();
                                     Vec3 explosion = handle.position().add(1, 0, 0);
                                     Vec3 pos = handle.position();
-                                    handle.level().explode(null, null, null, handle.position().x + 1, explosion.y, explosion.z, 6.0f, false, Level.ExplosionInteraction.BLOCK, false, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER, SoundEvents.GENERIC_EXPLODE);
-                                    sender.sendMessage(Component.text("Vel: " + handle.getDeltaMovement()));
-                                    target.getScheduler().runDelayed(this, task -> sender.sendMessage(Component.text("Diff 1 tick: " + handle.position().subtract(pos))), null, 1L);
-                                    target.getScheduler().runDelayed(this, task -> sender.sendMessage(Component.text("Diff 2 tick: " + handle.position().subtract(pos))), null, 2L);
-                                    target.getScheduler().runDelayed(this, task -> sender.sendMessage(Component.text("Diff 3 tick: " + handle.position().subtract(pos))), null, 3L);
-                                    target.getScheduler().runDelayed(this, task -> sender.sendMessage(Component.text("Diff 4 tick: " + handle.position().subtract(pos))), null, 4L);
-                                    target.getScheduler().runDelayed(this, task -> sender.sendMessage(Component.text("Diff 5 tick: " + handle.position().subtract(pos))), null, 5L);
+                                    double x = handle.getX() - explosion.x;
+                                    double y = (handle instanceof PrimedTnt ? handle.getY() : handle.getEyeY()) - explosion.y;
+                                    double z = handle.getZ() - explosion.z;
+                                    sender.sendMessage(Component.text(String.format("Step 1 X: %.03f Y: %.03f Z: %.03f", x, y, z)));
+                                    double dist = Math.sqrt(x * x + y * y + z * z);
+                                    if (dist <= 0.0D) {
+                                        sender.sendMessage(Component.text("Dist is 0"));
+                                    }
+                                    x /= dist;
+                                    y /= dist;
+                                    z /= dist;
+                                    sender.sendMessage(Component.text(String.format("Step 2 X: %.03f Y: %.03f Z: %.03f", x, y, z)));
+                                    double d7 = Math.sqrt(handle.distanceToSqr(explosion)) / 12.0;
+
+                                    BlockPos.MutableBlockPos bp = new BlockPos.MutableBlockPos();
+                                    double d12 = (1.0D - d7) * this.getSeenFraction(explosion, handle, new Explosion.ExplosionBlockCache[0], bp) * (double) new ExplosionDamageCalculator().getKnockbackMultiplier(handle);
+                                    double d13 = ProtectionEnchantment.getExplosionKnockbackAfterDampener((net.minecraft.world.entity.LivingEntity) handle, d12);
+
+                                    sender.sendMessage(Component.text(String.format("Step 3 d12: %.03f d13: %.03f", d12, d13)));
+
+                                    x *= d13;
+                                    y *= d13;
+                                    z *= d13;
+                                    sender.sendMessage(Component.text(String.format("Step 4 X: %.03f Y: %.03f Z: %.03f", x, y, z)));
                                 })))
                 .executesPlayer((sender, args) -> {
                     for (Bot b : PaperPlatform.BOTS) {
@@ -322,5 +347,53 @@ public class BotPlugin extends JavaPlugin {
                                         bot.interact(false);
                                     }, null, 40L);
                                 })));
+    }
+
+    private float getSeenFraction(final Vec3 source, final net.minecraft.world.entity.Entity target,
+                                  final Explosion.ExplosionBlockCache[] blockCache,
+                                  final BlockPos.MutableBlockPos blockPos) {
+        final AABB boundingBox = target.getBoundingBox();
+        final double diffX = boundingBox.maxX - boundingBox.minX;
+        final double diffY = boundingBox.maxY - boundingBox.minY;
+        final double diffZ = boundingBox.maxZ - boundingBox.minZ;
+
+        final double incX = 1.0 / (diffX * 2.0 + 1.0);
+        final double incY = 1.0 / (diffY * 2.0 + 1.0);
+        final double incZ = 1.0 / (diffZ * 2.0 + 1.0);
+
+        if (incX < 0.0 || incY < 0.0 || incZ < 0.0) {
+            return 0.0f;
+        }
+
+        final double offX = (1.0 - Math.floor(1.0 / incX) * incX) * 0.5 + boundingBox.minX;
+        final double offY = boundingBox.minY;
+        final double offZ = (1.0 - Math.floor(1.0 / incZ) * incZ) * 0.5 + boundingBox.minZ;
+
+        final io.papermc.paper.util.CollisionUtil.LazyEntityCollisionContext context = new io.papermc.paper.util.CollisionUtil.LazyEntityCollisionContext(target);
+
+        int totalRays = 0;
+        int missedRays = 0;
+
+        for (double dx = 0.0; dx <= 1.0; dx += incX) {
+            final double fromX = Math.fma(dx, diffX, offX);
+            for (double dy = 0.0; dy <= 1.0; dy += incY) {
+                final double fromY = Math.fma(dy, diffY, offY);
+                for (double dz = 0.0; dz <= 1.0; dz += incZ) {
+                    ++totalRays;
+
+                    final Vec3 from = new Vec3(
+                            fromX,
+                            fromY,
+                            Math.fma(dz, diffZ, offZ)
+                    );
+
+                    if (!false) {
+                        ++missedRays;
+                    }
+                }
+            }
+        }
+
+        return (float)missedRays / (float)totalRays;
     }
 }
