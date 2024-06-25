@@ -74,8 +74,7 @@ public class FakePlayer extends ServerPlayer {
         forceClientSideDelta = true;
         this.doTick();
         forceClientSideDelta = false;
-        this.aiStep();
-/*
+
         BlockPos blockBelow = this.getBlockPosBelowThatAffectsMyMovement();
         float f4 = level().getBlockState(blockBelow).getBlock().getFriction();
 
@@ -92,7 +91,8 @@ public class FakePlayer extends ServerPlayer {
         if (Math.abs(hiddenDeltaZ) < 0.003) {
             hiddenDeltaZ = 0.0;
         }
-        serverSideDelta = new Vec3(hiddenDeltaX, hiddenDeltaY, hiddenDeltaZ);*/
+        serverSideDelta = new Vec3(hiddenDeltaX, hiddenDeltaY, hiddenDeltaZ);
+        travel(new Vec3(this.xxa, this.yya, this.zza));
     }
 
     @Override
