@@ -13,7 +13,6 @@ import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.stats.Stat;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.ChatVisiblity;
 import net.minecraft.world.level.GameType;
@@ -44,7 +43,7 @@ public class FakePlayer extends ServerPlayer {
      */
     public Vec3 serverSideDelta = Vec3.ZERO;
     public boolean forceClientSideDelta = false;
-    public int debug = 0;
+    public boolean preventMove = false;
 
     public FakePlayer(ServerPlatform platform, MinecraftServer server, Vec3 pos, float yaw, float pitch, ServerLevel world, GameProfile profile) {
         super(server, world, profile, new ClientInformation("en_us", 2, ChatVisiblity.HIDDEN, true, 0x7F, HumanoidArm.RIGHT, false, false));
@@ -74,6 +73,10 @@ public class FakePlayer extends ServerPlayer {
         forceClientSideDelta = true;
         this.doTick();
         forceClientSideDelta = false;
+        preventMove = true;
+        travel(new Vec3(xxa, yya, zza));
+        preventMove = false;
+        /*
 
         BlockPos blockBelow = this.getBlockPosBelowThatAffectsMyMovement();
         float f4 = level().getBlockState(blockBelow).getBlock().getFriction();
@@ -91,7 +94,7 @@ public class FakePlayer extends ServerPlayer {
         if (Math.abs(hiddenDeltaZ) < 0.003) {
             hiddenDeltaZ = 0.0;
         }
-        serverSideDelta = new Vec3(hiddenDeltaX, hiddenDeltaY, hiddenDeltaZ);
+        serverSideDelta = new Vec3(hiddenDeltaX, hiddenDeltaY, hiddenDeltaZ);*/
     }
 
     @Override
@@ -122,9 +125,6 @@ public class FakePlayer extends ServerPlayer {
     }
 
     public void setDeltaMovement(Vec3 vec3, boolean serverSide) {
-        if (debug > 0) {
-            new Exception("Stack trace; server side: " + serverSide + " actual: " + (serverSide && !forceClientSideDelta)).printStackTrace();
-        }
         if (serverSide && !forceClientSideDelta) {
             serverSideDelta = vec3;
         } else {
@@ -156,5 +156,23 @@ public class FakePlayer extends ServerPlayer {
     public void sentMotionPacket() {
         setDeltaMovement(serverSideDelta, false);
         setDeltaMovement(Vec3.ZERO, true);
+    }
+
+    @Override
+    public boolean isControlledByLocalInstance() {
+        return true;
+    }
+
+    @Override
+    public boolean isEffectiveAi() {
+        return true;
+    }
+
+    @Override
+    public void setPos(double d, double e, double f) {
+        if (preventMove) {
+            return;
+        }
+        super.setPos(d, e, f);
     }
 }
