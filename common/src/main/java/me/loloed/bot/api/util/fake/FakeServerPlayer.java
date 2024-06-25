@@ -33,4 +33,9 @@ public class FakeServerPlayer extends LivingEntity {
     public HumanoidArm getMainArm() {
         return serverPlayer.getMainArm();
     }
+
+    public void update() {
+        setPose(serverPlayer.getPose());
+        setPos(serverPlayer.position());
+    }
 }
