@@ -75,6 +75,9 @@ public class FakePlayer extends ServerPlayer {
         this.doTick();
         forceClientSideDelta = false;
 
+        preventMove = true;
+        move(MoverType.SELF, getDeltaMovement());
+        preventMove = false;
         BlockPos blockPos = this.getBlockPosBelowThatAffectsMyMovement();
         float p = serverLevel().getBlockState(blockPos).getBlock().getFriction();
         float friction = this.onGround() ? p * 0.91f : 0.91f;
@@ -91,9 +94,6 @@ public class FakePlayer extends ServerPlayer {
             serverSideDeltaZ = 0.0;
         }
         serverSideDelta = new Vec3(serverSideDeltaX, serverSideDeltaY, serverSideDeltaZ);
-        preventMove = true;
-        move(MoverType.SELF, getDeltaMovement());
-        preventMove = false;
     }
 
     @Override
