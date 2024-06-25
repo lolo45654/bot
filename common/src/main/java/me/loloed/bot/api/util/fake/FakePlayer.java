@@ -80,7 +80,7 @@ public class FakePlayer extends ServerPlayer {
 
         double f = onGround() ? f4 * 0.91F : 0.91F;
         double hiddenDeltaX = serverSideDelta.x * f;
-        double hiddenDeltaY = (serverSideDelta.y - getGravity()) * 0.9800000190734863D;
+        double hiddenDeltaY = serverSideDelta.y * 0.9800000190734863D;
         double hiddenDeltaZ = serverSideDelta.z * f;
         if (Math.abs(hiddenDeltaX) < 0.003) {
             hiddenDeltaX = 0.0;
