@@ -1,6 +1,5 @@
 package me.loloed.bot;
 
-import io.papermc.paper.event.entity.EntityKnockbackEvent;
 import me.loloed.bot.api.Bot;
 import me.loloed.bot.api.platform.ServerPlatform;
 import me.loloed.bot.api.util.ClientSimulator;
@@ -15,7 +14,6 @@ import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerVelocityEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 

@@ -2,7 +2,6 @@ package me.loloed.bot.api.platform;
 
 import me.loloed.bot.api.util.fake.FakePlayer;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
-import net.minecraft.server.level.ServerPlayer;
 
 import java.util.EnumSet;
 

@@ -2,7 +2,6 @@ package me.loloed.bot.api.util.fake;
 
 import com.mojang.authlib.GameProfile;
 import me.loloed.bot.api.platform.ServerPlatform;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket.Action;
 import net.minecraft.server.MinecraftServer;
@@ -14,7 +13,6 @@ import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.stats.Stat;
 import net.minecraft.world.entity.HumanoidArm;
-import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.player.ChatVisiblity;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.phys.Vec3;
@@ -36,6 +34,8 @@ public class FakePlayer extends ServerPlayer {
     private final ClientboundPlayerInfoUpdatePacket.Entry fakePlayerEntry;
     private final ServerPlatform platform;
 
+    public final FakeServerPlayer fakeServerPlayer;
+
     /**
      * When attacked, a player receives a ClientboundSetEntityMotionPacket for themselves and the server sets
      * the server side velocity to zero (or the velocity before the attack). For the shield, it sets the delta movement
@@ -49,6 +49,7 @@ public class FakePlayer extends ServerPlayer {
     public FakePlayer(ServerPlatform platform, MinecraftServer server, Vec3 pos, float yaw, float pitch, ServerLevel world, GameProfile profile) {
         super(server, world, profile, new ClientInformation("en_us", 2, ChatVisiblity.HIDDEN, true, 0x7F, HumanoidArm.RIGHT, false, false));
         this.platform = platform;
+        this.fakeServerPlayer = new FakeServerPlayer(this);
         // Please save yourself the trouble and don't use setPosRaw. The bounding box is wrong with that.
         setPos(pos.x, pos.y, pos.z);
         setRot(yaw, pitch);
@@ -74,8 +75,9 @@ public class FakePlayer extends ServerPlayer {
         forceClientSideDelta = true;
         this.doTick();
         forceClientSideDelta = false;
+        fakeServerPlayer.travel(new Vec3(xxa, yya, zza));
 
-        preventMove = true;
+        /*preventMove = true;
         move(MoverType.SELF, getDeltaMovement());
         preventMove = false;
         BlockPos blockPos = this.getBlockPosBelowThatAffectsMyMovement();
@@ -93,7 +95,7 @@ public class FakePlayer extends ServerPlayer {
         if (Math.abs(serverSideDeltaZ) < 0.003) {
             serverSideDeltaZ = 0.0;
         }
-        serverSideDelta = new Vec3(serverSideDeltaX, serverSideDeltaY, serverSideDeltaZ);
+        serverSideDelta = new Vec3(serverSideDeltaX, serverSideDeltaY, serverSideDeltaZ);*/
     }
 
     @Override
@@ -125,7 +127,8 @@ public class FakePlayer extends ServerPlayer {
 
     public void setDeltaMovement(Vec3 vec3, boolean serverSide) {
         if (serverSide && !forceClientSideDelta) {
-            serverSideDelta = vec3;
+            fakeServerPlayer.setDeltaMovement(vec3);
+            // serverSideDelta = vec3;
         } else {
             super.setDeltaMovement(vec3);
         }
@@ -137,7 +140,7 @@ public class FakePlayer extends ServerPlayer {
     }
 
     public Vec3 getDeltaMovement(boolean serverSide) {
-        return serverSide && !forceClientSideDelta ? serverSideDelta : super.getDeltaMovement();
+        return serverSide && !forceClientSideDelta ? fakeServerPlayer.getDeltaMovement() : super.getDeltaMovement();
     }
 
     /**

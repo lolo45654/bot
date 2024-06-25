@@ -3,7 +3,6 @@ package me.loloed.bot.api.impl;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
-import me.loloed.bot.api.util.fake.FakePlayer;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.concurrent.ThreadLocalRandom;
