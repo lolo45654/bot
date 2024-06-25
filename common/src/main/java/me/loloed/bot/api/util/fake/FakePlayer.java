@@ -69,28 +69,27 @@ public class FakePlayer extends ServerPlayer {
 
     @Override
     public void tick() {
-        Vec3 vec3 = new Vec3(xxa, yya, zza);
         super.tick();
         forceClientSideDelta = true;
         this.doTick();
         forceClientSideDelta = false;
-        preventMove = true;
-        travel(vec3);
-        preventMove = false;
 
-        double hiddenDeltaX = serverSideDelta.x;
-        double hiddenDeltaY = serverSideDelta.y;
-        double hiddenDeltaZ = serverSideDelta.z;
-        if (Math.abs(hiddenDeltaX) < 0.003) {
-            hiddenDeltaX = 0.0;
+        BlockPos blockPos = this.getBlockPosBelowThatAffectsMyMovement();
+        float p = serverLevel().getBlockState(blockPos).getBlock().getFriction();
+        float friction = this.onGround() ? p * 0.91f : 0.91f;
+        double serverSideDeltaX = serverSideDelta.x * friction;
+        double serverSideDeltaY = (serverSideDelta.y - this.getGravity()) * 0.98f;
+        double serverSideDeltaZ = serverSideDelta.z * friction;
+        if (Math.abs(serverSideDeltaX) < 0.003) {
+            serverSideDeltaX = 0.0;
         }
-        if (Math.abs(hiddenDeltaY) < 0.003) {
-            hiddenDeltaY = 0.0;
+        if (Math.abs(serverSideDeltaY) < 0.003) {
+            serverSideDeltaY = 0.0;
         }
-        if (Math.abs(hiddenDeltaZ) < 0.003) {
-            hiddenDeltaZ = 0.0;
+        if (Math.abs(serverSideDeltaZ) < 0.003) {
+            serverSideDeltaZ = 0.0;
         }
-        serverSideDelta = new Vec3(hiddenDeltaX, hiddenDeltaY, hiddenDeltaZ);
+        serverSideDelta = new Vec3(serverSideDeltaX, serverSideDeltaY, serverSideDeltaZ);
     }
 
     @Override
