@@ -14,6 +14,7 @@ import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.stats.Stat;
 import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.player.ChatVisiblity;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.phys.Vec3;
@@ -90,6 +91,9 @@ public class FakePlayer extends ServerPlayer {
             serverSideDeltaZ = 0.0;
         }
         serverSideDelta = new Vec3(serverSideDeltaX, serverSideDeltaY, serverSideDeltaZ);
+        preventMove = true;
+        move(MoverType.SELF, getDeltaMovement());
+        preventMove = false;
     }
 
     @Override
