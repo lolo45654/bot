@@ -24,6 +24,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.item.PrimedTnt;
 import net.minecraft.world.item.enchantment.ProtectionEnchantment;
 import net.minecraft.world.level.Explosion;
@@ -195,10 +196,24 @@ public class BotPlugin extends JavaPlugin {
                                     y /= dist;
                                     z /= dist;
                                     sender.sendMessage(Component.text(String.format("Step 2 X: %.03f Y: %.03f Z: %.03f", x, y, z)));
+                                    ExplosionDamageCalculator calc = new ExplosionDamageCalculator();
+
+
+                                    sender.sendMessage(Component.text(String.format("Velocity pre-hurt X: %.03f Y: %.03f Z: %.03f", handle.getDeltaMovement().x, handle.getDeltaMovement().y, handle.getDeltaMovement().z)));
+
+                                    float f = 6.0F * 2.0F;
+                                    Vec3 vec3 = explosion;
+                                    double d = Math.sqrt(handle.distanceToSqr(vec3)) / (double)f;
+                                    double e = (1.0 - d) * getSeenFraction(explosion, handle, new Explosion.ExplosionBlockCache[0], new BlockPos.MutableBlockPos()); // Paper - actually optimise explosions
+                                    float dmg = (float)((e * e + e) / 2.0 * 7.0 * (double)f + 1.0);
+                                    handle.hurt(handle.damageSources().badRespawnPointExplosion(pos), dmg); // Paper - actually optimise explosions
+
+                                    sender.sendMessage(Component.text(String.format("Velocity post-hurt X: %.03f Y: %.03f Z: %.03f", handle.getDeltaMovement().x, handle.getDeltaMovement().y, handle.getDeltaMovement().z)));
+
                                     double d7 = Math.sqrt(handle.distanceToSqr(explosion)) / 12.0;
 
                                     BlockPos.MutableBlockPos bp = new BlockPos.MutableBlockPos();
-                                    double d12 = (1.0D - d7) * this.getSeenFraction(explosion, handle, new Explosion.ExplosionBlockCache[0], bp) * (double) new ExplosionDamageCalculator().getKnockbackMultiplier(handle);
+                                    double d12 = (1.0D - d7) * this.getSeenFraction(explosion, handle, new Explosion.ExplosionBlockCache[0], bp) * (double) calc.getKnockbackMultiplier(handle);
                                     double d13 = ProtectionEnchantment.getExplosionKnockbackAfterDampener((net.minecraft.world.entity.LivingEntity) handle, d12);
 
                                     sender.sendMessage(Component.text(String.format("Step 3 d12: %.03f d13: %.03f", d12, d13)));
