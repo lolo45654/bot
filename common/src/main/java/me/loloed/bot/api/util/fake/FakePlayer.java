@@ -43,7 +43,6 @@ public class FakePlayer extends ServerPlayer {
      * then the velocity of the shield is stored and sent due to the attack.
      */
     public Vec3 serverSideDelta = Vec3.ZERO;
-    public Vec3 storedDelta = Vec3.ZERO;
     public boolean forceClientSideDelta = false;
     public int debug = 0;
 
@@ -75,7 +74,8 @@ public class FakePlayer extends ServerPlayer {
         forceClientSideDelta = true;
         this.doTick();
         forceClientSideDelta = false;
-
+        this.aiStep();
+/*
         BlockPos blockBelow = this.getBlockPosBelowThatAffectsMyMovement();
         float f4 = level().getBlockState(blockBelow).getBlock().getFriction();
 
@@ -92,23 +92,7 @@ public class FakePlayer extends ServerPlayer {
         if (Math.abs(hiddenDeltaZ) < 0.003) {
             hiddenDeltaZ = 0.0;
         }
-        serverSideDelta = new Vec3(hiddenDeltaX, hiddenDeltaY, hiddenDeltaZ);
-        hiddenDeltaX = storedDelta.x * f;
-        hiddenDeltaY = storedDelta.y * f;
-        hiddenDeltaZ = storedDelta.z * f;
-        if (Math.abs(hiddenDeltaX) < 0.003) {
-            hiddenDeltaX = 0.0;
-        }
-        if (Math.abs(hiddenDeltaY) < 0.003) {
-            hiddenDeltaY = 0.0;
-        }
-        if (Math.abs(hiddenDeltaZ) < 0.003) {
-            hiddenDeltaZ = 0.0;
-        }
-        storedDelta = new Vec3(hiddenDeltaX, hiddenDeltaY, hiddenDeltaZ);
-        if (debug > 0) {
-            debug--;
-        }
+        serverSideDelta = new Vec3(hiddenDeltaX, hiddenDeltaY, hiddenDeltaZ);*/
     }
 
     @Override
@@ -156,17 +140,6 @@ public class FakePlayer extends ServerPlayer {
 
     public Vec3 getDeltaMovement(boolean serverSide) {
         return serverSide && !forceClientSideDelta ? serverSideDelta : super.getDeltaMovement();
-    }
-
-    @Override
-    public boolean hurt(DamageSource damageSource, float f) {
-        Vec3 pre = getDeltaMovement();
-        boolean hurt = super.hurt(damageSource, f);
-        Vec3 post = getDeltaMovement();
-        if (!hurtMarked) {
-            storedDelta = post.subtract(pre);
-        }
-        return hurt;
     }
 
     /**
