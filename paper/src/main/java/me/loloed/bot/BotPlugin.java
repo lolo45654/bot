@@ -17,8 +17,11 @@ import me.loloed.bot.api.impl.ServerBotSettings;
 import me.loloed.bot.api.util.fake.FakePlayer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.bukkit.Location;
@@ -132,14 +135,47 @@ public class BotPlugin extends JavaPlugin {
                         .executes((sender, args) -> {
                             sender.sendMessage(Component.text("There are currently " + PaperPlatform.BOTS.size() + " blade bot(s)."));
                         }))
-                .then(new LiteralArgument("explode")
+                .then(new LiteralArgument("explode1")
                         .then(new EntitySelectorArgument.OneEntity("target")
                                 .executes((sender, args) -> {
+                                    sender.sendMessage(Component.text("This is exactly the same as an end crystal."));
                                     Entity target = (Entity) args.get("target");
                                     net.minecraft.world.entity.Entity handle = ((CraftEntity) target).getHandle();
                                     Vec3 explosion = handle.position().add(1, 0, 0);
                                     Vec3 pos = handle.position();
                                     handle.level().explode(null, handle.position().x + 1, explosion.y, explosion.z, 6.0f, false, Level.ExplosionInteraction.BLOCK);
+                                    sender.sendMessage(Component.text("Vel: " + handle.getDeltaMovement()));
+                                    target.getScheduler().runDelayed(this, task -> sender.sendMessage(Component.text("Diff 1 tick: " + handle.position().subtract(pos))), null, 1L);
+                                    target.getScheduler().runDelayed(this, task -> sender.sendMessage(Component.text("Diff 2 tick: " + handle.position().subtract(pos))), null, 2L);
+                                    target.getScheduler().runDelayed(this, task -> sender.sendMessage(Component.text("Diff 3 tick: " + handle.position().subtract(pos))), null, 3L);
+                                    target.getScheduler().runDelayed(this, task -> sender.sendMessage(Component.text("Diff 4 tick: " + handle.position().subtract(pos))), null, 4L);
+                                    target.getScheduler().runDelayed(this, task -> sender.sendMessage(Component.text("Diff 5 tick: " + handle.position().subtract(pos))), null, 5L);
+                                })))
+                .then(new LiteralArgument("explode2")
+                        .then(new EntitySelectorArgument.OneEntity("target")
+                                .executes((sender, args) -> {
+                                    sender.sendMessage(Component.text("This will not send the explode packet."));
+                                    Entity target = (Entity) args.get("target");
+                                    net.minecraft.world.entity.Entity handle = ((CraftEntity) target).getHandle();
+                                    Vec3 explosion = handle.position().add(1, 0, 0);
+                                    Vec3 pos = handle.position();
+                                    handle.level().explode(null, null, null, handle.position().x + 1, explosion.y, explosion.z, 6.0f, false, Level.ExplosionInteraction.BLOCK, false, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER, SoundEvents.GENERIC_EXPLODE);
+                                    sender.sendMessage(Component.text("Vel: " + handle.getDeltaMovement()));
+                                    target.getScheduler().runDelayed(this, task -> sender.sendMessage(Component.text("Diff 1 tick: " + handle.position().subtract(pos))), null, 1L);
+                                    target.getScheduler().runDelayed(this, task -> sender.sendMessage(Component.text("Diff 2 tick: " + handle.position().subtract(pos))), null, 2L);
+                                    target.getScheduler().runDelayed(this, task -> sender.sendMessage(Component.text("Diff 3 tick: " + handle.position().subtract(pos))), null, 3L);
+                                    target.getScheduler().runDelayed(this, task -> sender.sendMessage(Component.text("Diff 4 tick: " + handle.position().subtract(pos))), null, 4L);
+                                    target.getScheduler().runDelayed(this, task -> sender.sendMessage(Component.text("Diff 5 tick: " + handle.position().subtract(pos))), null, 5L);
+                                })))
+                .then(new LiteralArgument("explode2")
+                        .then(new EntitySelectorArgument.OneEntity("target")
+                                .executes((sender, args) -> {
+                                    sender.sendMessage(Component.text("This will not send the explode packet."));
+                                    Entity target = (Entity) args.get("target");
+                                    net.minecraft.world.entity.Entity handle = ((CraftEntity) target).getHandle();
+                                    Vec3 explosion = handle.position().add(1, 0, 0);
+                                    Vec3 pos = handle.position();
+                                    handle.level().explode(null, null, null, handle.position().x + 1, explosion.y, explosion.z, 6.0f, false, Level.ExplosionInteraction.BLOCK, false, ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER, SoundEvents.GENERIC_EXPLODE);
                                     sender.sendMessage(Component.text("Vel: " + handle.getDeltaMovement()));
                                     target.getScheduler().runDelayed(this, task -> sender.sendMessage(Component.text("Diff 1 tick: " + handle.position().subtract(pos))), null, 1L);
                                     target.getScheduler().runDelayed(this, task -> sender.sendMessage(Component.text("Diff 2 tick: " + handle.position().subtract(pos))), null, 2L);
