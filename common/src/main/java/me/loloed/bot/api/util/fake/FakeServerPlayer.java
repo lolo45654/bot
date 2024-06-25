@@ -10,7 +10,7 @@ public class FakeServerPlayer extends LivingEntity {
     private final FakePlayer serverPlayer;
 
     protected FakeServerPlayer(FakePlayer serverPlayer) {
-        super(EntityType.PLAYER, serverPlayer.serverLevel());
+        super(EntityType.ZOMBIE, serverPlayer.serverLevel());
         this.serverPlayer = serverPlayer;
     }
 
