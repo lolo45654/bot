@@ -167,7 +167,7 @@ public class BotPlugin extends JavaPlugin {
                                     target.getScheduler().runDelayed(this, task -> sender.sendMessage(Component.text("Diff 4 tick: " + handle.position().subtract(pos))), null, 4L);
                                     target.getScheduler().runDelayed(this, task -> sender.sendMessage(Component.text("Diff 5 tick: " + handle.position().subtract(pos))), null, 5L);
                                 })))
-                .then(new LiteralArgument("explode2")
+                .then(new LiteralArgument("explode3")
                         .then(new EntitySelectorArgument.OneEntity("target")
                                 .executes((sender, args) -> {
                                     sender.sendMessage(Component.text("This will not send the explode packet."));
