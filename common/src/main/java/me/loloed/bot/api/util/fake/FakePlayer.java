@@ -80,7 +80,7 @@ public class FakePlayer extends ServerPlayer {
 
         double f = onGround() ? f4 * 0.91F : 0.91F;
         double hiddenDeltaX = serverSideDelta.x * f;
-        double hiddenDeltaY = serverSideDelta.y * f;
+        double hiddenDeltaY = serverSideDelta.y * f - getGravity();
         double hiddenDeltaZ = serverSideDelta.z * f;
         if (Math.abs(hiddenDeltaX) < 0.003) {
             hiddenDeltaX = 0.0;
@@ -92,7 +92,6 @@ public class FakePlayer extends ServerPlayer {
             hiddenDeltaZ = 0.0;
         }
         serverSideDelta = new Vec3(hiddenDeltaX, hiddenDeltaY, hiddenDeltaZ);
-        travel(new Vec3(this.xxa, this.yya, this.zza));
     }
 
     @Override
