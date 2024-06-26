@@ -34,7 +34,6 @@ public class ScorePlanner implements Planner<ScoreDebug, ScoreAction> {
     @Override
     public BladePlannedAction<ScoreAction> planInternal(BladeGoal goal, BladeState state, ScoreDebug debug) {
         Objects.requireNonNull(goal);
-        goal.tick();
         debug.setTemperature(temperature);
         Map<ScoreAction, Score> scores = new HashMap<>();
         double totalWeight = 0.0;

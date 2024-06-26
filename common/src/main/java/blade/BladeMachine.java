@@ -39,6 +39,7 @@ public class BladeMachine {
         ReportError.wrap(() -> {
             planner.refreshAll(bot, state);
             goal.setBot(bot);
+            goal.tick();
             produceState();
             frame.setState(state.copy());
             BladePlannedAction<ScoreAction> plan = planner.planInternal(goal, state, frame.getPlanner());
