@@ -50,8 +50,6 @@ public class UseHealing extends ScoreAction implements Sword {
         double distSq = closestPoint.distanceToSqr(eyePos);
         float ourHealthRatio = bot.getVanillaPlayer().getHealth() / bot.getVanillaPlayer().getMaxHealth();
         float targetHealthRatio = target.getHealth() / target.getMaxHealth();
-
-        System.out.println("Score for UseHealing's useitemticks: " + ((bot.getVanillaPlayer().isUsingItem() ? (-bot.getVanillaPlayer().getUseItemRemainingTicks() + 16) / 3.0 : 0)));
         return getSwordScore(bot) +
                 Math.min(distSq / 24, 3) +
                 (bot.getVanillaPlayer().isUsingItem() ? (-bot.getVanillaPlayer().getUseItemRemainingTicks() + 16) / 3.0 : 0) +
