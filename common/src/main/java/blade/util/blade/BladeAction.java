@@ -3,15 +3,18 @@ package blade.util.blade;
 import blade.Bot;
 import blade.debug.DebugPlanner;
 import blade.state.BladeState;
+import org.slf4j.Logger;
 
 public abstract class BladeAction<T extends BladeAction<T>> {
     protected BladeState state = new BladeState();
     protected DebugPlanner parentDebugPlanner;
     protected Bot bot;
     protected int tick = 0;
+    public Logger logger;
 
     public void setBot(Bot bot) {
         this.bot = bot;
+        this.logger = bot.getLogger(getClass().getSimpleName());
     }
 
     public void setState(BladeState state) {

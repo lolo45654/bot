@@ -15,6 +15,9 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.helpers.NOPLogger;
 
 import java.util.Random;
 
@@ -29,6 +32,7 @@ public class Bot {
     public final boolean isClient;
     protected final BladeMachine blade = new BladeMachine(this);
     protected boolean jumped = false;
+    protected boolean debug = false;
 
     public Bot(Player vanillaPlayer, Platform platform) {
         this.isClient = platform.isClient();
@@ -219,5 +223,10 @@ public class Bot {
             return Minecraft.getInstance().hitResult;
         }
         return clientSimulator.getCrossHairTarget();
+    }
+
+    public Logger getLogger(String name) {
+        if (!debug) return NOPLogger.NOP_LOGGER;
+        return LoggerFactory.getLogger("BOT-" + name);
     }
 }
