@@ -18,7 +18,7 @@ public class Slot {
     public static Slot fromHotBar(int index) {
         return new Slot(index + 36);
     }
-    public static final int MAX_INDEX = 45;
+    public static final int MAX_INDEX = 46;
 
     private final int index;
 
