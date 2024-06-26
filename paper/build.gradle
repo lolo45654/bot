@@ -53,10 +53,10 @@ base {
 }
 
 processResources {
-    def props = [version: version, description: project.description]
+    def props = [version: project.version, description: project.description]
     inputs.properties props
     filteringCharset 'UTF-8'
-    filesMatching('plugin.yml') {
+    filesMatching('paper-plugin.yml') {
         expand props
     }
 }
