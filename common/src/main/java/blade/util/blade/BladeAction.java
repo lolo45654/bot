@@ -13,8 +13,10 @@ public abstract class BladeAction<T extends BladeAction<T>> {
     public Logger logger;
 
     public void setBot(Bot bot) {
+        if (this.logger == null || this.bot != bot) {
+            this.logger = bot.getLogger(getClass().getSimpleName());
+        }
         this.bot = bot;
-        this.logger = bot.getLogger(getClass().getSimpleName());
     }
 
     public void setState(BladeState state) {
