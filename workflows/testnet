@@ -31,7 +31,7 @@ fi
 
 echo "say [WF-$WF_PROJECT] Done." > $WF_COMMAND
 cp "$WF_REPO/paper/build/libs/bot-paper.jar" "$WF_SERVER/plugins"
-echo "$REF" > $WF_SERVER/DEVELOPMENT
+echo "$REF" > $WF_SERVER/DEVELOPMENT-bot
 sudo systemctl restart minecraft@prac.service
 
 mkdir -p "$WF_CACHE/bot"
