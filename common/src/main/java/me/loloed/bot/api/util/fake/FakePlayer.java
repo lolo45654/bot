@@ -16,6 +16,7 @@ import net.minecraft.stats.Stat;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.ChatVisiblity;
 import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
@@ -157,5 +158,10 @@ public class FakePlayer extends ServerPlayer {
             return;
         }
         super.setPos(d, e, f);
+    }
+
+    @Override
+    protected void checkFallDamage(double y, boolean onGround, BlockState blockState, BlockPos blockPos) {
+        doCheckFallDamage(0.0, y, 0.0, onGround);
     }
 }
