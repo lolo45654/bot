@@ -91,15 +91,12 @@ public class ClientSimulator {
     private BlockPos currentBreakingPos;
     private BiConsumer<Vec3i, Float> blockDamageHandler = null;
 
-    private float blockReach = 3.5f;
-    private float entityReach = 3.0f;
-
     public ClientSimulator(ServerPlayer player) {
         this.player = player;
     }
 
     public void tick() {
-        crosshairTarget = findCrosshairTarget(player, blockReach, entityReach, 1f);
+        crosshairTarget = findCrosshairTarget(player, player.blockInteractionRange(), player.entityInteractionRange(), 1f);
         ensureVariables();
         tickMove();
         tickUsingItem();
@@ -418,22 +415,6 @@ public class ClientSimulator {
 
     public void attack() {
         attackTimes++;
-    }
-
-    public void setBlockReach(float blockReach) {
-        this.blockReach = blockReach;
-    }
-
-    public float getBlockReach() {
-        return blockReach;
-    }
-
-    public void setEntityReach(float entityReach) {
-        this.entityReach = entityReach;
-    }
-
-    public float getEntityReach() {
-        return entityReach;
     }
 
     public HitResult getCrossHairTarget() {

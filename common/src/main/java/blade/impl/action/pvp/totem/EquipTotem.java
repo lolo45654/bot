@@ -2,11 +2,14 @@ package blade.impl.action.pvp.totem;
 
 import blade.impl.ConfigKeys;
 import blade.impl.StateKeys;
+import blade.impl.util.AttackUtil;
 import blade.inventory.BotInventory;
 import blade.inventory.Slot;
 import blade.inventory.SlotFlag;
 import blade.planner.score.ScoreAction;
 import blade.state.BladeState;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
 
 public class EquipTotem extends ScoreAction implements Totem {
@@ -31,10 +34,18 @@ public class EquipTotem extends ScoreAction implements Totem {
     @Override
     public double getScore() {
         BotInventory inv = bot.getInventory();
+        Player player = bot.getVanillaPlayer();
+        LivingEntity target = bot.getBlade().get(ConfigKeys.TARGET);
+        double deltaY = player.getDeltaMovement().y;
+        double health = player.getHealth() / player.getMaxHealth();
+        double healthReversed = 0 - health + 1;
         Slot hotBarSlot = inv.findFirst(stack -> stack.is(Items.TOTEM_OF_UNDYING), SlotFlag.HOT_BAR);
         return getTotemScore(bot) +
                 (inv.getOffHand().is(Items.TOTEM_OF_UNDYING) ? -5 : 0) +
                 (hotBarSlot != null && inv.getSelectedSlot() == hotBarSlot.getHotBarIndex() ? 1.4 : 0) +
+                Math.min(Math.max(deltaY * 2, 0), 2.0) +
+                (healthReversed * healthReversed) +
+                AttackUtil.isAttacking(target, bot.getVanillaPlayer()) +
                 (Math.min(tick / 0.7, 5));
     }
 

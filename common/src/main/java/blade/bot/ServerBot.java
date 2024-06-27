@@ -7,6 +7,7 @@ import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
@@ -58,7 +59,7 @@ public class ServerBot extends Bot implements IServerBot {
         food.setFoodLevel(20);
         food.setSaturation(20.0f);
 
-        clientSimulator.setEntityReach(settings.reach);
+        player.getAttribute(Attributes.ENTITY_INTERACTION_RANGE).setBaseValue(settings.reach);
         applyArmor(vanillaPlayer.getInventory());
     }
 
