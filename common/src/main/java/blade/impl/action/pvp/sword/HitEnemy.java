@@ -47,7 +47,7 @@ public class HitEnemy extends ScoreAction implements Sword {
         Vec3 closestPoint = BotMath.getClosestPoint(eyePos, target.getBoundingBox());
         double distSq = closestPoint.distanceToSqr(eyePos);
         float attackStrength = player.getAttackStrengthScale(0.5f);
-        double reach = player.entityInteractionRange() - ConfigKeys.getDifficultyReversedCubic(bot) / 2;
+        double reach = getReach(bot);
 
         return getSwordScore(bot) +
                 (distSq > reach * reach ? -8 : (Math.min(distSq, 6))) +

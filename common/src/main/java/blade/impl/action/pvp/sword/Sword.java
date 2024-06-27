@@ -16,6 +16,8 @@ public interface Sword {
         blade.addAction(new Jump());
         blade.addAction(new MoveClose());
         blade.addAction(new UseHealing());
+        blade.addAction(new StrafeRight());
+        blade.addAction(new StrafeLeft());
     }
 
     default double getSwordScore(Bot bot) {
@@ -39,5 +41,9 @@ public interface Sword {
         float yaw = BotMath.getYaw(direction);
         float pitch = BotMath.getPitch(direction);
         bot.lookRealistic(yaw, pitch, (tick % time) / time, bot.getBlade().get(ConfigKeys.DIFFICULTY) * 0.2f);
+    }
+
+    default double getReach(Bot bot) {
+        return bot.getVanillaPlayer().entityInteractionRange() - ConfigKeys.getDifficultyReversedCubic(bot) / 2;
     }
 }

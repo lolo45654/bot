@@ -7,23 +7,15 @@ import blade.util.BotMath;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 
-public class MoveClose extends ScoreAction implements Sword {
-    private Vec3 previousPos = null;
+import java.util.concurrent.ThreadLocalRandom;
 
+public class StrafeRight extends ScoreAction implements Sword {
     @Override
     public void onTick() {
         lookAtEnemy(bot, tick);
 
-        Vec3 currentPosition = bot.getVanillaPlayer().position();
-        bot.interact(false);
-        bot.attack(false);
-        bot.setMoveForward(true);
-        bot.setMoveBackward(false);
-        bot.setSprint(true);
-        if (previousPos != null && (previousPos.x() == currentPosition.x() || previousPos.z() == currentPosition.z())) {
-            bot.jump();
-        }
-        previousPos = currentPosition;
+        bot.setMoveRight(true);
+        bot.setMoveLeft(false);
     }
 
     @Override
@@ -40,6 +32,8 @@ public class MoveClose extends ScoreAction implements Sword {
         double reach = getReach(bot);
 
         return getSwordScore(bot) +
-                (distSq <= reach * reach ? -8 : (Math.min(distSq, 6)));
+                (distSq <= reach * reach ? -8 : (Math.min(distSq, 6))) +
+                Math.min(tick / 3.0, 1.4) +
+                ThreadLocalRandom.current().nextDouble() * 0.6;
     }
 }
