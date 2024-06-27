@@ -38,9 +38,9 @@ public class PearlTowardsEnemy extends ScoreAction implements Crystal {
     public double getScore() {
         LivingEntity target = bot.getBlade().get(ConfigKeys.TARGET);
         double distSq = target.distanceToSqr(bot.getVanillaPlayer());
-        double dist = Math.min(distSq / 96, 4);
+        double dist = Math.max(Math.min((distSq - 16 * 16) / 96, 4), 0);
         return getCrystalScore(bot) +
-                dist * dist +
+                dist +
                 (getPearlSlot() == null ? -8 : 0) +
                 (bot.getVanillaPlayer().getCooldowns().isOnCooldown(Items.ENDER_PEARL) ? -4 : 0);
     }
