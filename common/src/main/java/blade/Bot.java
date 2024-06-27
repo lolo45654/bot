@@ -230,8 +230,4 @@ public class Bot {
         if (!debug) return NOPLogger.NOP_LOGGER;
         return LoggerFactory.getLogger("BOT-" + name);
     }
-
-    public boolean canCritIgnoreSprint() {
-        return vanillaPlayer.getAttackStrengthScale(0.5f) > 0.9 && !vanillaPlayer.onGround() && !vanillaPlayer.onClimbable() && !vanillaPlayer.isInWater() && !vanillaPlayer.hasEffect(MobEffects.BLINDNESS) && !vanillaPlayer.isPassenger();
-    }
 }

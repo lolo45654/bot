@@ -1,6 +1,7 @@
 package blade.impl.action.pvp.sword;
 
 import blade.impl.ConfigKeys;
+import blade.impl.util.AttackUtil;
 import blade.inventory.Slot;
 import blade.inventory.SlotFlag;
 import blade.planner.score.ScoreAction;
@@ -25,7 +26,7 @@ public class HitEnemy extends ScoreAction implements Sword {
         lookAtEnemy(bot, tick);
         bot.setMoveForward(true);
         bot.setMoveBackward(false);
-        bot.setSprint(!bot.canCritIgnoreSprint());
+        bot.setSprint(!AttackUtil.canCritIgnoreSprint(bot.getVanillaPlayer()));
         LivingEntity target = bot.getBlade().get(ConfigKeys.TARGET);
         if (bot.getCrossHairTarget() instanceof EntityHitResult entityHitResult && entityHitResult.getEntity() == target) {
             bot.attack();
