@@ -2,7 +2,6 @@ package blade.bot;
 
 import blade.BladeMachine;
 import blade.Bot;
-import blade.impl.ConfigKeys;
 import blade.impl.goal.KillTargetGoal;
 import blade.paper.BotPlugin;
 import blade.paper.PaperPlatform;
@@ -11,6 +10,7 @@ import blade.util.fake.FakePlayer;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftWorld;
@@ -83,7 +83,7 @@ public class KitBot extends Bot implements IServerBot {
             return;
         }
 
-        clientSimulator.setEntityReach(settings.reach);
+        player.getAttribute(Attributes.ENTITY_INTERACTION_RANGE).setBaseValue(settings.reach);
     }
 
     @Override
