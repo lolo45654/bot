@@ -73,7 +73,11 @@ public class Bot {
 
     protected void tick() {
         if (jumped) {
-            vanillaPlayer.setJumping(false);
+            if (isClient) {
+                Minecraft.getInstance().options.keyJump.setDown(false);
+            } else {
+                vanillaPlayer.setJumping(false);
+            }
         }
         scheduler.tick(this);
         blade.tick();
@@ -97,7 +101,11 @@ public class Bot {
     }
 
     public void jump() {
-        vanillaPlayer.setJumping(true);
+        if (isClient) {
+            Minecraft.getInstance().options.keyJump.setDown(true);
+        } else {
+            vanillaPlayer.setJumping(true);
+        }
         jumped = true;
     }
 
