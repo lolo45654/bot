@@ -9,6 +9,7 @@ import blade.state.BladeState;
 import blade.util.BotMath;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 
@@ -41,12 +42,15 @@ public class HitEnemy extends ScoreAction implements Sword {
     @Override
     public double getScore() {
         LivingEntity target = bot.getBlade().get(ConfigKeys.TARGET);
-        Vec3 eyePos = bot.getVanillaPlayer().getEyePosition();
+        Player player = bot.getVanillaPlayer();
+        Vec3 eyePos = player.getEyePosition();
         Vec3 closestPoint = BotMath.getClosestPoint(eyePos, target.getBoundingBox());
         double distSq = closestPoint.distanceToSqr(eyePos);
-        float attackStrength = bot.getVanillaPlayer().getAttackStrengthScale(0.5f);
+        float attackStrength = player.getAttackStrengthScale(0.5f);
+        double reach = player.entityInteractionRange() - ConfigKeys.getDifficultyReversedCubic(bot) / 2;
+
         return getSwordScore(bot) +
-                (distSq > 3 * 3 ? -8 : (Math.min(distSq, 6))) +
+                (distSq > reach * reach ? -8 : (Math.min(distSq, 6))) +
                 (attackStrength < 0.4f ? -8 : attackStrength > 0.9f ? 5.0f : attackStrength * 6 - 4) +
                 (getSwordSlot() == null ? -4 : 0);
     }
