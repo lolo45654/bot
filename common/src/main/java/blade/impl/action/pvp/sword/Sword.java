@@ -31,7 +31,7 @@ public interface Sword {
     }
 
     default void lookAtEnemy(Bot bot, int tick) {
-        float time = (float) (ConfigKeys.getDifficultyReversed(bot) * 0.6);
+        float time = ConfigKeys.getDifficultyReversedCubic(bot) * 1.2f;
         LivingEntity target = bot.getBlade().get(ConfigKeys.TARGET);
         Vec3 eyePos = bot.getVanillaPlayer().getEyePosition();
         Vec3 closestPoint = BotMath.getClosestPoint(eyePos, target.getBoundingBox());
