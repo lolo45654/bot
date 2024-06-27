@@ -36,4 +36,9 @@ public class StrafeRight extends ScoreAction implements Sword {
                 Math.min(tick / 3.0, 1.4) +
                 ThreadLocalRandom.current().nextDouble() * 0.6;
     }
+
+    @Override
+    public void onRelease(ScoreAction next) {
+        bot.setMoveRight(false);
+    }
 }
