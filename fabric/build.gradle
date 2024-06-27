@@ -1,5 +1,8 @@
+import net.fabricmc.loom.task.RemapJarTask
+
 plugins {
     id 'java-library'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
     id 'fabric-loom'
 }
 
@@ -21,7 +24,7 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
     include modImplementation("dev.xpple:clientarguments:1.8")
-    include implementation(project(path: ":common", configuration: "namedElements"))
+    implementation project(path: ":common", configuration: "namedElements")
 }
 
 processResources {
@@ -35,6 +38,28 @@ processResources {
                 "minecraft_version": project.minecraft_version,
                 "loader_version": project.loader_version
     }
+}
+
+shadowJar {
+    dependencies {
+        exclude('net.fabricmc:.*')
+        include(project(":common"))
+        exclude '/mappings/*'
+    }
+}
+
+task remappedShadowJar(type: RemapJarTask) {
+    dependsOn tasks.shadowJar
+    input = tasks.shadowJar.archiveFile
+    addNestedDependencies = true
+    archiveFileName = "bot-fabric-${project.version}.jar"
+}
+
+tasks.assemble.dependsOn tasks.remappedShadowJar
+
+artifacts {
+    archives remappedShadowJar
+    shadow shadowJar
 }
 
 java {
