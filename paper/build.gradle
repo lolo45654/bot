@@ -28,8 +28,8 @@ dependencies {
 shadowJar {
     // archiveFileName = "${archives_base_name}.jar"
 
-    relocate("xyz.xenondevs.invui", "me.loloed.bot.libs.invui")
-    relocate("dev.jorel.commandapi", "me.loloed.bot.libs.commandapi")
+    relocate("xyz.xenondevs.invui", "blade.libs.invui")
+    relocate("dev.jorel.commandapi", "blade.libs.commandapi")
 }
 
 reobfJar {
