@@ -7,7 +7,7 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
-import dev.xpple.clientarguments.arguments.CEntityArgumentType;
+import dev.xpple.clientarguments.arguments.CEntityArgument;
 import dev.xpple.clientarguments.arguments.CEntitySelector;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.Minecraft;
@@ -36,7 +36,7 @@ public class ClientCommands {
                         }))
                 .then(literal("enable")
                         .then(literal("kill")
-                                .then(argument("target", CEntityArgumentType.entity())
+                                .then(argument("target", CEntityArgument.entity())
                                         .executes(ctx -> {
                                             FabricClientCommandSource source = ctx.getSource();
                                             CEntitySelector arg = ctx.getArgument("target", CEntitySelector.class);

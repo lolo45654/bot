@@ -20,7 +20,7 @@ dependencies {
     // Fabric API. This is technically optional, but you probably want it anyway.
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-    include modImplementation("dev.xpple:clientarguments:1.7")
+    include modImplementation("dev.xpple:clientarguments:1.8")
     include implementation(project(path: ":common", configuration: "namedElements"))
 }
 
