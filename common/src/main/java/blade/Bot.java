@@ -12,6 +12,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -228,5 +229,9 @@ public class Bot {
     public Logger getLogger(String name) {
         if (!debug) return NOPLogger.NOP_LOGGER;
         return LoggerFactory.getLogger("BOT-" + name);
+    }
+
+    public boolean canCritIgnoreSprint() {
+        return vanillaPlayer.getAttackStrengthScale(0.5f) > 0.9 && !vanillaPlayer.onGround() && !vanillaPlayer.onClimbable() && !vanillaPlayer.isInWater() && !vanillaPlayer.hasEffect(MobEffects.BLINDNESS) && !vanillaPlayer.isPassenger();
     }
 }
