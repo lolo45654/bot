@@ -30,7 +30,10 @@ if ! [[ "$?" == "0" ]]; then
 fi
 
 echo "say [WF-$WF_PROJECT] Done." > $WF_COMMAND
-cp "$WF_REPO/paper/build/libs/bot-paper.jar" "$WF_SERVER/plugins"
+rm $WF_SERVER/plugins/bot*.jar
+rm $WF_SERVER/plugins/blade*.jar
+jar=$(find "$WF_REPO/paper/build/libs" -not -name "*-dev*.jar" -and -not -name "*-sources.jar" -and -name "*.jar" | head -1)
+cp "$jar" "$WF_SERVER/plugins"
 echo "$REF" > $WF_SERVER/DEVELOPMENT-bot
 sudo systemctl restart minecraft@prac.service
 

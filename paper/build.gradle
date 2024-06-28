@@ -32,10 +32,6 @@ shadowJar {
     relocate("dev.jorel.commandapi", "blade.libs.commandapi")
 }
 
-reobfJar {
-    outputJar = layout.buildDirectory.file("libs/bot-paper.jar")
-}
-
 assemble {
     dependsOn(reobfJar)
 }
