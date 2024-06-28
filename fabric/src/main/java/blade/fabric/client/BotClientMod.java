@@ -16,6 +16,10 @@ public class BotClientMod implements ClientModInitializer {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             Bot bot = PLATFORM.getBot();
             if (bot != null) {
+                if (client.player == null) {
+                    bot.destroy();
+                    return;
+                }
                 bot.doTick();
             }
         });
