@@ -34,6 +34,8 @@ public class Bot {
     protected final BladeMachine blade = new BladeMachine(this);
     protected boolean jumped = false;
     protected boolean debug = false;
+    protected float prevYaw;
+    protected float prevPitch;
 
     public Bot(Player vanillaPlayer, Platform platform) {
         this.isClient = platform.isClient();
@@ -72,9 +74,15 @@ public class Bot {
     }
 
     protected void tick() {
+        Minecraft client = Minecraft.getInstance();
+        if (isClient) {
+            prevYaw = vanillaPlayer.getYRot();
+            prevPitch = vanillaPlayer.getXRot();
+        }
+
         if (jumped) {
             if (isClient) {
-                Minecraft.getInstance().options.keyJump.setDown(false);
+                client.options.keyJump.setDown(false);
             } else {
                 vanillaPlayer.setJumping(false);
             }
@@ -184,14 +192,34 @@ public class Bot {
     }
 
     public void setYaw(float yaw) {
+        if (isClient) {
+            double f = Minecraft.getInstance().options.sensitivity().get() * 0.6 + 0.6;
+            double gcd = f * f * f * 8.0 * 0.15F;
+            float deltaYaw = yaw - prevYaw;
+            deltaYaw = ((int) (deltaYaw / gcd)) * (float) gcd;
+            yaw = prevYaw + deltaYaw;
+            prevYaw = yaw;
+        }
         vanillaPlayer.setYRot(yaw);
     }
 
     public void setPitch(float pitch) {
+        if (isClient) {
+            double f = Minecraft.getInstance().options.sensitivity().get() * 0.6 + 0.6;
+            double gcd = f * f * f * 8.0 * 0.15F;
+            float deltaPitch = pitch - prevPitch;
+            deltaPitch = ((int) (deltaPitch / gcd)) * (float) gcd;
+            pitch = prevPitch + deltaPitch;
+            prevPitch = pitch;
+        }
         vanillaPlayer.setXRot(pitch);
     }
 
     public void setSprint(boolean sprint) {
+        if (isClient) {
+            Minecraft.getInstance().options.keySprint.setDown(sprint);
+            return;
+        }
         vanillaPlayer.setSprinting(sprint);
     }
 
