@@ -12,7 +12,6 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -74,7 +73,6 @@ public class Bot {
     }
 
     protected void tick() {
-        Minecraft client = Minecraft.getInstance();
         if (isClient) {
             prevYaw = vanillaPlayer.getYRot();
             prevPitch = vanillaPlayer.getXRot();
@@ -82,7 +80,7 @@ public class Bot {
 
         if (jumped) {
             if (isClient) {
-                client.options.keyJump.setDown(false);
+                Minecraft.getInstance().options.keyJump.setDown(false);
             } else {
                 vanillaPlayer.setJumping(false);
             }
