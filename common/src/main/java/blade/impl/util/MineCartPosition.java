@@ -33,7 +33,7 @@ public record MineCartPosition(Vec3 position, double confidence) {
                     if (!(state.getBlock() instanceof BaseRailBlock) && !state.isAir()) continue;
                     if (!world.getBlockState(currentPos.below()).isSolid()) continue;
                     if (targetBlock.getX() == currentPos.getX() && targetBlock.getY() == currentPos.getY() && targetBlock.getZ() == currentPos.getZ()) continue;
-                    ClipContext clip = new ClipContext(target, Vec3.atBottomCenterOf(currentPos), ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, CollisionContext.empty());
+                    ClipContext clip = new ClipContext(botHeadPos, Vec3.atBottomCenterOf(currentPos), ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, CollisionContext.empty());
                     if (world.clip(clip).getType() != HitResult.Type.MISS) continue;
                     // if (world.rayCast(botHeadPos, currentPos) == null) continue;
                     double score = estimateScore(world, target, currentPos, state);

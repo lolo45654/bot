@@ -3,17 +3,15 @@ package blade.impl.util;
 import blade.BladeMachine;
 import blade.Bot;
 import blade.impl.ConfigKeys;
+import blade.util.ClipUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import java.util.Optional;
@@ -43,9 +41,9 @@ public record CrystalPosition(BlockPos obsidian, Vec3 placeAgainst, AABB crystal
                     if (targetAABB.intersects(new AABB(currentPos))) continue;
                     Vec3 placeAgainst = getPlaceAgainst(world, botHeadPos, currentPos);
                     if (placeAgainst == null) continue;
-                    ClipContext clip = new ClipContext(botHeadPos, placeAgainst, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, CollisionContext.empty());
-                    if (world.clip(clip).getType() != HitResult.Type.MISS) continue;
-                    Vec3 crystalBottom = Vec3.atBottomCenterOf(currentPos);
+                    if (!ClipUtil.hasLineOfSightPerformant(world, botHeadPos, placeAgainst)) continue;
+                    if (!ClipUtil.hasLineOfSightPerformant(world, botHeadPos, Vec3.atCenterOf(currentPos.above()))) continue;
+                    Vec3 crystalBottom = Vec3.atBottomCenterOf(currentPos.above());
                     AABB crystalAABB = new AABB(crystalBottom.x - 1.0, crystalBottom.y, crystalBottom.z - 1.0, crystalBottom.x + 1.0, crystalBottom.y + 2.0, crystalBottom.z + 1.0);;
                     double score = estimateScore(world, target, currentPos, state);
                     if (bestPos == null || score > bestScore) {
