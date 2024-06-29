@@ -25,9 +25,9 @@ public record MineCartPosition(Vec3 position, double confidence) {
         double bestScore = Double.NEGATIVE_INFINITY;
         if (target == null) return null;
         BlockPos targetBlock = BlockPos.containing(target);
-        for (int x = targetBlock.getX() - 4; x < targetBlock.getX(); x++) {
-            for (int y = targetBlock.getY() - 4; y < targetBlock.getY(); y++) {
-                for (int z = targetBlock.getZ() - 4; z < targetBlock.getZ() + 4; z++) {
+        for (int x = targetBlock.getX() - 2; x < targetBlock.getX() + 2; x++) {
+            for (int y = targetBlock.getY() - 1; y < targetBlock.getY() + 1; y++) {
+                for (int z = targetBlock.getZ() - 2; z < targetBlock.getZ() + 2; z++) {
                     BlockPos currentPos = BlockPos.containing(x, y, z);
                     BlockState state = world.getBlockState(currentPos);
                     if (!(state.getBlock() instanceof BaseRailBlock) && !state.isAir()) continue;

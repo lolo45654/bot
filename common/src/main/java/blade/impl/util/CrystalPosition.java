@@ -32,9 +32,9 @@ public record CrystalPosition(BlockPos obsidian, Vec3 placeAgainst, AABB crystal
         AABB bestCrystalAABB = null;
         if (target == null) return null;
         BlockPos targetBlock = BlockPos.containing(target);
-        for (int x = targetBlock.getX() - 4; x < targetBlock.getX(); x++) {
-            for (int y = targetBlock.getY() - 4; y < targetBlock.getY(); y++) {
-                for (int z = targetBlock.getZ() - 4; z < targetBlock.getZ() + 4; z++) {
+        for (int x = targetBlock.getX() - 2; x < targetBlock.getX() + 2; x++) {
+            for (int y = targetBlock.getY() - 1; y < targetBlock.getY() + 1; y++) {
+                for (int z = targetBlock.getZ() - 2; z < targetBlock.getZ() + 2; z++) {
                     BlockPos currentPos = BlockPos.containing(x, y, z);
                     BlockState state = world.getBlockState(currentPos);
                     if (!state.is(Blocks.BEDROCK) && !state.is(Blocks.OBSIDIAN) && !state.isAir()) continue;
@@ -46,9 +46,7 @@ public record CrystalPosition(BlockPos obsidian, Vec3 placeAgainst, AABB crystal
                     ClipContext clip = new ClipContext(botHeadPos, placeAgainst, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, CollisionContext.empty());
                     if (world.clip(clip).getType() != HitResult.Type.MISS) continue;
                     Vec3 crystalBottom = Vec3.atBottomCenterOf(currentPos);
-                    AABB crystalAABB = new AABB(crystalBottom.x - 1.0, crystalBottom.y, crystalBottom.z - 1.0, crystalBottom.x + 1.0, crystalBottom.y + 2.0, crystalBottom.z + 1.0);
-                    clip = new ClipContext(botHeadPos, Vec3.atCenterOf(currentPos.above()), ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, CollisionContext.empty());
-                    if (world.clip(clip).getType() != HitResult.Type.MISS) continue;
+                    AABB crystalAABB = new AABB(crystalBottom.x - 1.0, crystalBottom.y, crystalBottom.z - 1.0, crystalBottom.x + 1.0, crystalBottom.y + 2.0, crystalBottom.z + 1.0);;
                     double score = estimateScore(world, target, currentPos, state);
                     if (bestPos == null || score > bestScore) {
                         bestPos = currentPos;
