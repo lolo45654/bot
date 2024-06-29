@@ -41,8 +41,7 @@ public class PlaceObsidian extends ScoreAction implements Crystal {
 
     @Override
     public boolean isSatisfied() {
-        crystalPos = CrystalPosition.get(bot);
-        return isPvPSatisfied(bot) && crystalPos != null;
+        return isPvPSatisfied(bot) && (crystalPos = CrystalPosition.get(bot)) != null;
     }
 
     @Override
