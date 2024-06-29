@@ -77,9 +77,8 @@ public record CrystalPosition(BlockPos obsidian, Vec3 placeAgainst, AABB crystal
 
     public static double estimateScore(Level world, Vec3 targetPos, BlockPos pos, BlockState state) {
         double score = 0.0f;
-        score += 1.0 - Math.abs(targetPos.x - pos.getX());
         score += 12.0 - Math.min(targetPos.distanceToSqr(Vec3.atBottomCenterOf(pos.above())) / 12, 12);
         score += state.is(Blocks.OBSIDIAN) || state.is(Blocks.BEDROCK) ? 3.0 : 0;
-        return score;
+        return score / 6;
     }
 }

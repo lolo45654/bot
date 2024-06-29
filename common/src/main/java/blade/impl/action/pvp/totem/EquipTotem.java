@@ -47,9 +47,9 @@ public class EquipTotem extends ScoreAction implements Totem {
         double healthReversed = 0 - health + 1;
         Slot hotBarSlot = inv.findFirst(stack -> stack.is(Items.TOTEM_OF_UNDYING), SlotFlag.HOT_BAR);
         return getTotemScore(bot) +
-                (inv.getOffHand().is(Items.TOTEM_OF_UNDYING) ? -5 : 0) +
-                (hotBarSlot != null && inv.getSelectedSlot() == hotBarSlot.getHotBarIndex() ? 1.4 : 0) +
-                Math.min(Math.max(deltaY * 2, 0), 2.0) +
+                (inv.getOffHand().is(Items.TOTEM_OF_UNDYING) ? -12 : 0) +
+                (hotBarSlot != null && inv.getSelectedSlot() == hotBarSlot.getHotBarIndex() ? 0.4 : 0) +
+                Math.min(Math.max(deltaY * 2, 0), 1.0) +
                 (healthReversed * healthReversed) +
                 AttackUtil.isAttacking(target, bot.getVanillaPlayer()) +
                 (Math.min(tick / 0.7, 5));

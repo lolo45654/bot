@@ -16,6 +16,7 @@ public class SelectTotem extends ScoreAction implements Totem {
     public void onTick() {
         Slot totemSlot = getTotemSlot();
         if (totemSlot == null) return;
+        lookAtEnemy(bot, tick);
         bot.getInventory().setSelectedSlot(totemSlot.getHotBarIndex());
     }
 
@@ -33,6 +34,6 @@ public class SelectTotem extends ScoreAction implements Totem {
     @Override
     public double getScore() {
         return getTotemScore(bot) +
-                Math.min(bot.getVanillaPlayer().getDeltaMovement().y * 4, 2) + (getTotemSlot() == null ? -5 : 0);
+                Math.min(bot.getVanillaPlayer().getDeltaMovement().y * 2, 1) + (getTotemSlot() == null ? -5 : 0);
     }
 }
