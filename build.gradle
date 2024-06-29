@@ -3,7 +3,7 @@ plugins {
     id 'java-library'
 }
 
-group = 'me.loloed'
+group = 'blade'
 version = project.version
 
 repositories {
@@ -22,7 +22,7 @@ test {
 subprojects {
     apply plugin: "java-library"
 
-    group = 'me.loloed'
+    group = 'blade'
     version = project.version
 
     java {

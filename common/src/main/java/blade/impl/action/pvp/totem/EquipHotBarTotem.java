@@ -24,8 +24,14 @@ public class EquipHotBarTotem extends ScoreAction implements Totem {
     }
 
     @Override
+    public boolean isSatisfied() {
+        return true;
+    }
+
+    @Override
     public void getResult(BladeState result) {
         result.setValue(StateKeys.DOUBLE_HAND_TOTEM, 1);
+        result.setValue(StateKeys.DOING_PVP, 1.0);
     }
 
     @Override

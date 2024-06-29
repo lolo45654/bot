@@ -1,5 +1,6 @@
 package blade.util.fake;
 
+import blade.util.fake.FakePlayer.MovementSide;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.embedded.EmbeddedChannel;
 import net.minecraft.network.Connection;
@@ -42,9 +43,9 @@ public class FakeConnection extends Connection {
     @Override
     public void send(Packet<?> obj, @Nullable PacketSendListener packetSendListener, boolean bl) {
         if (obj instanceof ClientboundSetEntityMotionPacket) {
-            player.setDeltaMovement(player.getDeltaMovement(true), false);
+            player.setDeltaMovement(player.getDeltaMovement(MovementSide.SERVER), MovementSide.CLIENT);
         } else if (obj instanceof ClientboundExplodePacket packet) {
-            player.setDeltaMovement(player.getDeltaMovement(false).add(packet.getKnockbackX(), packet.getKnockbackY(), packet.getKnockbackZ()), false);
+            player.setDeltaMovement(player.getDeltaMovement(MovementSide.CLIENT).add(packet.getKnockbackX(), packet.getKnockbackY(), packet.getKnockbackZ()), MovementSide.CLIENT);
         }
     }
 

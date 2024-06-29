@@ -1,6 +1,7 @@
 package blade.impl;
 
 import blade.BladeMachine;
+import blade.impl.action.pvp.PvP;
 import blade.impl.action.pvp.cart.UseBow;
 import blade.impl.action.pvp.crystal.Crystal;
 import blade.impl.action.pvp.sword.Sword;
@@ -8,10 +9,7 @@ import blade.impl.action.pvp.totem.Totem;
 
 public class BladeImpl {
     public static void register(BladeMachine blade) {
-        Totem.register(blade);
-        Crystal.register(blade);
-        Sword.register(blade);
-        blade.addAction(new UseBow());
+        PvP.register(blade);
         /*blade.addAction(new MineCartEnemy.Bow());
         blade.addAction(new MineCartEnemy.PlaceRail());
         blade.addAction(new MineCartEnemy.PlaceCart());

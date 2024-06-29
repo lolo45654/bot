@@ -43,7 +43,7 @@ public class FakePlayer extends ServerPlayer {
      * then the velocity of the shield is stored and sent due to the attack.
      */
     public Vec3 serverSideDelta = Vec3.ZERO;
-    public boolean forceBothDelta = false;
+    public MovementSide forcedMovementSide = null;
     public boolean preventMove = false;
 
     public FakePlayer(ServerPlatform platform, MinecraftServer server, Vec3 pos, float yaw, float pitch, ServerLevel world, GameProfile profile) {
@@ -71,9 +71,9 @@ public class FakePlayer extends ServerPlayer {
     @Override
     public void tick() {
         super.tick();
-        forceBothDelta = true;
+        forcedMovementSide = MovementSide.BOTH;
         this.doTick();
-        forceBothDelta = false;
+        forcedMovementSide = null;
     }
 
     @Override
@@ -99,30 +99,35 @@ public class FakePlayer extends ServerPlayer {
     }
 
     @Override
-    public void setDeltaMovement(Vec3 vec3) {
-        setDeltaMovement(vec3, true);
+    public void setDeltaMovement(Vec3 delta) {
+        setDeltaMovement(delta, MovementSide.SERVER);
     }
 
-    public void setDeltaMovement(Vec3 vec3, boolean serverSide) {
-        if (forceBothDelta) {
-            serverSideDelta = vec3;
-            super.setDeltaMovement(vec3);
-            return;
+    public void setDeltaMovement(Vec3 delta, MovementSide side) {
+        if (forcedMovementSide != null) {
+            side = forcedMovementSide;
         }
-        if (serverSide) {
-            serverSideDelta = vec3;
-        } else {
-            super.setDeltaMovement(vec3);
+        if (side == MovementSide.SERVER || side == MovementSide.BOTH) {
+            serverSideDelta = delta;
+        }
+        if (side == MovementSide.CLIENT || side == MovementSide.BOTH) {
+            super.setDeltaMovement(delta);
         }
     }
 
     @Override
     public @NotNull Vec3 getDeltaMovement() {
-        return getDeltaMovement(true);
+        return getDeltaMovement(MovementSide.SERVER);
     }
 
-    public Vec3 getDeltaMovement(boolean serverSide) {
-        return serverSide && !forceBothDelta ? serverSideDelta : super.getDeltaMovement();
+    public Vec3 getDeltaMovement(MovementSide side) {
+        if (forcedMovementSide != null) {
+            side = forcedMovementSide;
+        }
+        if (side == MovementSide.SERVER) {
+            return serverSideDelta;
+        }
+        return super.getDeltaMovement();
     }
 
     /**
@@ -135,11 +140,6 @@ public class FakePlayer extends ServerPlayer {
     @Override
     public @NotNull String getIpAddress() {
         return "127.0.0.1";
-    }
-
-    public void sentMotionPacket() {
-        setDeltaMovement(serverSideDelta, false);
-        setDeltaMovement(Vec3.ZERO, true);
     }
 
     @Override
@@ -163,5 +163,11 @@ public class FakePlayer extends ServerPlayer {
     @Override
     protected void checkFallDamage(double y, boolean onGround, BlockState blockState, BlockPos blockPos) {
         doCheckFallDamage(0.0, y, 0.0, onGround);
+    }
+
+    public enum MovementSide {
+        SERVER,
+        CLIENT,
+        BOTH
     }
 }

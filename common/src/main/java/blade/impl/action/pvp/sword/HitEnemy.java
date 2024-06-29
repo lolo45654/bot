@@ -1,6 +1,7 @@
 package blade.impl.action.pvp.sword;
 
 import blade.impl.ConfigKeys;
+import blade.impl.StateKeys;
 import blade.impl.util.AttackUtil;
 import blade.inventory.Slot;
 import blade.inventory.SlotFlag;
@@ -35,8 +36,13 @@ public class HitEnemy extends ScoreAction implements Sword {
     }
 
     @Override
-    public void getResult(BladeState result) {
+    public boolean isSatisfied() {
+        return isPvPSatisfied(bot);
+    }
 
+    @Override
+    public void getResult(BladeState result) {
+        result.setValue(StateKeys.DOING_PVP, 1.0);
     }
 
     @Override

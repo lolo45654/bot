@@ -1,7 +1,6 @@
 package blade.impl;
 
 import blade.Bot;
-import blade.impl.util.MineCartPosition;
 import blade.util.blade.ConfigKey;
 import net.minecraft.world.entity.LivingEntity;
 
@@ -21,6 +20,4 @@ public class ConfigKeys {
     }
 
     public static final ConfigKey<LivingEntity> TARGET = ConfigKey.key("target", null);
-
-    public static final ConfigKey<MineCartPosition> MINE_CART_POSITION = ConfigKey.key("mine_cart_position", null);
 }

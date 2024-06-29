@@ -38,24 +38,29 @@ public class ScorePlanner implements Planner<ScoreDebug, ScoreAction> {
         Map<ScoreAction, Score> scores = new HashMap<>();
         double totalWeight = 0.0;
         for (ScoreAction action : actions) {
+            if (!action.isSatisfied()) {
+                scores.put(action, new Score(0, 0, 0, false));
+                continue;
+            }
             BladeState actionState = state.copy();
             action.getResult(actionState);
             double score = action.getScore();
             double scoreWithGoal = score + goal.getScore(actionState, state.difference(actionState));
             double weight = Math.pow(Math.E, scoreWithGoal / temperature);
-            scores.put(action, new Score(score, scoreWithGoal, weight));
+            scores.put(action, new Score(score, scoreWithGoal, weight, true));
             totalWeight += weight;
         }
 
         for (Map.Entry<ScoreAction, Score> entry : scores.entrySet()) {
             Score score = entry.getValue();
-            entry.setValue(new Score(score.score, score.scoreWithGoal, score.weight / totalWeight));
+            entry.setValue(new Score(score.score, score.scoreWithGoal, score.weight / totalWeight, score.satisfied));
         }
         debug.setScores(scores);
 
         double rand = random.nextDouble();
         double cumulativeWeight = 0.0;
         for (Map.Entry<ScoreAction, Score> entry : scores.entrySet()) {
+            if (!entry.getValue().satisfied) continue;
             cumulativeWeight += entry.getValue().weight;
             if (rand <= cumulativeWeight) {
                 ScoreAction action = entry.getKey();
@@ -87,6 +92,6 @@ public class ScorePlanner implements Planner<ScoreDebug, ScoreAction> {
         this.temperature = temperature;
     }
 
-    public static record Score(double score, double scoreWithGoal, double weight) {
+    public static record Score(double score, double scoreWithGoal, double weight, boolean satisfied) {
     }
 }

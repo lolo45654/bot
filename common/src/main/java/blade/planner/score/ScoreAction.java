@@ -8,6 +8,8 @@ public abstract class ScoreAction extends BladeAction<ScoreAction> {
     public void prepare() {
     }
 
+    public abstract boolean isSatisfied();
+
     public abstract void getResult(BladeState result);
 
     public abstract double getScore();

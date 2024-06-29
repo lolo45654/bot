@@ -1,6 +1,7 @@
 package blade.impl.action.pvp.sword;
 
 import blade.impl.ConfigKeys;
+import blade.impl.StateKeys;
 import blade.planner.score.ScoreAction;
 import blade.state.BladeState;
 import net.minecraft.world.entity.LivingEntity;
@@ -17,8 +18,13 @@ public class STap extends ScoreAction implements Sword {
     }
 
     @Override
-    public void getResult(BladeState result) {
+    public boolean isSatisfied() {
+        return isPvPSatisfied(bot);
+    }
 
+    @Override
+    public void getResult(BladeState result) {
+        result.setValue(StateKeys.DOING_PVP, 1.0);
     }
 
     @Override

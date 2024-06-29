@@ -1,6 +1,7 @@
 package blade.impl.action.pvp.crystal;
 
 import blade.impl.ConfigKeys;
+import blade.impl.StateKeys;
 import blade.inventory.Slot;
 import blade.inventory.SlotFlag;
 import blade.planner.score.ScoreAction;
@@ -30,15 +31,20 @@ public class PearlTowardsEnemy extends ScoreAction implements Crystal {
     }
 
     @Override
-    public void getResult(BladeState result) {
+    public boolean isSatisfied() {
+        return isPvPSatisfied(bot);
+    }
 
+    @Override
+    public void getResult(BladeState result) {
+        result.setValue(StateKeys.DOING_PVP, 1.0);
     }
 
     @Override
     public double getScore() {
         LivingEntity target = bot.getBlade().get(ConfigKeys.TARGET);
         double distSq = target.distanceToSqr(bot.getVanillaPlayer());
-        double dist = Math.max(Math.min((distSq - 16 * 16) / 96, 4), 0);
+        double dist = Math.min(Math.max((distSq - 16 * 16), 0) / 96, 0);
         return getCrystalScore(bot) +
                 dist +
                 (getPearlSlot() == null ? -8 : 0) +

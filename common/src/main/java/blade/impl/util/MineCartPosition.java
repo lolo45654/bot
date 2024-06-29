@@ -16,12 +16,8 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 public record MineCartPosition(Vec3 position, double confidence) {
     public static MineCartPosition get(Bot bot){
         BladeMachine blade = bot.getBlade();
-        MineCartPosition cartPos = blade.get(ConfigKeys.MINE_CART_POSITION);
-        if (cartPos == null) {
-            LivingEntity target = blade.get(ConfigKeys.TARGET);
-            cartPos = produce(target.position(), bot.getVanillaPlayer().getEyePosition(), bot.getVanillaPlayer().level());
-        }
-        return cartPos;
+        LivingEntity target = blade.get(ConfigKeys.TARGET);
+        return produce(target.position(), bot.getVanillaPlayer().getEyePosition(), bot.getVanillaPlayer().level());
     }
 
     public static MineCartPosition produce(Vec3 target, Vec3 botHeadPos, Level world) {

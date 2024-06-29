@@ -28,7 +28,7 @@ public class BotDebugOverlay {
             ScoreDebug planner = frame.getPlanner();
             ScoreAction actionTaken = planner.getActionTaken();
             Map<ScoreAction, ScorePlanner.Score> scores = planner.getScores();
-            ScorePlanner.Score defScore = new ScorePlanner.Score(-1, -1, -1);
+            ScorePlanner.Score defScore = new ScorePlanner.Score(-1, -1, -1, true);
             ScorePlanner.Score score = scores.getOrDefault(actionTaken, defScore);
             lines.add("A: " + actionTaken + " " + scoreToString(score) + " E: " + frame.getErrors().size() + " T: " + planner.getTemperature());
 
@@ -63,6 +63,6 @@ public class BotDebugOverlay {
     }
 
     public static String scoreToString(ScorePlanner.Score score) {
-        return String.format(Locale.ROOT, "S: %.3f SG: %.3f W: %.3f", score.score(), score.scoreWithGoal(), score.weight());
+        return String.format(Locale.ROOT, "S: %.3f SG: %.3f W: %.3f C: %s", score.score(), score.scoreWithGoal(), score.weight(), score.satisfied());
     }
 }

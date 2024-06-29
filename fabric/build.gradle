@@ -9,18 +9,14 @@ plugins {
 var archives_base_name = "bot-fabric"
 
 repositories {
-    maven {
-        url = 'https://maven.xpple.dev/maven2'
-    }
+    maven { url 'https://maven.xpple.dev/maven2' }
 }
 
 dependencies {
-    // To change the versions see the gradle.properties file
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings loom.officialMojangMappings()
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-    // Fabric API. This is technically optional, but you probably want it anyway.
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
     include modImplementation("dev.xpple:clientarguments:1.8")
@@ -41,9 +37,11 @@ processResources {
 }
 
 shadowJar {
+    archiveFileName = "bot-fabric-${project.version}-dev.jar"
+
     dependencies {
         exclude('net.fabricmc:.*')
-        include(project(":common"))
+        include(dependency("blade:.*"))
         exclude '/mappings/*'
     }
 }
