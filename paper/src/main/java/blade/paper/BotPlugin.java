@@ -25,6 +25,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
@@ -158,7 +159,7 @@ public class BotPlugin extends JavaPlugin {
             platform.addBot(bot);
             return bot;
         };
-        BiFunction<Player, CommandArguments, Bot> kill = (sender, args) -> {
+        BiFunction<CommandSender, CommandArguments, Bot> kill = (sender, args) -> {
             Entity target = (Entity) args.get("target");
             if (!(target instanceof LivingEntity)) return null;
             Bot bot = botGetter.apply(args);
@@ -175,14 +176,14 @@ public class BotPlugin extends JavaPlugin {
         return tree
                 .then(new LiteralArgument("kill")
                         .then(new EntitySelectorArgument.OneEntity("target")
-                                .executesPlayer((sender, args) -> {
+                                .executes((sender, args) -> {
                                     Bot bot = kill.apply(sender, args);
                                     if (bot == null) return;
                                     sender.sendMessage(Component.text("Spawned a killing bot."));
                                 })))
                 .then(new LiteralArgument("cart")
                         .then(new EntitySelectorArgument.OneEntity("target")
-                                .executesPlayer((sender, args) -> {
+                                .executes((sender, args) -> {
                                     Bot bot = kill.apply(sender, args);
                                     if (bot == null) return;
 
@@ -198,7 +199,7 @@ public class BotPlugin extends JavaPlugin {
                                 })))
                 .then(new LiteralArgument("crystal")
                         .then(new EntitySelectorArgument.OneEntity("target")
-                                .executesPlayer((sender, args) -> {
+                                .executes((sender, args) -> {
                                     Bot bot = kill.apply(sender, args);
                                     if (bot == null) return;
 
@@ -225,7 +226,7 @@ public class BotPlugin extends JavaPlugin {
                                 })))
                 .then(new LiteralArgument("sword")
                         .then(new EntitySelectorArgument.OneEntity("target")
-                                .executesPlayer((sender, args) -> {
+                                .executes((sender, args) -> {
                                     Bot bot = kill.apply(sender, args);
                                     if (bot == null) return;
 
@@ -246,22 +247,22 @@ public class BotPlugin extends JavaPlugin {
                                 })))
                 .then(new LiteralArgument("test")
                         .then(new LiteralArgument("move_forward")
-                                .executesPlayer((sender, args) -> {
+                                .executes((sender, args) -> {
                                     Bot bot = botGetter.apply(args);
                                     bot.setMoveForward(true);
                                 }))
                         .then(new LiteralArgument("move_right")
-                                .executesPlayer((sender, args) -> {
+                                .executes((sender, args) -> {
                                     Bot bot = botGetter.apply(args);
                                     bot.setMoveRight(true);
                                 }))
                         .then(new LiteralArgument("attack")
-                                .executesPlayer((sender, args) -> {
+                                .executes((sender, args) -> {
                                     Bot bot = botGetter.apply(args);
                                     bot.attack();
                                 }))
                         .then(new LiteralArgument("bow")
-                                .executesPlayer((sender, args) -> {
+                                .executes((sender, args) -> {
                                     Bot bot = botGetter.apply(args);
                                     PlayerInventory inv = bot.getVanillaPlayer().getBukkitEntity().getInventory();
                                     inv.addItem(new ItemStack(Material.BOW));
