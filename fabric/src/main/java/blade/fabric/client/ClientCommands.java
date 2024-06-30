@@ -2,6 +2,7 @@ package blade.fabric.client;
 
 import blade.BladeMachine;
 import blade.Bot;
+import blade.fabric.client.screen.MainScreen;
 import blade.impl.goal.KillTargetGoal;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
@@ -26,8 +27,13 @@ public class ClientCommands {
 
     public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandBuildContext registryAccess) {
         dispatcher.register(literal("cbot")
+                .then(literal("gui")
+                        .executes(ctx -> {
+                            Minecraft.getInstance().setScreen(new MainScreen());
+                            return 0;
+                        }))
                 .then(literal("disable")
-                        .executes(source -> {
+                        .executes(ctx -> {
                             Bot bot = BotClientMod.PLATFORM.getBot();
                             if (bot == null) return -1;
                             bot.destroy();

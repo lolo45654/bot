@@ -66,7 +66,7 @@ public record CrystalPosition(BlockPos obsidian, Vec3 placeAgainst, AABB crystal
                 BlockState state = world.getBlockState(checkingBlockPos);
                 if (state.isAir()) continue;
                 if (state.hasBlockEntity()) continue;
-                VoxelShape shape = state.getShape(world, checkingBlockPos);
+                VoxelShape shape = state.getShape(world, checkingBlockPos).move(checkingBlockPos.getX(), checkingBlockPos.getY(), checkingBlockPos.getZ());
                 Optional<Vec3> point = shape.closestPointTo(checkingPos);
                 if (point.isEmpty()) continue;
                 return point.get();

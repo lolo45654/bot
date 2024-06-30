@@ -12,6 +12,7 @@ public class AttackUtil {
         double score = 0.0;
         score += canCrit(attacker) ? 1.0 : 0.0;
         score += canAttack(attacker, victim) ? 2.0 : 0.0;
+        score += attacker instanceof Player player ? player.getAttackStrengthScale(0.5f) : 0;
         return score / 2;
     }
 
