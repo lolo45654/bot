@@ -18,6 +18,7 @@ public class UseShield extends ScoreAction implements Shield {
     @Override
     public void onTick() {
         Slot shieldSlot = getShieldSlot(bot);
+        if (shieldSlot == null) return;
         Slot totemSlot = getTotemSlot();
         if (shieldSlot.isOffHand() && totemSlot != null) {
             bot.getInventory().setSelectedSlot(totemSlot.getHotBarIndex());
@@ -47,7 +48,7 @@ public class UseShield extends ScoreAction implements Shield {
     public double getScore() {
         LivingEntity target = bot.getBlade().get(ConfigKeys.TARGET);
         Player player = bot.getVanillaPlayer();
-        return (getShieldSlot(bot) == null ? -12 : 0) +
+        return (getShieldSlot(bot) == null ? -24 : 0) +
                 (player.isUsingItem() ? (-player.getUseItemRemainingTicks() + 16) / 2.0 : 0) +
                 AttackUtil.isAttacking(target, player);
     }
