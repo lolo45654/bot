@@ -60,7 +60,8 @@ public class PlaceCrystal extends ScoreAction implements Crystal {
         Level world = bot.getVanillaPlayer().level();
         List<EndCrystal> endCrystals = world.getEntitiesOfClass(EndCrystal.class, crystalPos.crystalAABB());
         BlockState obsidian = world.getBlockState(crystalPos.obsidian());
-        return getCrystalScore(bot) + crystalPos.confidence() +
+        return getCrystalScore(bot) +
+                (Math.max(Math.min(crystalPos.confidence() * 4, 6), 0)) +
                 (endCrystals.isEmpty() ? -12 : 2) +
                 (obsidian.isAir() ? -8 : 2) +
                 (getCrystalSlot() == null ? -12 : 0);

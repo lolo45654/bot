@@ -54,7 +54,7 @@ public class PlaceObsidian extends ScoreAction implements Crystal {
         Level world = bot.getVanillaPlayer().level();
         BlockState obsidian = world.getBlockState(crystalPos.obsidian());
         return getCrystalScore(bot) +
-                (Math.max(Math.min(crystalPos.confidence(), 3), 0)) +
+                (Math.max(Math.min(crystalPos.confidence() * 4, 6), 0)) +
                 (getObsidianSlot() == null ? -8 : 0) +
                 (obsidian.isAir() ? 2 : -12);
     }

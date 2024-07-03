@@ -18,6 +18,9 @@ import net.minecraft.world.entity.player.ChatVisiblity;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.scores.PlayerTeam;
+import net.minecraft.world.scores.Scoreboard;
+import net.minecraft.world.scores.Team;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
@@ -58,6 +61,15 @@ public class FakePlayer extends ServerPlayer {
         connection = new ServerGamePacketListenerImpl(server, new FakeConnection(this), this, CommonListenerCookie.createInitial(profile, false));
         updateAll();
 
+        Scoreboard scoreboard = getScoreboard();
+        PlayerTeam team = scoreboard.getPlayersTeam("bot$no_display_name");
+        if (team == null) {
+            team = scoreboard.addPlayerTeam("bot$no_display_name");
+        }
+        team.setNameTagVisibility(Team.Visibility.NEVER);
+        team.setCollisionRule(Team.CollisionRule.NEVER);
+        scoreboard.addPlayerToTeam(getScoreboardName(), team);
+
         // Bukkit.getPluginManager().registerEvents(this, PaperPlatform.PLUGIN);
         world.addNewPlayer(this);
         invulnerableTime = 0;
@@ -80,11 +92,6 @@ public class FakePlayer extends ServerPlayer {
     public void remove(RemovalReason reason) {
         super.remove(reason);
         disconnect();
-    }
-
-    @Override
-    public @NotNull String getScoreboardName() {
-        return "BOT:" + getUUID();
     }
 
     public void update(ServerPlayer player) {

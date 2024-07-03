@@ -44,8 +44,8 @@ public class ScorePlanner implements Planner<ScoreDebug, ScoreAction> {
             }
             BladeState actionState = state.copy();
             action.getResult(actionState);
-            double score = action.getScore();
-            double scoreWithGoal = score + goal.getScore(actionState, state.difference(actionState));
+            double score = Math.max(action.getScore(), 0);
+            double scoreWithGoal = score + Math.max(goal.getScore(actionState, state.difference(actionState)), 0);
             double weight = Math.pow(Math.E, scoreWithGoal / temperature);
             scores.put(action, new Score(score, scoreWithGoal, weight, true));
             totalWeight += weight;
