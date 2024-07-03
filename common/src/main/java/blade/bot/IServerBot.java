@@ -5,9 +5,13 @@ import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
 import net.minecraft.server.level.ServerPlayer;
 
+import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 public interface IServerBot {
+    UUID PROFILE_UUID = UUID.fromString("eda5e1d7-c0ae-4cec-b182-2b052661821a");
+    String PROFILE_NAME = "$Bot";
+
     Property[] SKINS = new Property[] {
             new Property("textures",
                     "ewogICJ0aW1lc3RhbXAiIDogMTcxOTA1NTY2OTA5OSwKICAicHJvZmlsZUlkIiA6ICI0NTM1Y2RjNjk3NGU0Nzk4YjljYzY4ODlkZWY1MDk2NiIsCiAgInByb2ZpbGVOYW1lIiA6ICIzZXlyZW4iLAogICJzaWduYXR1cmVSZXF1aXJlZCIgOiB0cnVlLAogICJ0ZXh0dXJlcyIgOiB7CiAgICAiU0tJTiIgOiB7CiAgICAgICJ1cmwiIDogImh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNGI2YTVmYmIyNjQ1MjkzMjkyYTg0Mjk4ZDdlYTcwMTVkMjc2YzVlZDM3OWY2NjFmYWEyNzcyMGYxNWFkMTlhOCIsCiAgICAgICJtZXRhZGF0YSIgOiB7CiAgICAgICAgIm1vZGVsIiA6ICJzbGltIgogICAgICB9CiAgICB9CiAgfQp9",
@@ -22,7 +26,8 @@ public interface IServerBot {
 
     void destroy();
 
-    static GameProfile applySkin(GameProfile profile) {
+    static GameProfile getProfile() {
+        GameProfile profile = new GameProfile(PROFILE_UUID, PROFILE_NAME);
         PropertyMap properties = profile.getProperties();
         properties.put("textures", SKINS[ThreadLocalRandom.current().nextInt(SKINS.length)]);
         return profile;
