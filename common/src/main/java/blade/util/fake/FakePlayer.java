@@ -65,9 +65,9 @@ public class FakePlayer extends ServerPlayer {
         PlayerTeam team = scoreboard.getPlayersTeam("bot$no_display_name");
         if (team == null) {
             team = scoreboard.addPlayerTeam("bot$no_display_name");
+            team.setNameTagVisibility(Team.Visibility.NEVER);
+            team.setCollisionRule(Team.CollisionRule.NEVER);
         }
-        team.setNameTagVisibility(Team.Visibility.NEVER);
-        team.setCollisionRule(Team.CollisionRule.NEVER);
         scoreboard.addPlayerToTeam(getScoreboardName(), team);
 
         // Bukkit.getPluginManager().registerEvents(this, PaperPlatform.PLUGIN);

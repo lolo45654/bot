@@ -9,7 +9,6 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 public interface IServerBot {
-    UUID PROFILE_UUID = UUID.fromString("eda5e1d7-c0ae-4cec-b182-2b052661821a");
     String PROFILE_NAME = "$Bot";
 
     Property[] SKINS = new Property[] {
@@ -27,7 +26,7 @@ public interface IServerBot {
     void destroy();
 
     static GameProfile getProfile() {
-        GameProfile profile = new GameProfile(PROFILE_UUID, PROFILE_NAME);
+        GameProfile profile = new GameProfile(UUID.randomUUID(), PROFILE_NAME);
         PropertyMap properties = profile.getProperties();
         properties.put("textures", SKINS[ThreadLocalRandom.current().nextInt(SKINS.length)]);
         return profile;
