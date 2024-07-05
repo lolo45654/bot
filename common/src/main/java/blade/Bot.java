@@ -129,7 +129,7 @@ public class Bot {
     public void interact() {
         if (inventory.hasInventoryOpen()) return;
         if (isClient) {
-            InputConstants.Key key = ((ClientPlatform) platform).getKey(Minecraft.getInstance().options.keyAttack);
+            InputConstants.Key key = ((ClientPlatform) platform).getKey(Minecraft.getInstance().options.keyUse);
             KeyMapping.click(key);
             return;
         }
