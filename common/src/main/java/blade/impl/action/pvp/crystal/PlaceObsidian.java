@@ -25,6 +25,7 @@ public class PlaceObsidian extends BladeAction implements Crystal {
     @Override
     public void onTick() {
         Slot obsidianSlot = getObsidianSlot();
+        if (obsidianSlot == null) return;
         if (obsidianSlot.isHotBar()) {
             bot.getInventory().setSelectedSlot(obsidianSlot.getHotBarIndex());
         }
