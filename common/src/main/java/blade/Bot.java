@@ -43,7 +43,7 @@ public class Bot {
         this.scheduler = new BotScheduler(platform.getExecutor());
         this.inventory = isClient ? new BotClientInventory(this) : new BotInventory(this);
         if (isClient) clientSimulator = null;
-        else clientSimulator = new ClientSimulator((ServerPlayer) vanillaPlayer);
+        else clientSimulator = new ClientSimulator((ServerPlayer) vanillaPlayer, inventory::hasInventoryOpen);
     }
 
     public Player getVanillaPlayer() {
@@ -107,6 +107,7 @@ public class Bot {
     }
 
     public void jump() {
+        if (inventory.hasInventoryOpen()) return;
         if (isClient) {
             Minecraft.getInstance().options.keyJump.setDown(true);
         } else {
@@ -116,6 +117,7 @@ public class Bot {
     }
 
     public void attack() {
+        if (inventory.hasInventoryOpen()) return;
         if (isClient) {
             InputConstants.Key key = ((ClientPlatform) platform).getKey(Minecraft.getInstance().options.keyAttack);
             KeyMapping.click(key);
@@ -125,6 +127,7 @@ public class Bot {
     }
 
     public void interact() {
+        if (inventory.hasInventoryOpen()) return;
         if (isClient) {
             InputConstants.Key key = ((ClientPlatform) platform).getKey(Minecraft.getInstance().options.keyAttack);
             KeyMapping.click(key);
@@ -134,6 +137,7 @@ public class Bot {
     }
 
     public void attack(boolean should) {
+        if (inventory.hasInventoryOpen()) return;
         if (isClient) {
             Minecraft.getInstance().options.keyAttack.setDown(should);
             return;
@@ -142,6 +146,7 @@ public class Bot {
     }
 
     public void interact(boolean should) {
+        if (inventory.hasInventoryOpen()) return;
         if (isClient) {
             Minecraft.getInstance().options.keyUse.setDown(should);
             return;
@@ -150,6 +155,7 @@ public class Bot {
     }
 
     public void setSneak(boolean should) {
+        if (inventory.hasInventoryOpen()) return;
         if (isClient) {
             Minecraft.getInstance().options.keyShift.setDown(should);
             return;
@@ -158,6 +164,7 @@ public class Bot {
     }
 
     public void setMoveLeft(boolean should) {
+        if (inventory.hasInventoryOpen()) return;
         if (isClient) {
             Minecraft.getInstance().options.keyLeft.setDown(should);
             return;
@@ -166,6 +173,7 @@ public class Bot {
     }
 
     public void setMoveRight(boolean should) {
+        if (inventory.hasInventoryOpen()) return;
         if (isClient) {
             Minecraft.getInstance().options.keyRight.setDown(should);
             return;
@@ -174,6 +182,7 @@ public class Bot {
     }
 
     public void setMoveForward(boolean should) {
+        if (inventory.hasInventoryOpen()) return;
         if (isClient) {
             Minecraft.getInstance().options.keyUp.setDown(should);
             return;
@@ -182,6 +191,7 @@ public class Bot {
     }
 
     public void setMoveBackward(boolean should) {
+        if (inventory.hasInventoryOpen()) return;
         if (isClient) {
             Minecraft.getInstance().options.keyDown.setDown(should);
             return;
@@ -190,6 +200,7 @@ public class Bot {
     }
 
     public void setYaw(float yaw) {
+        if (inventory.hasInventoryOpen()) return;
         if (isClient) {
             double f = Minecraft.getInstance().options.sensitivity().get() * 0.6 + 0.6;
             double gcd = f * f * f * 8.0 * 0.15F;
@@ -202,6 +213,7 @@ public class Bot {
     }
 
     public void setPitch(float pitch) {
+        if (inventory.hasInventoryOpen()) return;
         if (isClient) {
             double f = Minecraft.getInstance().options.sensitivity().get() * 0.6 + 0.6;
             double gcd = f * f * f * 8.0 * 0.15F;
@@ -214,6 +226,7 @@ public class Bot {
     }
 
     public void setSprint(boolean sprint) {
+        if (inventory.hasInventoryOpen()) return;
         if (isClient) {
             Minecraft.getInstance().options.keySprint.setDown(sprint);
             return;

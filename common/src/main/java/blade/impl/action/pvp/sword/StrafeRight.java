@@ -2,15 +2,15 @@ package blade.impl.action.pvp.sword;
 
 import blade.impl.ConfigKeys;
 import blade.impl.StateKeys;
-import blade.planner.score.ScoreAction;
-import blade.state.BladeState;
+import blade.planner.score.ScoreState;
 import blade.util.BotMath;
+import blade.util.blade.BladeAction;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-public class StrafeRight extends ScoreAction implements Sword {
+public class StrafeRight extends BladeAction implements Sword {
     @Override
     public void onTick() {
         lookAtEnemy(bot, tick);
@@ -25,7 +25,13 @@ public class StrafeRight extends ScoreAction implements Sword {
     }
 
     @Override
-    public void getResult(BladeState result) {
+    public void onRelease(BladeAction next) {
+        super.onRelease(next);
+        bot.setMoveRight(false);
+    }
+
+    @Override
+    public void getResult(ScoreState result) {
         result.setValue(StateKeys.DOING_PVP, 1.0);
     }
 
@@ -41,10 +47,5 @@ public class StrafeRight extends ScoreAction implements Sword {
                 (distSq <= reach * reach ? -8 : (distSq > 12 * 12 ? -8 : Math.min(distSq / (12 * 12), 6))) +
                 Math.min(tick / 3.0, 1.4) +
                 ThreadLocalRandom.current().nextDouble() * 0.6;
-    }
-
-    @Override
-    public void onRelease(ScoreAction next) {
-        bot.setMoveRight(false);
     }
 }

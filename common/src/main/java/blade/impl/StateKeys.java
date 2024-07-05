@@ -4,7 +4,7 @@ import blade.debug.DebugFrame;
 import blade.impl.action.pvp.PvP;
 import blade.inventory.BotInventory;
 import blade.inventory.Slot;
-import blade.state.StateKey;
+import blade.planner.score.StateKey;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;

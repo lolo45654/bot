@@ -1,48 +1,25 @@
 package blade.planner.score;
 
-import blade.Bot;
-import blade.debug.planner.ScoreDebug;
-import blade.planner.Planner;
-import blade.state.BladeState;
+import blade.debug.planner.ScorePlannerDebug;
 import blade.util.blade.BladeGoal;
-import blade.util.blade.BladePlannedAction;
 
 import java.util.*;
 
-public class ScorePlanner implements Planner<ScoreDebug, ScoreAction> {
-    private final Set<ScoreAction> actions = new HashSet<>();
+public class ScorePlanner {
     private double temperature = 1.0;
     private Random random = new Random();
 
-    @Override
-    public void refreshAll(Bot bot, BladeState state) {
-        for (ScoreAction action : actions) {
-            action.setBot(bot);
-            action.setState(state);
-        }
-    }
-
-    @Override
-    public ScoreDebug createDebug() {
-        ScoreDebug debug = new ScoreDebug();
-        for (ScoreAction action : actions) {
-            action.setParentDebugPlanner(debug);
-        }
-        return debug;
-    }
-
-    @Override
-    public BladePlannedAction<ScoreAction> planInternal(BladeGoal goal, BladeState state, ScoreDebug debug) {
+    public <Action extends ScoreAction> Action plan(List<Action> actions, BladeGoal goal, ScoreState state, ScorePlannerDebug debug) {
         Objects.requireNonNull(goal);
         debug.setTemperature(temperature);
-        Map<ScoreAction, Score> scores = new HashMap<>();
+        Map<Action, Score> scores = new HashMap<>();
         double totalWeight = 0.0;
-        for (ScoreAction action : actions) {
+        for (Action action : actions) {
             if (!action.isSatisfied()) {
                 scores.put(action, new Score(0, 0, 0, false));
                 continue;
             }
-            BladeState actionState = state.copy();
+            ScoreState actionState = state.copy();
             action.getResult(actionState);
             double score = Math.max(action.getScore(), 0);
             double scoreWithGoal = score + Math.max(goal.getScore(actionState, state.difference(actionState)), 0);
@@ -51,29 +28,25 @@ public class ScorePlanner implements Planner<ScoreDebug, ScoreAction> {
             totalWeight += weight;
         }
 
-        for (Map.Entry<ScoreAction, Score> entry : scores.entrySet()) {
+        for (Map.Entry<Action, Score> entry : scores.entrySet()) {
             Score score = entry.getValue();
             entry.setValue(new Score(score.score, score.scoreWithGoal, score.weight / totalWeight, score.satisfied));
         }
-        debug.setScores(scores);
+        debug.setScores((Map<ScoreAction, Score>) scores);
 
         double rand = random.nextDouble();
         double cumulativeWeight = 0.0;
-        for (Map.Entry<ScoreAction, Score> entry : scores.entrySet()) {
+        for (Map.Entry<Action, Score> entry : scores.entrySet()) {
             if (!entry.getValue().satisfied) continue;
             cumulativeWeight += entry.getValue().weight;
             if (rand <= cumulativeWeight) {
-                ScoreAction action = entry.getKey();
+                Action action = entry.getKey();
                 debug.setActionTaken(action);
-                return new BladePlannedAction<>(action);
+                return action;
             }
         }
 
         throw new IllegalStateException("Scored planner has reached an impossible state.");
-    }
-
-    public void addAction(ScoreAction action) {
-        actions.add(action);
     }
 
     public Random getRandom() {
@@ -93,5 +66,9 @@ public class ScorePlanner implements Planner<ScoreDebug, ScoreAction> {
     }
 
     public static record Score(double score, double scoreWithGoal, double weight, boolean satisfied) {
+        @Override
+        public String toString() {
+            return String.format(Locale.ROOT, "S: %.3f SG: %.3f W: %.3f C: %s", score, scoreWithGoal, weight, satisfied);
+        }
     }
 }

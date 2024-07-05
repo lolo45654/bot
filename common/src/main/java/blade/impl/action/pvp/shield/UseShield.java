@@ -4,13 +4,13 @@ import blade.impl.ConfigKeys;
 import blade.impl.util.AttackUtil;
 import blade.inventory.Slot;
 import blade.inventory.SlotFlag;
-import blade.planner.score.ScoreAction;
-import blade.state.BladeState;
+import blade.planner.score.ScoreState;
+import blade.util.blade.BladeAction;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
 
-public class UseShield extends ScoreAction implements Shield {
+public class UseShield extends BladeAction implements Shield {
     public Slot getTotemSlot() {
         return bot.getInventory().findFirst(stack -> stack.is(Items.TOTEM_OF_UNDYING), SlotFlag.HOT_BAR);
     }
@@ -40,7 +40,13 @@ public class UseShield extends ScoreAction implements Shield {
     }
 
     @Override
-    public void getResult(BladeState result) {
+    public void onRelease(BladeAction next) {
+        super.onRelease(next);
+        bot.interact(false);
+    }
+
+    @Override
+    public void getResult(ScoreState result) {
 
     }
 
@@ -51,10 +57,5 @@ public class UseShield extends ScoreAction implements Shield {
         return (getShieldSlot(bot) == null ? -24 : 0) +
                 (player.isUsingItem() ? (-player.getUseItemRemainingTicks() + 16) / 2.0 : 0) +
                 AttackUtil.isAttacking(target, player);
-    }
-
-    @Override
-    public void onRelease(ScoreAction next) {
-        bot.interact(false);
     }
 }

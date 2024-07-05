@@ -6,7 +6,9 @@
   "mixins": [
     "ClientboundPlayerInfoUpdatePacketAccessor",
     "GuiMixin",
-    "MinecraftMixin"
+    "KeyMappingAccessor",
+    "MinecraftMixin",
+    "PauseScreenMixin"
   ],
   "client": [
   ],

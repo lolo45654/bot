@@ -26,6 +26,7 @@ import net.minecraft.world.phys.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 
 public class ClientSimulator {
     public static Method LivingEntity$updatingUsingItem;
@@ -72,6 +73,7 @@ public class ClientSimulator {
     }
     
     private final ServerPlayer player;
+    private final Supplier<Boolean> inventoryOpen;
     private boolean forwardKey = false;
     private boolean leftKey = false;
     private boolean rightKey = false;
@@ -91,8 +93,9 @@ public class ClientSimulator {
     private BlockPos currentBreakingPos;
     private BiConsumer<Vec3i, Float> blockDamageHandler = null;
 
-    public ClientSimulator(ServerPlayer player) {
+    public ClientSimulator(ServerPlayer player, Supplier<Boolean> inventoryOpen) {
         this.player = player;
+        this.inventoryOpen = inventoryOpen;
     }
 
     public void tick() {
@@ -101,12 +104,11 @@ public class ClientSimulator {
         tickMove();
         tickUsingItem();
         tickMouse();
-        // player.getCooldowns().tick();
         if (!(player instanceof FakePlayer)) {
             player.tick();
             player.doTick();
+            player.connection.teleport(player.getX(), player.getY(), player.getZ(), player.getYRot(), player.getXRot());
         }
-        // player.aiStep();
         if (itemUseCooldown > 0) {
             itemUseCooldown--;
         }
@@ -117,6 +119,12 @@ public class ClientSimulator {
     }
 
     public void tickMove() {
+        if (inventoryOpen.get()) {
+            player.xxa = 0;
+            player.yya = 0;
+            return;
+        }
+
         player.xxa = 0;
         if (rightKey) {
             player.xxa += 1;
@@ -143,6 +151,9 @@ public class ClientSimulator {
     }
     
     public void tickMouse() {
+        if (inventoryOpen.get()) {
+            return;
+        }
         boolean hasAttacked = false;
         if (player.isUsingItem() && !useKey) {
             ItemStack item = player.getUseItem();

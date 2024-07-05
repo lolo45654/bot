@@ -5,26 +5,28 @@ import blade.debug.DebugFrame;
 import blade.debug.ErrorOccurrence;
 import blade.debug.ReportError;
 import blade.impl.BladeImpl;
-import blade.planner.score.ScoreAction;
 import blade.planner.score.ScorePlanner;
-import blade.state.BladeState;
+import blade.planner.score.ScoreState;
+import blade.util.blade.BladeAction;
 import blade.util.blade.BladeGoal;
-import blade.util.blade.BladePlannedAction;
 import blade.util.blade.ConfigKey;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class BladeMachine {
     protected final Bot bot;
-    protected final BladeState state = new BladeState();
+    protected final ScoreState state = new ScoreState();
     protected final ScorePlanner planner = new ScorePlanner();
     protected final BladeDebug report = new BladeDebug();
     private final Map<ConfigKey<?>, Object> config = new HashMap<>();
 
+    protected final List<BladeAction> actions = new ArrayList<>();
     protected BladeGoal goal = null;
     protected boolean enabled = false;
-    protected ScoreAction previousAction;
+    protected BladeAction previousAction;
     protected DebugFrame frame;
 
     public BladeMachine(Bot bot) {
@@ -37,14 +39,27 @@ public class BladeMachine {
         if (goal == null) return;
         frame = report.newFrame();
         ReportError.wrap(() -> {
-            planner.refreshAll(bot, state);
+            for (BladeAction action : actions) {
+                action.setBot(bot);
+                action.setState(state);
+            }
             goal.setBot(bot);
             goal.tick();
             produceState();
             frame.setState(state.copy());
-            BladePlannedAction<ScoreAction> plan = planner.planInternal(goal, state, frame.getPlanner());
-            if (plan == null) return;
-            previousAction = plan.tick(previousAction, frame);
+            BladeAction action = planner.plan(actions, goal, state, frame.getPlanner());
+            if (action == null) {
+                previousAction = null;
+                return;
+            }
+            if (previousAction != null && !action.equals(previousAction)) {
+                ReportError.wrap(() -> previousAction.onRelease(action), frame, ErrorOccurrence.ACTION_RELEASE);
+                ReportError.wrap(previousAction::prepare, frame, ErrorOccurrence.ACTION_PREPARE);
+            }
+
+            ReportError.wrap(action::onTick, frame, ErrorOccurrence.ACTION_TICK);
+            ReportError.wrap(action::postTick, frame, ErrorOccurrence.ACTION_POST_TICK);
+            previousAction = action;
         }, frame, ErrorOccurrence.OTHER);
     }
 
@@ -61,11 +76,15 @@ public class BladeMachine {
         this.goal = goal;
     }
 
-    public void addAction(ScoreAction action) {
-        planner.addAction(action);
+    public void addAction(BladeAction action) {
+        actions.add(action);
     }
 
-    public BladeState getState() {
+    public List<BladeAction> getActions() {
+        return actions;
+    }
+
+    public ScoreState getState() {
         return state;
     }
 
@@ -86,7 +105,6 @@ public class BladeMachine {
     }
 
     public void causePanic(String detailedReason) {
-        // bot.sendError("Blade has panicked.");
         bot.destroy();
         DebugFrame frame = report.newFrame();
         frame.addError(ReportError.from(new Exception("Panic: " + detailedReason), ErrorOccurrence.PANIC));
@@ -103,5 +121,9 @@ public class BladeMachine {
 
     public <T> void set(ConfigKey<T> key, T value) {
         config.put(key, value);
+    }
+
+    public BladeGoal getGoal() {
+        return goal;
     }
 }

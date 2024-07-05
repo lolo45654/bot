@@ -5,12 +5,9 @@ import blade.impl.StateKeys;
 import blade.impl.util.CrystalPosition;
 import blade.inventory.Slot;
 import blade.inventory.SlotFlag;
-import blade.planner.score.ScoreAction;
-import blade.state.BladeState;
+import blade.planner.score.ScoreState;
 import blade.util.BotMath;
-import net.minecraft.core.BlockPos;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.world.effect.MobEffects;
+import blade.util.blade.BladeAction;
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
@@ -19,7 +16,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
-public class PlaceCrystal extends ScoreAction implements Crystal {
+public class PlaceCrystal extends BladeAction implements Crystal {
     private CrystalPosition crystalPos = null;
 
     public Slot getCrystalSlot() {
@@ -51,7 +48,7 @@ public class PlaceCrystal extends ScoreAction implements Crystal {
     }
 
     @Override
-    public void getResult(BladeState result) {
+    public void getResult(ScoreState result) {
         result.setValue(StateKeys.DOING_PVP, 1.0);
     }
 
@@ -65,5 +62,10 @@ public class PlaceCrystal extends ScoreAction implements Crystal {
                 (endCrystals.isEmpty() ? -12 : 2) +
                 (obsidian.isAir() ? -8 : 2) +
                 (getCrystalSlot() == null ? -12 : 0);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("place_crystal[pos=%s]", crystalPos);
     }
 }

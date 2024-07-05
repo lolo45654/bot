@@ -4,13 +4,13 @@ import blade.impl.ConfigKeys;
 import blade.impl.StateKeys;
 import blade.inventory.Slot;
 import blade.inventory.SlotFlag;
-import blade.planner.score.ScoreAction;
-import blade.state.BladeState;
+import blade.planner.score.ScoreState;
 import blade.util.BotMath;
+import blade.util.blade.BladeAction;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Items;
 
-public class PearlTowardsEnemy extends ScoreAction implements Crystal {
+public class PearlTowardsEnemy extends BladeAction implements Crystal {
     public Slot getPearlSlot() {
         return bot.getInventory().findFirst(stack -> stack.is(Items.ENDER_PEARL), SlotFlag.HOT_BAR);
     }
@@ -36,7 +36,7 @@ public class PearlTowardsEnemy extends ScoreAction implements Crystal {
     }
 
     @Override
-    public void getResult(BladeState result) {
+    public void getResult(ScoreState result) {
         result.setValue(StateKeys.DOING_PVP, 1.0);
     }
 

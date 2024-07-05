@@ -15,6 +15,7 @@ import java.util.function.Predicate;
 public class BotInventory {
     protected final Bot bot;
     protected final Inventory inventory;
+    protected boolean inventoryOpen = false;
 
     public BotInventory(Bot bot) {
         this.bot = bot;
@@ -96,10 +97,16 @@ public class BotInventory {
         ((ServerPlayer) bot.getVanillaPlayer()).drop(entireStack);
     }
 
-    public void startAction() {
+    public void openInventory() {
+        inventoryOpen = true;
     }
 
-    public void endAction() {
+    public void closeInventory() {
+        inventoryOpen = false;
+    }
+
+    public boolean hasInventoryOpen() {
+        return inventoryOpen;
     }
 
     public Inventory getVanilla() {

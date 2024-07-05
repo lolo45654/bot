@@ -2,13 +2,13 @@ package blade.impl.action.pvp.sword;
 
 import blade.impl.ConfigKeys;
 import blade.impl.StateKeys;
-import blade.planner.score.ScoreAction;
-import blade.state.BladeState;
+import blade.planner.score.ScoreState;
 import blade.util.BotMath;
+import blade.util.blade.BladeAction;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 
-public class MoveClose extends ScoreAction implements Sword {
+public class MoveClose extends BladeAction implements Sword {
     private Vec3 previousPos = null;
 
     @Override
@@ -33,7 +33,7 @@ public class MoveClose extends ScoreAction implements Sword {
     }
 
     @Override
-    public void getResult(BladeState result) {
+    public void getResult(ScoreState result) {
         result.setValue(StateKeys.DOING_PVP, 1.0);
     }
 

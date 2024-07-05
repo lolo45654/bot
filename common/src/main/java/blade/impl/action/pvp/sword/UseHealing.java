@@ -4,15 +4,15 @@ import blade.impl.ConfigKeys;
 import blade.impl.StateKeys;
 import blade.inventory.Slot;
 import blade.inventory.SlotFlag;
-import blade.planner.score.ScoreAction;
-import blade.state.BladeState;
+import blade.planner.score.ScoreState;
 import blade.util.BotMath;
+import blade.util.blade.BladeAction;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.phys.Vec3;
 
-public class UseHealing extends ScoreAction implements Sword {
+public class UseHealing extends BladeAction implements Sword {
     public Slot getSwordSlot() {
         return bot.getInventory().findFirst(stack -> stack.is(ItemTags.SWORDS), SlotFlag.HOT_BAR);
     }
@@ -44,7 +44,13 @@ public class UseHealing extends ScoreAction implements Sword {
     }
 
     @Override
-    public void getResult(BladeState result) {
+    public void onRelease(BladeAction next) {
+        super.onRelease(next);
+        bot.interact(false);
+    }
+
+    @Override
+    public void getResult(ScoreState result) {
         result.setValue(StateKeys.IS_HEALING, 1);
         result.setValue(StateKeys.DOING_PVP, 1.0);
     }
@@ -62,11 +68,5 @@ public class UseHealing extends ScoreAction implements Sword {
                 (bot.getVanillaPlayer().isUsingItem() ? (-bot.getVanillaPlayer().getUseItemRemainingTicks() + 16) / 2.0 : 0) +
                 ((targetHealthRatio - ourHealthRatio) * 3 - bot.getBlade().get(ConfigKeys.DIFFICULTY)) +
                 (getHealingSlot() == null ? -12 : 0);
-    }
-
-    @Override
-    public void onRelease(ScoreAction next) {
-        super.onRelease(next);
-        bot.interact(false);
     }
 }

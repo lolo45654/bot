@@ -1,16 +1,9 @@
 package blade.planner.score;
 
-import blade.state.BladeState;
-import blade.util.blade.BladeAction;
+public interface ScoreAction {
+    boolean isSatisfied();
 
-public abstract class ScoreAction extends BladeAction<ScoreAction> {
-    @Override
-    public void prepare() {
-    }
+    void getResult(ScoreState result);
 
-    public abstract boolean isSatisfied();
-
-    public abstract void getResult(BladeState result);
-
-    public abstract double getScore();
+    double getScore();
 }

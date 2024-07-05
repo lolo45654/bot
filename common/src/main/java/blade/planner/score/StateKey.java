@@ -1,4 +1,4 @@
-package blade.state;
+package blade.planner.score;
 
 import blade.Bot;
 

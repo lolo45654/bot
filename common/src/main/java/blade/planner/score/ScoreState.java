@@ -1,4 +1,4 @@
-package blade.state;
+package blade.planner.score;
 
 import blade.Bot;
 
@@ -7,12 +7,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class BladeState {
+public class ScoreState {
     public static final Set<StateKey> KEYS = new HashSet<>();
 
     private final Map<StateKey, Double> values = new HashMap<>();
 
-    public BladeState() {
+    public ScoreState() {
         updateValues();
     }
 
@@ -37,14 +37,14 @@ public class BladeState {
         values.clear();
     }
 
-    public BladeState copy() {
-        BladeState copy = new BladeState();
+    public ScoreState copy() {
+        ScoreState copy = new ScoreState();
         copy.values.putAll(values);
         return copy;
     }
 
-    public BladeState difference(BladeState other) {
-        BladeState diff = new BladeState();
+    public ScoreState difference(ScoreState other) {
+        ScoreState diff = new ScoreState();
         for (StateKey key : KEYS) {
             diff.values.put(key, getValue(key) - other.getValue(key));
         }

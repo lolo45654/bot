@@ -1,13 +1,12 @@
 package blade.debug.planner;
 
-import blade.debug.DebugPlanner;
 import blade.planner.score.ScoreAction;
 import blade.planner.score.ScorePlanner;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class ScoreDebug extends DebugPlanner {
+public class ScorePlannerDebug {
     private double temperature;
     private ScoreAction actionTaken;
     private Map<ScoreAction, ScorePlanner.Score> scores = new HashMap<>();

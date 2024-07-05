@@ -5,16 +5,16 @@ import blade.impl.StateKeys;
 import blade.impl.util.AttackUtil;
 import blade.inventory.Slot;
 import blade.inventory.SlotFlag;
-import blade.planner.score.ScoreAction;
-import blade.state.BladeState;
+import blade.planner.score.ScoreState;
 import blade.util.BotMath;
+import blade.util.blade.BladeAction;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 
-public class HitEnemy extends ScoreAction implements Sword {
+public class HitEnemy extends BladeAction implements Sword {
     public Slot getSwordSlot() {
         return bot.getInventory().findFirst(stack -> stack.is(ItemTags.SWORDS), SlotFlag.HOT_BAR);
     }
@@ -41,7 +41,7 @@ public class HitEnemy extends ScoreAction implements Sword {
     }
 
     @Override
-    public void getResult(BladeState result) {
+    public void getResult(ScoreState result) {
         result.setValue(StateKeys.DOING_PVP, 1.0);
     }
 

@@ -5,9 +5,9 @@ import blade.impl.StateKeys;
 import blade.impl.util.CrystalPosition;
 import blade.inventory.Slot;
 import blade.inventory.SlotFlag;
-import blade.planner.score.ScoreAction;
-import blade.state.BladeState;
+import blade.planner.score.ScoreState;
 import blade.util.BotMath;
+import blade.util.blade.BladeAction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.effect.MobEffects;
@@ -17,7 +17,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
-public class DestroyCrystal extends ScoreAction implements Crystal {
+public class DestroyCrystal extends BladeAction implements Crystal {
     private CrystalPosition crystalPos = null;
 
     public Slot getSwordSlot() {
@@ -53,7 +53,7 @@ public class DestroyCrystal extends ScoreAction implements Crystal {
     }
 
     @Override
-    public void getResult(BladeState result) {
+    public void getResult(ScoreState result) {
         result.setValue(StateKeys.DOING_PVP, 1.0);
     }
 
@@ -66,5 +66,10 @@ public class DestroyCrystal extends ScoreAction implements Crystal {
                 (endCrystals.isEmpty() ? -12 : 4) +
                 (hasWeakness() && !hasStrength() ? -1 : 0) +
                 (getSwordSlot() == null ? 0 : 1);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("destroy_crystal[pos=%s]", crystalPos);
     }
 }

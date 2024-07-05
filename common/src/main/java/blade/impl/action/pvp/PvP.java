@@ -3,7 +3,6 @@ package blade.impl.action.pvp;
 import blade.BladeMachine;
 import blade.Bot;
 import blade.impl.ConfigKeys;
-import blade.impl.action.pvp.cart.UseBow;
 import blade.impl.action.pvp.crystal.Crystal;
 import blade.impl.action.pvp.shield.Shield;
 import blade.impl.action.pvp.sword.Sword;
@@ -18,7 +17,7 @@ public interface PvP {
         Crystal.register(blade);
         Sword.register(blade);
         Shield.register(blade);
-        blade.addAction(new UseBow());
+        // blade.addAction(new UseBow());
     }
 
     default void lookAtEnemy(Bot bot, int tick) {

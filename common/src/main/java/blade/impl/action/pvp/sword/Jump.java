@@ -2,13 +2,13 @@ package blade.impl.action.pvp.sword;
 
 import blade.impl.ConfigKeys;
 import blade.impl.StateKeys;
-import blade.planner.score.ScoreAction;
-import blade.state.BladeState;
+import blade.planner.score.ScoreState;
+import blade.util.blade.BladeAction;
 import net.minecraft.world.entity.LivingEntity;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-public class Jump extends ScoreAction implements Sword {
+public class Jump extends BladeAction implements Sword {
     @Override
     public void onTick() {
         lookAtEnemy(bot, tick);
@@ -23,7 +23,7 @@ public class Jump extends ScoreAction implements Sword {
     }
 
     @Override
-    public void getResult(BladeState result) {
+    public void getResult(ScoreState result) {
         result.setValue(StateKeys.DOING_PVP, 1.0);
     }
 

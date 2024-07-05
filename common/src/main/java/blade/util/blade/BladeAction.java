@@ -1,13 +1,12 @@
 package blade.util.blade;
 
 import blade.Bot;
-import blade.debug.DebugPlanner;
-import blade.state.BladeState;
+import blade.planner.score.ScoreAction;
+import blade.planner.score.ScoreState;
 import org.slf4j.Logger;
 
-public abstract class BladeAction<T extends BladeAction<T>> {
-    protected BladeState state = new BladeState();
-    protected DebugPlanner parentDebugPlanner;
+public abstract class BladeAction implements ScoreAction {
+    protected ScoreState state = new ScoreState();
     protected Bot bot;
     protected int tick = 0;
     public Logger logger;
@@ -19,19 +18,16 @@ public abstract class BladeAction<T extends BladeAction<T>> {
         this.bot = bot;
     }
 
-    public void setState(BladeState state) {
+    public void setState(ScoreState state) {
         this.state = state;
     }
 
-    public void setParentDebugPlanner(DebugPlanner parentDebugPlanner) {
-        this.parentDebugPlanner = parentDebugPlanner;
+    public void prepare() {
     }
-
-    public abstract void prepare();
 
     public abstract void onTick();
 
-    public void onRelease(T next) {
+    public void onRelease(BladeAction next) {
         tick = 0;
     }
 
