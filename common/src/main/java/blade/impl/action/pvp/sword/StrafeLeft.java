@@ -41,10 +41,9 @@ public class StrafeLeft extends BladeAction implements Sword {
         Vec3 eyePos = bot.getVanillaPlayer().getEyePosition();
         Vec3 closestPoint = BotMath.getClosestPoint(eyePos, target.getBoundingBox());
         double distSq = closestPoint.distanceToSqr(eyePos);
-        double reach = getReach(bot);
 
         return getSwordScore(bot) +
-                (distSq <= reach * reach ? -8 : (distSq > 12 * 12 ? -8 : Math.min(distSq / (12 * 12), 6))) +
+                (1 - Math.min(distSq / (12 * 12), 1)) +
                 Math.min(tick / 3.0, 1.4) +
                 ThreadLocalRandom.current().nextDouble() * 0.6;
     }
