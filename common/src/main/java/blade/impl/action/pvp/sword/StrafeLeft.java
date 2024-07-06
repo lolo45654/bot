@@ -2,6 +2,7 @@ package blade.impl.action.pvp.sword;
 
 import blade.impl.ConfigKeys;
 import blade.impl.StateKeys;
+import blade.impl.util.AttackUtil;
 import blade.planner.score.ScoreState;
 import blade.util.BotMath;
 import blade.util.blade.BladeAction;
@@ -43,7 +44,8 @@ public class StrafeLeft extends BladeAction implements Sword {
         double distSq = closestPoint.distanceToSqr(eyePos);
 
         return getSwordScore(bot) +
-                (1 - Math.min(distSq / (12 * 12), 1)) +
+                (1 - Math.min(distSq / (24 * 24), 1)) +
+                AttackUtil.isAttacking(target, bot.getVanillaPlayer()) +
                 Math.min(tick / 3.0, 1.4) +
                 ThreadLocalRandom.current().nextDouble() * 0.6;
     }
