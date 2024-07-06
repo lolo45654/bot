@@ -172,6 +172,16 @@ public class FakePlayer extends ServerPlayer {
         doCheckFallDamage(0.0, y, 0.0, onGround);
     }
 
+    @Override
+    public boolean isInWaterOrRain() {
+        return false;
+    }
+
+    @Override
+    public boolean isInWaterRainOrBubble() {
+        return false;
+    }
+
     public enum MovementSide {
         SERVER,
         CLIENT,
