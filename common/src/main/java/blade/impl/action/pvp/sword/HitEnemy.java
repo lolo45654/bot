@@ -56,7 +56,7 @@ public class HitEnemy extends BladeAction implements Sword {
         double reach = getReach(bot);
 
         return getSwordScore(bot) +
-                (distSq > reach * reach ? -8 : 1 - (distSq / (reach * reach))) +
+                (distSq > reach * reach ? -8 : 1 - (distSq / (reach * reach / 2))) +
                 (attackStrength < 0.4f ? -8 : attackStrength > 0.9f ? 5.0f : attackStrength * 6 - 4) +
                 (getSwordSlot() == null ? -4 : 0);
     }
