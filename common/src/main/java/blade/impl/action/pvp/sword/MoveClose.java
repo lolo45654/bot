@@ -46,6 +46,6 @@ public class MoveClose extends BladeAction implements Sword {
         double reach = getReach(bot);
 
         return getSwordScore(bot) +
-                (distSq <= reach * reach ? -8 : (Math.min(distSq / 16, 6)));
+                (distSq <= reach * reach ? -8 : (Math.min(distSq / 16, 6) + 2));
     }
 }
