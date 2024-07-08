@@ -5,8 +5,11 @@
   "name": "Blade",
   "description": "",
   "authors": [ "loloed" ],
-  "contact": {},
-  "license": "All-Rights-Reserved",
+  "contact": {
+    "issues": "https://github.com/lolo45654/bot/issues",
+    "sources": "https://github.com/lolo45654/bot"
+  },
+  "license": "AGPL-3.0-or-later",
   "icon": "assets/blade/icon.png",
   "environment": "*",
   "entrypoints": {
