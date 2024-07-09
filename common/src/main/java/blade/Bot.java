@@ -12,6 +12,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -92,11 +93,12 @@ public class Bot {
     }
 
     public void lookRealistic(float targetYaw, float targetPitch, float time, float randomness) {
+        time = Mth.clamp(time, 0.0f, 1.0f);
         float yaw = vanillaPlayer.getYRot();
         float pitch = vanillaPlayer.getXRot();
         float t = time * time;
-        setYaw(targetYaw * t + yaw * (1 - t) + random.nextFloat() * 6f * randomness);
-        setPitch(targetPitch * t + pitch * (1 - t) + random.nextFloat() * 6f * randomness);
+        setYaw((targetYaw - yaw) * t + yaw + random.nextFloat() * 6f * randomness);
+        setPitch((targetPitch - pitch) * t + pitch + random.nextFloat() * 6f * randomness);
     }
 
     public void jump() {

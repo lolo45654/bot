@@ -11,7 +11,7 @@ public class ConfigKeys {
     public static final ConfigKey<Float> DIFFICULTY = ConfigKey.key("difficulty", 0.5f);
 
     public static float getDifficultyReversed(Bot bot) {
-        return 0 - bot.getBlade().get(DIFFICULTY) + 1;
+        return 0.9999f - bot.getBlade().get(DIFFICULTY);
     }
 
     public static float getDifficultyReversedCubic(Bot bot) {
