@@ -1,4 +1,4 @@
-package blade.impl.action.pvp.sword;
+package blade.impl.action.attack;
 
 import blade.impl.ConfigKeys;
 import blade.impl.StateKeys;
@@ -12,7 +12,10 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.phys.Vec3;
 
-public class UseHealing extends BladeAction implements Sword {
+import static blade.impl.action.attack.Attack.isPvPSatisfied;
+import static blade.impl.action.attack.Attack.lookAtEnemy;
+
+public class ConsumeHealing extends BladeAction implements Attack {
     public Slot getSwordSlot() {
         return bot.getInventory().findFirst(stack -> stack.is(ItemTags.SWORDS), SlotFlag.HOT_BAR);
     }
@@ -51,7 +54,7 @@ public class UseHealing extends BladeAction implements Sword {
 
     @Override
     public void getResult(ScoreState result) {
-        result.setValue(StateKeys.IS_HEALING, 1);
+        result.setValue(StateKeys.IS_HEALING, 1.0);
         result.setValue(StateKeys.DOING_PVP, 1.0);
     }
 
@@ -63,9 +66,10 @@ public class UseHealing extends BladeAction implements Sword {
         double distSq = closestPoint.distanceToSqr(eyePos);
         float ourHealthRatio = bot.getVanillaPlayer().getHealth() / bot.getVanillaPlayer().getMaxHealth();
         float targetHealthRatio = target.getHealth() / target.getMaxHealth();
-        return (getSwordScore(bot) / 2.0) +
+
+        return 0 +
                 Math.min(distSq / 24, 3) +
-                (bot.getVanillaPlayer().isUsingItem() ? (-bot.getVanillaPlayer().getUseItemRemainingTicks() + 16) / 2.0 : 0) +
+                (bot.getVanillaPlayer().isUsingItem() ? (16 - bot.getVanillaPlayer().getUseItemRemainingTicks()) / 2.0 : 0) +
                 ((targetHealthRatio - ourHealthRatio) * 3 - bot.getBlade().get(ConfigKeys.DIFFICULTY)) +
                 (getHealingSlot() == null ? -12 : 0);
     }

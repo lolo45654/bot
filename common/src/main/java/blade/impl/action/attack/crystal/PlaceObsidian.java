@@ -1,4 +1,4 @@
-package blade.impl.action.pvp.crystal;
+package blade.impl.action.attack.crystal;
 
 import blade.impl.ConfigKeys;
 import blade.impl.StateKeys;
@@ -14,6 +14,9 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+
+import static blade.impl.action.attack.Attack.isPvPSatisfied;
+import static blade.impl.action.attack.crystal.Crystal.getCrystalScore;
 
 public class PlaceObsidian extends BladeAction implements Crystal {
     private CrystalPosition crystalPos = null;
@@ -64,7 +67,7 @@ public class PlaceObsidian extends BladeAction implements Crystal {
 
         return getCrystalScore(bot) +
                 (distSq > 3 * 3 ? -8 : (Math.min(distSq, 3))) +
-                (Math.max(Math.min(crystalPos.confidence() / 3, 5), 0)) +
+                (Math.max(Math.min(crystalPos.confidence() / 3, 3), 0)) +
                 (getObsidianSlot() == null ? -8 : 0) +
                 (obsidian.isAir() ? 2 : -12);
     }

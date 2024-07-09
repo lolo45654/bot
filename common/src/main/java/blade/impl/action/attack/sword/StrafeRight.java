@@ -1,4 +1,4 @@
-package blade.impl.action.pvp.sword;
+package blade.impl.action.attack.sword;
 
 import blade.impl.ConfigKeys;
 import blade.impl.StateKeys;
@@ -10,6 +10,9 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.concurrent.ThreadLocalRandom;
+
+import static blade.impl.action.attack.Attack.isPvPSatisfied;
+import static blade.impl.action.attack.Attack.lookAtEnemy;
 
 public class StrafeRight extends BladeAction implements Sword {
     @Override
@@ -43,7 +46,7 @@ public class StrafeRight extends BladeAction implements Sword {
         Vec3 closestPoint = BotMath.getClosestPoint(eyePos, target.getBoundingBox());
         double distSq = closestPoint.distanceToSqr(eyePos);
 
-        return getSwordScore(bot) +
+        return Sword.getSwordScore(bot) +
                 (1 - Math.min(distSq / (24 * 24), 1)) +
                 AttackUtil.isAttacking(target, bot.getVanillaPlayer()) +
                 Math.min(tick / 3.0, 1.4) +

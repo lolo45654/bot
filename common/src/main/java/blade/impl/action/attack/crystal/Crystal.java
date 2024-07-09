@@ -1,12 +1,12 @@
-package blade.impl.action.pvp.crystal;
+package blade.impl.action.attack.crystal;
 
 import blade.BladeMachine;
 import blade.Bot;
-import blade.impl.action.pvp.PvP;
+import blade.impl.action.attack.Attack;
 import blade.inventory.BotInventory;
 import net.minecraft.world.item.Items;
 
-public interface Crystal extends PvP {
+public interface Crystal extends Attack {
     static void register(BladeMachine blade) {
         blade.addAction(new PearlTowardsEnemy());
         blade.addAction(new DestroyCrystal());
@@ -14,7 +14,7 @@ public interface Crystal extends PvP {
         blade.addAction(new PlaceCrystal());
     }
 
-    default double getCrystalScore(Bot bot) {
+    static double getCrystalScore(Bot bot) {
         BotInventory inv = bot.getInventory();
         double score = 0.0;
         score += inv.findFirst(stack -> stack.is(Items.END_CRYSTAL)) != null ? 1 : 0;

@@ -1,7 +1,7 @@
 package blade.impl;
 
 import blade.debug.DebugFrame;
-import blade.impl.action.pvp.PvP;
+import blade.impl.action.attack.Attack;
 import blade.inventory.BotInventory;
 import blade.inventory.Slot;
 import blade.planner.score.StateKey;
@@ -38,7 +38,7 @@ public class StateKeys {
     public static final StateKey DOING_PVP = StateKey.key("doing_pvp", bot -> {
         DebugFrame frame = bot.getBlade().getLastFrame();
         if (frame == null) return 0;
-        return frame.getPlanner().getActionTaken() instanceof PvP ? 1.0 : 0;
+        return frame.getPlanner().getActionTaken() instanceof Attack ? 1.0 : 0;
     });
 
     public static final StateKey IS_HEALING = StateKey.key("is_healing", bot -> 0);

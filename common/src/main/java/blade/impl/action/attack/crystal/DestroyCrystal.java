@@ -1,4 +1,4 @@
-package blade.impl.action.pvp.crystal;
+package blade.impl.action.attack.crystal;
 
 import blade.impl.ConfigKeys;
 import blade.impl.StateKeys;
@@ -8,37 +8,45 @@ import blade.inventory.SlotFlag;
 import blade.planner.score.ScoreState;
 import blade.util.BotMath;
 import blade.util.blade.BladeAction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
-public class PlaceCrystal extends BladeAction implements Crystal {
+import static blade.impl.action.attack.Attack.isPvPSatisfied;
+import static blade.impl.action.attack.crystal.Crystal.getCrystalScore;
+
+public class DestroyCrystal extends BladeAction implements Crystal {
     private CrystalPosition crystalPos = null;
 
-    public Slot getCrystalSlot() {
-        return bot.getInventory().findFirst(stack -> stack.is(Items.END_CRYSTAL), SlotFlag.OFF_HAND, SlotFlag.HOT_BAR);
+    public Slot getSwordSlot() {
+        return bot.getInventory().findFirst(stack -> stack.is(ItemTags.SWORDS), SlotFlag.HOT_BAR);
+    }
+
+    public boolean hasWeakness() {
+        return bot.getVanillaPlayer().hasEffect(MobEffects.WEAKNESS);
+    }
+
+    public boolean hasStrength() {
+        return bot.getVanillaPlayer().hasEffect(MobEffects.DAMAGE_BOOST);
     }
 
     @Override
     public void onTick() {
-        Slot crystalSlot = getCrystalSlot();
-        if (crystalSlot.isHotBar()) {
-            bot.getInventory().setSelectedSlot(crystalSlot.getHotBarIndex());
-        }
-
         float time = ConfigKeys.getDifficultyReversedCubic(bot) * 0.3f;
-        Vec3 lookAt = crystalPos.placeAgainst();
+        BlockPos obsidian = crystalPos.obsidian();
+        Vec3 lookAt = Vec3.atCenterOf(obsidian.above());
         Vec3 eyePos = bot.getVanillaPlayer().getEyePosition();
         Vec3 direction = lookAt.subtract(eyePos);
         float yaw = BotMath.getYaw(direction);
         float pitch = BotMath.getPitch(direction);
         bot.lookRealistic(yaw, pitch, (tick % time) / time, bot.getBlade().get(ConfigKeys.DIFFICULTY) * 0.2f);
         if (tick >= time) {
-            bot.interact();
+            bot.attack();
         }
     }
 
@@ -56,16 +64,15 @@ public class PlaceCrystal extends BladeAction implements Crystal {
     public double getScore() {
         Level world = bot.getVanillaPlayer().level();
         List<EndCrystal> endCrystals = world.getEntitiesOfClass(EndCrystal.class, crystalPos.crystalAABB());
-        BlockState obsidian = world.getBlockState(crystalPos.obsidian());
         return getCrystalScore(bot) +
                 (Math.max(Math.min(crystalPos.confidence() * 4, 6), 0)) +
-                (endCrystals.isEmpty() ? -12 : 2) +
-                (obsidian.isAir() ? -8 : 2) +
-                (getCrystalSlot() == null ? -12 : 0);
+                (endCrystals.isEmpty() ? -12 : 4) +
+                (hasWeakness() && !hasStrength() ? -1 : 0) +
+                (getSwordSlot() == null ? 0 : 1);
     }
 
     @Override
     public String toString() {
-        return String.format("place_crystal[pos=%s]", crystalPos);
+        return String.format("destroy_crystal[pos=%s]", crystalPos);
     }
 }

@@ -1,4 +1,4 @@
-package blade.impl.action.pvp.crystal;
+package blade.impl.action.attack.crystal;
 
 import blade.impl.ConfigKeys;
 import blade.impl.StateKeys;
@@ -9,6 +9,8 @@ import blade.util.BotMath;
 import blade.util.blade.BladeAction;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Items;
+
+import static blade.impl.action.attack.Attack.isPvPSatisfied;
 
 public class PearlTowardsEnemy extends BladeAction implements Crystal {
     public Slot getPearlSlot() {

@@ -1,12 +1,12 @@
-package blade.impl.action.pvp.totem;
+package blade.impl.action.attack.totem;
 
 import blade.BladeMachine;
 import blade.Bot;
-import blade.impl.action.pvp.PvP;
+import blade.impl.action.attack.Attack;
 import blade.inventory.BotInventory;
 import net.minecraft.world.item.Items;
 
-public interface Totem extends PvP {
+public interface Totem extends Attack {
     static void register(BladeMachine blade) {
         blade.addAction(new SelectTotem());
         blade.addAction(new EquipTotem());

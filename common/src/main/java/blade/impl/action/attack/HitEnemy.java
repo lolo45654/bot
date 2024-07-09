@@ -1,4 +1,4 @@
-package blade.impl.action.pvp.sword;
+package blade.impl.action.attack;
 
 import blade.impl.ConfigKeys;
 import blade.impl.StateKeys;
@@ -14,7 +14,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 
-public class HitEnemy extends BladeAction implements Sword {
+import static blade.impl.action.attack.Attack.*;
+
+public class HitEnemy extends BladeAction implements Attack {
     public Slot getSwordSlot() {
         return bot.getInventory().findFirst(stack -> stack.is(ItemTags.SWORDS), SlotFlag.HOT_BAR);
     }
@@ -55,7 +57,7 @@ public class HitEnemy extends BladeAction implements Sword {
         float attackStrength = player.getAttackStrengthScale(0.5f);
         double reach = getReach(bot);
 
-        return getSwordScore(bot) +
+        return 0 +
                 (distSq > reach * reach ? -8 : 1 - (distSq / (reach * reach / 2))) +
                 (attackStrength < 0.4f ? -8 : attackStrength > 0.9f ? 5.0f : attackStrength * 6 - 4) +
                 (getSwordSlot() == null ? -4 : 0);

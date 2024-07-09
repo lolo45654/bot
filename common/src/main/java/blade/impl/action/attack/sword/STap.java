@@ -1,4 +1,4 @@
-package blade.impl.action.pvp.sword;
+package blade.impl.action.attack.sword;
 
 import blade.impl.ConfigKeys;
 import blade.impl.StateKeys;
@@ -7,6 +7,9 @@ import blade.util.blade.BladeAction;
 import net.minecraft.world.entity.LivingEntity;
 
 import java.util.concurrent.ThreadLocalRandom;
+
+import static blade.impl.action.attack.Attack.isPvPSatisfied;
+import static blade.impl.action.attack.Attack.lookAtEnemy;
 
 public class STap extends BladeAction implements Sword {
     @Override
@@ -30,7 +33,7 @@ public class STap extends BladeAction implements Sword {
     @Override
     public double getScore() {
         LivingEntity target = bot.getBlade().get(ConfigKeys.TARGET);
-        return getSwordScore(bot) +
+        return Sword.getSwordScore(bot) +
                 target.hurtTime / 6.0 +
                 ThreadLocalRandom.current().nextDouble() * 0.6;
     }

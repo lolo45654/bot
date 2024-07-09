@@ -1,10 +1,10 @@
 package blade.impl;
 
 import blade.BladeMachine;
-import blade.impl.action.pvp.PvP;
+import blade.impl.action.attack.Attack;
 
 public class BladeImpl {
     public static void register(BladeMachine blade) {
-        PvP.register(blade);
+        Attack.register(blade);
     }
 }

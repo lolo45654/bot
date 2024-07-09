@@ -1,4 +1,4 @@
-package blade.impl.action.pvp.shield;
+package blade.impl.action.attack.shield;
 
 import blade.impl.ConfigKeys;
 import blade.impl.util.AttackUtil;
@@ -9,6 +9,10 @@ import blade.util.blade.BladeAction;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
+
+import static blade.impl.action.attack.Attack.isPvPSatisfied;
+import static blade.impl.action.attack.Attack.lookAtEnemy;
+import static blade.impl.action.attack.shield.Shield.getShieldSlot;
 
 public class UseShield extends BladeAction implements Shield {
     public Slot getTotemSlot() {

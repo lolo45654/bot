@@ -1,35 +1,37 @@
-package blade.impl.action.pvp.sword;
+package blade.impl.action.attack.sword;
 
 import blade.impl.ConfigKeys;
 import blade.impl.StateKeys;
+import blade.impl.util.AttackUtil;
 import blade.planner.score.ScoreState;
 import blade.util.BotMath;
 import blade.util.blade.BladeAction;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 
-public class MoveClose extends BladeAction implements Sword {
-    private Vec3 previousPos = null;
+import java.util.concurrent.ThreadLocalRandom;
 
+import static blade.impl.action.attack.Attack.isPvPSatisfied;
+import static blade.impl.action.attack.Attack.lookAtEnemy;
+
+public class StrafeLeft extends BladeAction implements Sword {
     @Override
     public void onTick() {
         lookAtEnemy(bot, tick);
 
-        Vec3 currentPosition = bot.getVanillaPlayer().position();
-        bot.interact(false);
-        bot.attack(false);
-        bot.setMoveForward(true);
-        bot.setMoveBackward(false);
-        bot.setSprint(true);
-        if (previousPos != null && (previousPos.x() == currentPosition.x() || previousPos.z() == currentPosition.z())) {
-            bot.jump();
-        }
-        previousPos = currentPosition;
+        bot.setMoveLeft(true);
+        bot.setMoveRight(false);
     }
 
     @Override
     public boolean isSatisfied() {
         return isPvPSatisfied(bot);
+    }
+
+    @Override
+    public void onRelease(BladeAction next) {
+        super.onRelease(next);
+        bot.setMoveLeft(false);
     }
 
     @Override
@@ -43,9 +45,11 @@ public class MoveClose extends BladeAction implements Sword {
         Vec3 eyePos = bot.getVanillaPlayer().getEyePosition();
         Vec3 closestPoint = BotMath.getClosestPoint(eyePos, target.getBoundingBox());
         double distSq = closestPoint.distanceToSqr(eyePos);
-        double reach = getReach(bot);
 
-        return getSwordScore(bot) +
-                (distSq <= reach * reach ? -8 : (Math.min(distSq / 16, 6) + 2));
+        return Sword.getSwordScore(bot) +
+                (1 - Math.min(distSq / (24 * 24), 1)) +
+                AttackUtil.isAttacking(target, bot.getVanillaPlayer()) +
+                Math.min(tick / 3.0, 1.4) +
+                ThreadLocalRandom.current().nextDouble() * 0.6;
     }
 }

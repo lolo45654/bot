@@ -1,4 +1,4 @@
-package blade.impl.action.pvp.totem;
+package blade.impl.action.attack.totem;
 
 import blade.impl.StateKeys;
 import blade.inventory.Slot;
@@ -6,6 +6,8 @@ import blade.inventory.SlotFlag;
 import blade.planner.score.ScoreState;
 import blade.util.blade.BladeAction;
 import net.minecraft.world.item.Items;
+
+import static blade.impl.action.attack.Attack.lookAtEnemy;
 
 public class SelectTotem extends BladeAction implements Totem {
     public Slot getTotemSlot() {
