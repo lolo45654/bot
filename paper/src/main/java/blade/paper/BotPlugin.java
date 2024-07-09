@@ -2,14 +2,12 @@ package blade.paper;
 
 import blade.BladeMachine;
 import blade.Bot;
-import blade.BuildConstants;
 import blade.bot.IServerBot;
 import blade.bot.ServerBot;
 import blade.bot.ServerBotSettings;
 import blade.debug.BladeDebug;
 import blade.impl.goal.KillTargetGoal;
 import blade.util.fake.FakePlayer;
-import com.mojang.authlib.GameProfile;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPIBukkitConfig;
 import dev.jorel.commandapi.CommandTree;
@@ -38,7 +36,10 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.java.JavaPlugin;
 import xyz.xenondevs.invui.item.builder.ItemBuilder;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
