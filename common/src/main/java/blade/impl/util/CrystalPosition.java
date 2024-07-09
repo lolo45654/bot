@@ -18,13 +18,13 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import java.util.Optional;
 
 public record CrystalPosition(BlockPos obsidian, Vec3 placeAgainst, AABB crystalAABB, double confidence) {
-    public static CrystalPosition get(Bot bot){
+    public static CrystalPosition get(Bot bot, CrystalPosition previous){
         BladeMachine blade = bot.getBlade();
         LivingEntity target = blade.get(ConfigKeys.TARGET);
-        return produce(target.position(), target.getBoundingBox(), bot.getVanillaPlayer().getEyePosition(), bot.getVanillaPlayer().level());
+        return produce(previous, target.position(), target.getBoundingBox(), bot.getVanillaPlayer().getEyePosition(), bot.getVanillaPlayer().level());
     }
 
-    public static CrystalPosition produce(Vec3 target, AABB targetAABB, Vec3 botHeadPos, Level world) {
+    public static CrystalPosition produce(CrystalPosition previous, Vec3 target, AABB targetAABB, Vec3 botHeadPos, Level world) {
         BlockPos bestPos = null;
         double bestScore = Double.NEGATIVE_INFINITY;
         Vec3 bestPlaceAgainst = null;
@@ -56,6 +56,7 @@ public record CrystalPosition(BlockPos obsidian, Vec3 placeAgainst, AABB crystal
                 }
             }
         }
+        if (previous != null && previous.confidence - bestScore > -5) return previous;
         return bestPos == null ? null : new CrystalPosition(bestPos, bestPlaceAgainst, bestCrystalAABB, bestScore);
     }
 
