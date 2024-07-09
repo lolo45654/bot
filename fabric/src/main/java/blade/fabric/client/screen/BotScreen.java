@@ -4,6 +4,7 @@ import blade.BladeMachine;
 import blade.Bot;
 import blade.debug.DebugFrame;
 import blade.debug.planner.ScorePlannerDebug;
+import blade.impl.ConfigKeys;
 import blade.planner.score.ScorePlanner;
 import blade.util.blade.BladeAction;
 import com.google.common.collect.ImmutableList;
@@ -11,11 +12,14 @@ import net.minecraft.client.GameNarrator;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractSliderButton;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.components.tabs.GridLayoutTab;
 import net.minecraft.client.gui.components.tabs.TabManager;
 import net.minecraft.client.gui.components.tabs.TabNavigationBar;
+import net.minecraft.client.gui.layouts.FrameLayout;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -41,7 +45,7 @@ public class BotScreen extends Screen {
 
     @Override
     protected void init() {
-        tabs = new BotTab[] { new ActionsTab(bot) };
+        tabs = new BotTab[] { new ActionsTab(bot), new SettingsTab(bot) };
         tabNavigationBar = addRenderableWidget(TabNavigationBar.builder(tabManager, width).addTabs(tabs).build());
         tabNavigationBar.selectTab(0, false);
         repositionElements();
@@ -149,6 +153,47 @@ public class BotScreen extends Screen {
         @Override
         public @NotNull List<? extends GuiEventListener> children() {
             return ImmutableList.of();
+        }
+    }
+
+    public class SettingsTab extends BotTab {
+        private static final Component TITLE = Component.literal("Settings");
+
+        public SettingsTab(Bot bot) {
+            super(TITLE);
+            layout.defaultCellSetting().padding(4, 4, 4, 0);
+            layout.addChild(new AbstractSliderButton(0, 0, 80, 20, Component.literal(String.format("Difficulty: %.1f", bot.getBlade().get(ConfigKeys.DIFFICULTY))), bot.getBlade().get(ConfigKeys.DIFFICULTY)) {
+                @Override
+                protected void updateMessage() {
+                    setMessage(Component.literal(String.format("Difficulty: %.1f", value)));
+                }
+
+                @Override
+                protected void applyValue() {
+                    bot.getBlade().set(ConfigKeys.DIFFICULTY, (float) value);
+                }
+            }, 1, 1);
+            layout.addChild(new AbstractSliderButton(0, 0, 80, 20, Component.literal(String.format("Temperature: %.1f", bot.getBlade().getPlanner().getTemperature())), bot.getBlade().getPlanner().getTemperature()) {
+                @Override
+                protected void updateMessage() {
+                    setMessage(Component.literal(String.format("Temperature: %.1f", value)));
+                }
+
+                @Override
+                protected void applyValue() {
+                    bot.getBlade().getPlanner().setTemperature(value);
+                }
+            }, 1, 2);
+            layout.addChild(Button.builder(Component.literal("Destroy"), btn -> {
+                bot.destroy();
+                Minecraft.getInstance().setScreen(null);
+            }).size(60, 20).build(), 2, 1);
+            FrameLayout.alignInRectangle(layout, 0, 0, BotScreen.this.width, BotScreen.this.height, 0.5F, 0.25F);
+        }
+
+        @Override
+        public void repositionElements() {
+            layout.arrangeElements();
         }
     }
 }
