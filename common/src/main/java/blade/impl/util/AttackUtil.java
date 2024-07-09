@@ -13,7 +13,7 @@ public class AttackUtil {
         score += canCrit(attacker) ? 1.0 : 0.0;
         score += canAttack(attacker, victim) ? 2.0 : 0.0;
         score += attacker instanceof Player player ? player.getAttackStrengthScale(0.5f) : 0;
-        return score / 2;
+        return score / 3.5;
     }
 
     public static boolean canCritIgnoreSprint(LivingEntity entity) {
