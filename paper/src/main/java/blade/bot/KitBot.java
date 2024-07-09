@@ -41,6 +41,7 @@ public class KitBot extends Bot implements IServerBot {
         FakePlayer fakePlayer = new FakePlayer(BotPlugin.platform, MinecraftServer.getServer(), CraftLocation.toVec3D(pos), pos.getYaw(), pos.getPitch(), ((CraftWorld) pos.getWorld()).getHandle(), IServerBot.getProfile());
         KitBot bot = new KitBot(fakePlayer, BotPlugin.platform, ((CraftPlayer) spawner).getHandle());
         BladeMachine blade = bot.getBlade();
+        blade.getPlanner().setTemperature(0.3);
         blade.setGoal(new KillTargetGoal(() -> {
             if (target.isDead()) {
                 bot.destroy();
