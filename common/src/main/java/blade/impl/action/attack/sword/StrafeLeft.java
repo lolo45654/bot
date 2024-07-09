@@ -47,9 +47,9 @@ public class StrafeLeft extends BladeAction implements Sword {
         double distSq = closestPoint.distanceToSqr(eyePos);
 
         return Sword.getSwordScore(bot) +
-                (1 - Math.min(distSq / (24 * 24), 1)) +
-                AttackUtil.isAttacking(target, bot.getVanillaPlayer()) +
-                Math.min(tick / 3.0, 1.4) +
-                ThreadLocalRandom.current().nextDouble() * 0.6;
+                (1 - Math.min(distSq / (24 * 24), 1)) * 0.4 +
+                AttackUtil.isAttacking(target, bot.getVanillaPlayer()) / 2 +
+                Math.min(tick / 3.0, 0.3) +
+                ThreadLocalRandom.current().nextDouble() * 0.2;
     }
 }
