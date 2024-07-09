@@ -14,6 +14,8 @@ public class ScorePlanner {
         debug.setTemperature(temperature);
         Map<Action, Score> scores = new HashMap<>();
         double totalWeight = 0.0;
+        Action highestScoreAction = null;
+        double highestScore = 0.0;
         for (Action action : actions) {
             if (!action.isSatisfied()) {
                 scores.put(action, new Score(0, 0, 0, false));
@@ -23,9 +25,17 @@ public class ScorePlanner {
             action.getResult(actionState);
             double score = Math.max(action.getScore(), 0);
             double scoreWithGoal = score + Math.max(goal.getScore(actionState, state.difference(actionState)), 0);
-            double weight = Math.pow(Math.E, scoreWithGoal / temperature);
+            double weight = temperature <= 0.0 ? 0.0 : Math.pow(Math.E, scoreWithGoal / temperature);
             scores.put(action, new Score(score, scoreWithGoal, weight, true));
+            if (highestScoreAction == null || scoreWithGoal > highestScore) {
+                highestScoreAction = action;
+                highestScore = scoreWithGoal;
+            }
             totalWeight += weight;
+        }
+        if (temperature <= 0.0 && highestScoreAction != null) {
+            scores.computeIfPresent(highestScoreAction, (action, score) -> new Score(score.score, score.scoreWithGoal, 1.0, score.satisfied));
+            totalWeight = 1.0;
         }
 
         for (Map.Entry<Action, Score> entry : scores.entrySet()) {
