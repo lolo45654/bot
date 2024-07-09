@@ -29,6 +29,7 @@ public class PlaceCrystal extends BladeAction implements Crystal {
     @Override
     public void onTick() {
         Slot crystalSlot = getCrystalSlot();
+        if (crystalSlot == null) return;
         if (crystalSlot.isHotBar()) {
             bot.getInventory().setSelectedSlot(crystalSlot.getHotBarIndex());
         }
