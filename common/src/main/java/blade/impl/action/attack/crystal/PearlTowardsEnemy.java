@@ -9,6 +9,7 @@ import blade.util.BotMath;
 import blade.util.blade.BladeAction;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.phys.Vec3;
 
 import static blade.impl.action.attack.Attack.isPvPSatisfied;
 
@@ -23,9 +24,9 @@ public class PearlTowardsEnemy extends BladeAction implements Crystal {
         if (pearlSlot == null) return;
         bot.getInventory().setSelectedSlot(pearlSlot.getHotBarIndex());
         float time = ConfigKeys.getDifficultyReversed(bot) * 0.3f;
-        float[] bow = BotMath.getRotationForBow(bot.getVanillaPlayer().getEyePosition(), bot.getBlade().get(ConfigKeys.TARGET).position(), 24);
+        Vec3 direction = bot.getBlade().get(ConfigKeys.TARGET).position().subtract(bot.getVanillaPlayer().getEyePosition());
         if (tick < time) {
-            bot.lookRealistic(bow[0], bow[1], tick / time, 0.3f);
+            bot.lookRealistic(BotMath.getYaw(direction), BotMath.getPitch(direction), tick / time, 0.3f);
         }
         if (tick >= time) {
             bot.interact();
