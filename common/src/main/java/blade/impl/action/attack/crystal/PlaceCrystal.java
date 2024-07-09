@@ -61,9 +61,9 @@ public class PlaceCrystal extends BladeAction implements Crystal {
         List<EndCrystal> endCrystals = world.getEntitiesOfClass(EndCrystal.class, crystalPos.crystalAABB());
         BlockState obsidian = world.getBlockState(crystalPos.obsidian());
         return getCrystalScore(bot) +
-                (Math.max(Math.min(crystalPos.confidence() * 4, 6), 0)) +
+                (Math.max(Math.min(crystalPos.confidence() / 3, 3), 0)) +
                 (endCrystals.isEmpty() ? -12 : 2) +
-                (obsidian.isAir() ? -8 : 2) +
+                (obsidian.isAir() ? -12 : 0) +
                 (getCrystalSlot() == null ? -12 : 0);
     }
 

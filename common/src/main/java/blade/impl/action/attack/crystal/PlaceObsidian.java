@@ -69,7 +69,7 @@ public class PlaceObsidian extends BladeAction implements Crystal {
                 (distSq > 3 * 3 ? -8 : (Math.min(distSq, 3))) +
                 (Math.max(Math.min(crystalPos.confidence() / 3, 3), 0)) +
                 (getObsidianSlot() == null ? -8 : 0) +
-                (obsidian.isAir() ? 2 : -12);
+                (obsidian.isAir() ? 0 : -12);
     }
 
     @Override

@@ -65,8 +65,8 @@ public class DestroyCrystal extends BladeAction implements Crystal {
         Level world = bot.getVanillaPlayer().level();
         List<EndCrystal> endCrystals = world.getEntitiesOfClass(EndCrystal.class, crystalPos.crystalAABB());
         return getCrystalScore(bot) +
-                (Math.max(Math.min(crystalPos.confidence() * 4, 6), 0)) +
-                (endCrystals.isEmpty() ? -12 : 4) +
+                (Math.max(Math.min(crystalPos.confidence() / 3, 3), 0)) +
+                (endCrystals.isEmpty() ? -12 : 3) +
                 (hasWeakness() && !hasStrength() ? -1 : 0) +
                 (getSwordSlot() == null ? 0 : 1);
     }
