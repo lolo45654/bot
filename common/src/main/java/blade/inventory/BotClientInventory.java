@@ -15,7 +15,7 @@ public class BotClientInventory extends BotInventory {
     @Override
     public void moveInternally(Slot from, Slot to) {
         LocalPlayer player = (LocalPlayer) bot.getVanillaPlayer();
-        Minecraft.getInstance().gameMode.handleInventoryMouseClick(player.containerMenu.containerId, from.getIndex(), to.getIndex(), ClickType.SWAP, player);
+        Minecraft.getInstance().gameMode.handleInventoryMouseClick(player.containerMenu.containerId, from.getVanillaIndex(), to.getVanillaIndex(), ClickType.SWAP, player);
     }
 
     @Override
