@@ -112,23 +112,6 @@ public class BotPlugin extends JavaPlugin {
                         .executes((sender, args) -> {
                             platform.removeAll();
                         }))
-                .then(new LiteralArgument("debug")
-                        .withPermission("bot.debug")
-                        .then(new LiteralArgument("save")
-                                .then(new GreedyStringArgument("name")
-                                        .executes((sender, args) -> {
-                                            Bot first = PaperPlatform.BOTS.getFirst();
-                                            if (first == null) return;
-                                            reports.put((String) args.get("name"), first.getBlade().getReport());
-                                        })))
-                        .then(new LiteralArgument("view")
-                                .then(new GreedyStringArgument("name")
-                                        .replaceSuggestions(ArgumentSuggestions.strings(info -> reports.keySet().toArray(new String[0])))
-                                        .executesPlayer((sender, args) -> {
-                                            String name = (String) args.get("name");
-                                            if (name == null || !reports.containsKey(name)) return;
-                                            // DebugGui.showMain(sender, reports.get(name));
-                                        }))))
                 .then(new LiteralArgument("count")
                         .withPermission("bot.count")
                         .executes((sender, args) -> {

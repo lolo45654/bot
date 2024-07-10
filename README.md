@@ -23,8 +23,6 @@ Under paper, you have the option to run the following commands:
   Similar to the simple bot, it spawns a fake player, now with advanced capabilities though.
 - /bot removeall (`bot.removeall`)<br>
   Clears all bots, useful as bots load chunks.
-- /bot debug (`bot.debug`)<br>
-  Legacy command.
 - /bot count (`bot.count`)<br>
   Show how many bots there are!
 
