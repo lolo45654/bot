@@ -13,13 +13,13 @@ public class EquipHotBarTotem extends BladeAction implements Totem {
     @Override
     public void onTick() {
         BotInventory inv = bot.getInventory();
-        Slot inventorySlot = inv.findFirst(stack -> stack.is(Items.TOTEM_OF_UNDYING), SlotFlag.MAIN, SlotFlag.ARMOR);
-        if (inventorySlot == null) return;
+        Slot totemSlot = getInventoryTotemSlot(bot);
+        if (totemSlot == null) return;
         if (tick == 0) {
             inv.openInventory();
         }
         if (tick >= ConfigKeys.getDifficultyReversed(bot) * 3) {
-            inv.move(inventorySlot, Slot.fromHotBar(1), true);
+            inv.move(totemSlot, Slot.fromHotBar(1), true);
         }
     }
 
@@ -39,7 +39,7 @@ public class EquipHotBarTotem extends BladeAction implements Totem {
         BotInventory inv = bot.getInventory();
         Slot hotBarSlot = inv.findFirst(stack -> stack.is(Items.TOTEM_OF_UNDYING), SlotFlag.HOT_BAR);
         return getTotemScore(bot) +
-                (hotBarSlot == null ? 1.2 : -10);
+                (hotBarSlot == null ? 0.8 : -10);
     }
 
     @Override

@@ -16,13 +16,13 @@ public class EquipTotem extends BladeAction implements Totem {
     @Override
     public void onTick() {
         BotInventory inv = bot.getInventory();
-        Slot inventorySlot = inv.findFirst(stack -> stack.is(Items.TOTEM_OF_UNDYING), SlotFlag.MAIN, SlotFlag.ARMOR);
-        if (inventorySlot == null) return;
+        Slot totemSlot = getInventoryTotemSlot(bot);
+        if (totemSlot == null) return;
         if (tick == 0) {
             inv.openInventory();
         }
         if (tick >= ConfigKeys.getDifficultyReversedCubic(bot) * 0.8) {
-            inv.move(inventorySlot, Slot.fromOffHand(), true);
+            inv.move(totemSlot, Slot.fromOffHand(), true);
         }
     }
 
@@ -43,16 +43,16 @@ public class EquipTotem extends BladeAction implements Totem {
         Player player = bot.getVanillaPlayer();
         LivingEntity target = bot.getBlade().get(ConfigKeys.TARGET);
         double deltaY = player.getDeltaMovement().y;
-        double health = player.getHealth() / player.getMaxHealth();
-        double healthReversed = 0 - health + 1;
+        double health = 1 - player.getHealth() / player.getMaxHealth();
         Slot hotBarSlot = inv.findFirst(stack -> stack.is(Items.TOTEM_OF_UNDYING), SlotFlag.HOT_BAR);
+
         return getTotemScore(bot) +
                 (inv.getOffHand().is(Items.TOTEM_OF_UNDYING) ? -12 : 0) +
-                (hotBarSlot != null && inv.getSelectedSlot() == hotBarSlot.getHotBarIndex() ? 0.4 : 0) +
+                (hotBarSlot != null && inv.getSelectedSlot() == hotBarSlot.getHotBarIndex() ? 0.3 : 0) +
                 Math.min(Math.max(deltaY * 2, 0), 1.0) +
-                (healthReversed * healthReversed) +
+                Math.min(health * health, 1) +
                 AttackUtil.isAttacking(target, bot.getVanillaPlayer()) +
-                (Math.min(tick / 0.7, 5));
+                tick > 0 ? 0.5 : 0;
     }
 
     @Override
