@@ -2,6 +2,7 @@ package blade.bot;
 
 import blade.BladeMachine;
 import blade.Bot;
+import blade.impl.ConfigKeys;
 import blade.impl.goal.KillTargetGoal;
 import blade.paper.BotPlugin;
 import blade.paper.PaperPlatform;
@@ -31,7 +32,7 @@ public class KitBot extends Bot implements IServerBot {
      * @param target  Entity to start killing.
      * @return the newly spawned bot as a bukkit player
      */
-    public static org.bukkit.entity.Player create(Location pos, org.bukkit.entity.Player spawner, LivingEntity target) {
+    public static org.bukkit.entity.Player create(Location pos, org.bukkit.entity.Player spawner, LivingEntity target, float difficulty, double temperature) {
         for (int i = 0; i < PaperPlatform.BOTS.size(); i++) {
             Bot bot = PaperPlatform.BOTS.get(i);
             if (bot instanceof IServerBot sBot && sBot.getSpawner().getUUID().equals(spawner.getUniqueId())) {
@@ -41,7 +42,8 @@ public class KitBot extends Bot implements IServerBot {
         FakePlayer fakePlayer = new FakePlayer(BotPlugin.platform, MinecraftServer.getServer(), CraftLocation.toVec3D(pos), pos.getYaw(), pos.getPitch(), ((CraftWorld) pos.getWorld()).getHandle(), IServerBot.getProfile());
         KitBot bot = new KitBot(fakePlayer, BotPlugin.platform, ((CraftPlayer) spawner).getHandle());
         BladeMachine blade = bot.getBlade();
-        blade.getPlanner().setTemperature(0.3);
+        blade.set(ConfigKeys.DIFFICULTY, difficulty);
+        blade.getPlanner().setTemperature(temperature);
         blade.setGoal(new KillTargetGoal(() -> {
             if (target.isDead()) {
                 bot.destroy();
@@ -51,6 +53,10 @@ public class KitBot extends Bot implements IServerBot {
         }));
         BotPlugin.platform.addBot(bot);
         return fakePlayer.getBukkitEntity();
+    }
+
+    public static org.bukkit.entity.Player create(Location pos, org.bukkit.entity.Player spawner, LivingEntity target) {
+        return create(pos, spawner, target, 0.5f, 0.3);
     }
 
     @Deprecated(forRemoval = true)
