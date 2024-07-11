@@ -8,6 +8,7 @@ import blade.impl.action.attack.shield.Shield;
 import blade.impl.action.attack.sword.Sword;
 import blade.impl.action.attack.totem.Totem;
 import blade.util.BotMath;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 
@@ -17,6 +18,11 @@ public interface Attack {
         Crystal.register(blade);
         Sword.register(blade);
         Shield.register(blade);
+
+        blade.addAction(new ConsumePotion(MobEffects.DAMAGE_BOOST, 1.0));
+        blade.addAction(new ConsumePotion(MobEffects.DAMAGE_RESISTANCE, 0.7));
+        blade.addAction(new ConsumePotion(MobEffects.MOVEMENT_SPEED, 0.3));
+        blade.addAction(new ConsumePotion(MobEffects.FIRE_RESISTANCE, 1.0));
     }
 
     static void lookAtEnemy(Bot bot, int tick) {
