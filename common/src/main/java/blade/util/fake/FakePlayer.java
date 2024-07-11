@@ -62,7 +62,7 @@ public class FakePlayer extends ServerPlayer {
         updateAll();
 
         Scoreboard scoreboard = getScoreboard();
-        PlayerTeam team = scoreboard.getPlayersTeam("bot$no_display_name");
+        PlayerTeam team = scoreboard.getPlayerTeam("bot$no_display_name");
         if (team == null) {
             team = scoreboard.addPlayerTeam("bot$no_display_name");
             team.setNameTagVisibility(Team.Visibility.NEVER);
