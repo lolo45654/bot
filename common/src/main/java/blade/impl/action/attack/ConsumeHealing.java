@@ -69,7 +69,7 @@ public class ConsumeHealing extends BladeAction implements Attack {
 
         return 0 +
                 Math.min((distSq - 3 * 3) / (8 * 8), 1) +
-                (tick > 0 ? 0.6 : 0) +
+                Math.min(tick / 16, 1) +
                 ((targetHealthRatio - ourHealthRatio) * 3 - bot.getBlade().get(ConfigKeys.DIFFICULTY)) +
                 (getHealingSlot() == null ? -12 : 0) +
                 Math.max(Math.min(20 - bot.getVanillaPlayer().getFoodData().getFoodLevel(), 2) * 2, 0) +
