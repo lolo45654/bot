@@ -94,6 +94,7 @@ public class Bot {
     }
 
     public void lookRealistic(float targetYaw, float targetPitch, float time, float randomness) {
+        if (true) randomness = 0.0f; // Randomness disabled
         time = Mth.clamp(time, 0.0f, 1.0f);
         float yaw = vanillaPlayer.getYRot();
         float pitch = vanillaPlayer.getXRot();
