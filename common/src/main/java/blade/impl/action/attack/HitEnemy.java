@@ -58,8 +58,9 @@ public class HitEnemy extends BladeAction implements Attack {
         double reach = getReach(bot);
 
         return 0 +
-                (distSq > reach * reach ? -8 : 1 - (distSq / (reach * reach / 2))) +
-                (attackStrength < 0.4f ? -8 : attackStrength > 0.9f ? 5.0f : attackStrength * 6 - 4) +
-                (getSwordSlot() == null ? -4 : 0);
+                (distSq > reach * reach ? -8 : 1 - (distSq / (reach * reach)) * 2) +
+                (attackStrength < 0.4f ? -8 : attackStrength > 0.9f ? 2.0f : attackStrength * 4 - 3) +
+                AttackUtil.isAttacking(player, target) +
+                (getSwordSlot() == null ? -12 : 0);
     }
 }

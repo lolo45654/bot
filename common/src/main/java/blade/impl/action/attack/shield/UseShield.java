@@ -61,6 +61,6 @@ public class UseShield extends BladeAction implements Shield {
         return (getShieldSlot(bot) == null ? -12 : 0) +
                 (player.isUsingItem() && player.getUseItem().is(Items.SHIELD) ? 0.3 : 0) +
                 (player.getCooldowns().isOnCooldown(Items.SHIELD) ? -12 : 0) +
-                AttackUtil.isAttacking(target, player) * 2;
+                AttackUtil.isAttacking(target, player);
     }
 }
