@@ -68,7 +68,7 @@ public class ConsumeHealing extends BladeAction implements Attack {
         float targetHealthRatio = target.getHealth() / target.getMaxHealth();
 
         return 0 +
-                Math.min(distSq / (8 * 8) - 3 * 3, 1) +
+                Math.min((distSq - 3 * 3) / (8 * 8), 1) +
                 (tick > 0 ? 0.6 : 0) +
                 ((targetHealthRatio - ourHealthRatio) * 3 - bot.getBlade().get(ConfigKeys.DIFFICULTY)) +
                 (getHealingSlot() == null ? -12 : 0) +
