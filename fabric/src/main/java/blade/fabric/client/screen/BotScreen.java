@@ -188,6 +188,10 @@ public class BotScreen extends Screen {
                 bot.destroy();
                 Minecraft.getInstance().setScreen(null);
             }).size(60, 20).build(), 2, 1);
+            layout.addChild(Button.builder(Component.literal("Debug: " + (bot.isDebug() ? "On" : "Off")), btn -> {
+                bot.setDebug(!bot.isDebug());
+                btn.setMessage(Component.literal("Debug: " + (bot.isDebug() ? "On" : "Off")));
+            }).size(60, 20).build(), 2, 2);
             FrameLayout.alignInRectangle(layout, 0, 0, BotScreen.this.width, BotScreen.this.height, 0.5F, 0.25F);
         }
 

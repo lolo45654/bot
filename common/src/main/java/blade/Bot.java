@@ -7,6 +7,7 @@ import blade.platform.ClientPlatform;
 import blade.platform.Platform;
 import blade.scheduler.BotScheduler;
 import blade.util.ClientSimulator;
+import blade.util.blade.BladeAction;
 import blade.util.fake.FakePlayer;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
@@ -255,5 +256,16 @@ public class Bot {
     public Logger getLogger(String name) {
         if (!debug) return NOPLogger.NOP_LOGGER;
         return LoggerFactory.getLogger("BOT-" + name);
+    }
+
+    public void setDebug(boolean debug) {
+        this.debug = debug;
+        for (BladeAction action : blade.getActions()) {
+            action.logger = getLogger(action.getClass().getSimpleName());
+        }
+    }
+
+    public boolean isDebug() {
+        return debug;
     }
 }

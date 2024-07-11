@@ -12,8 +12,8 @@ public abstract class BladeAction implements ScoreAction {
     public Logger logger;
 
     public void setBot(Bot bot) {
-        if (this.logger == null || this.bot != bot) {
-            this.logger = bot.getLogger(getClass().getSimpleName());
+        if (logger == null || this.bot != bot) {
+            logger = bot.getLogger(getClass().getSimpleName());
         }
         this.bot = bot;
     }
