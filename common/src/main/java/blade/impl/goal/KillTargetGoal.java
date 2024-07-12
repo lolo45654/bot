@@ -26,9 +26,7 @@ public class KillTargetGoal extends BladeGoal {
 
     @Override
     public void tick() {
-        LivingEntity target = this.target.get();
-        if (target == null) return;
-        bot.getBlade().set(ConfigKeys.TARGET, target);
+        bot.getBlade().set(ConfigKeys.TARGET, target.get());
     }
 
     @Override

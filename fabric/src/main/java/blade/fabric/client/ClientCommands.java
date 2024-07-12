@@ -60,7 +60,6 @@ public class ClientCommands {
                                                 } catch (CommandSyntaxException e) {
                                                     BotClientMod.LOGGER.warn("Syntax error in tick get target.");
                                                 }
-                                                bot.destroy();
                                                 return null;
                                             }));
                                             BotClientMod.PLATFORM.setBot(bot);
