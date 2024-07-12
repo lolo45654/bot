@@ -9,8 +9,6 @@ import blade.util.blade.BladeAction;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.concurrent.ThreadLocalRandom;
-
 import static blade.impl.action.attack.Attack.isPvPSatisfied;
 import static blade.impl.action.attack.Attack.lookAtEnemy;
 
@@ -50,6 +48,6 @@ public class StrafeRight extends BladeAction implements Sword {
                 (1 - Math.min(distSq / (24 * 24), 1)) * 0.4 +
                 AttackUtil.isAttacking(target, bot.getVanillaPlayer()) / 2 +
                 Math.min(tick / 3.0, 0.3) +
-                ThreadLocalRandom.current().nextDouble() * 0.2;
+                bot.getRandom().nextDouble() * 0.2;
     }
 }

@@ -81,7 +81,7 @@ public class ServerBot extends Bot implements IServerBot {
             noShieldTicks--;
         }
         if (shieldCooldown && noShieldTicks <= 0) {
-            noShieldTicks = ThreadLocalRandom.current().nextInt(42);
+            noShieldTicks = random.nextInt(42);
         }
     }
 
