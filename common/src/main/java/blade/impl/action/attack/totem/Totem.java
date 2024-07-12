@@ -15,16 +15,16 @@ public interface Totem extends Attack {
         blade.addAction(new EquipHotBarTotem());
     }
 
-    default double getTotemScore(Bot bot) {
+    static double getTotemScore(Bot bot) {
         BotInventory inv = bot.getInventory();
         return inv.findFirst(stack -> stack.is(Items.TOTEM_OF_UNDYING)) == null ? -24 : 0;
     }
 
-    default Slot getInventoryTotemSlot(Bot bot) {
+    static Slot getInventoryTotemSlot(Bot bot) {
         return bot.getInventory().findFirst(stack -> stack.is(Items.TOTEM_OF_UNDYING), SlotFlag.MAIN, SlotFlag.ARMOR);
     }
 
-    default Slot getHotBarTotemSlot(Bot bot) {
+    static Slot getHotBarTotemSlot(Bot bot) {
         return bot.getInventory().findFirst(stack -> stack.is(Items.TOTEM_OF_UNDYING), SlotFlag.HOT_BAR);
     }
 }

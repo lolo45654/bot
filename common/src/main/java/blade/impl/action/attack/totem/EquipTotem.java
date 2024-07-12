@@ -2,6 +2,7 @@ package blade.impl.action.attack.totem;
 
 import blade.impl.ConfigKeys;
 import blade.impl.StateKeys;
+import blade.impl.action.attack.Attack;
 import blade.impl.util.AttackUtil;
 import blade.inventory.BotInventory;
 import blade.inventory.Slot;
@@ -16,7 +17,7 @@ public class EquipTotem extends BladeAction implements Totem {
     @Override
     public void onTick() {
         BotInventory inv = bot.getInventory();
-        Slot totemSlot = getInventoryTotemSlot(bot);
+        Slot totemSlot = Totem.getInventoryTotemSlot(bot);
         if (totemSlot == null) return;
         if (tick == 0) {
             inv.openInventory();
@@ -28,7 +29,7 @@ public class EquipTotem extends BladeAction implements Totem {
 
     @Override
     public boolean isSatisfied() {
-        return true;
+        return Attack.isPvPSatisfied(bot);
     }
 
     @Override
@@ -46,7 +47,7 @@ public class EquipTotem extends BladeAction implements Totem {
         double health = 1 - player.getHealth() / player.getMaxHealth();
         Slot hotBarSlot = inv.findFirst(stack -> stack.is(Items.TOTEM_OF_UNDYING), SlotFlag.HOT_BAR);
 
-        return getTotemScore(bot) +
+        return Totem.getTotemScore(bot) +
                 (inv.getOffHand().is(Items.TOTEM_OF_UNDYING) ? -12 : 0) +
                 (hotBarSlot != null && inv.getSelectedSlot() == hotBarSlot.getHotBarIndex() ? 0.3 : 0) +
                 Math.min(Math.max(deltaY * 2, 0), 1.0) +
