@@ -47,7 +47,6 @@ public class MoveTowardsEnemy extends BladeAction implements Attack {
         double distSq = closestPoint.distanceToSqr(eyePos);
         double reach = getReach(bot);
 
-        return 0 +
-                (distSq <= reach * reach ? -8 : (Math.min(distSq / 16, 6) + 2));
+        return distSq <= reach * reach ? -8 : Math.min(distSq / 32, 3) + 1;
     }
 }
