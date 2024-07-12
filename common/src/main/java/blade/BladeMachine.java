@@ -126,4 +126,16 @@ public class BladeMachine {
     public BladeGoal getGoal() {
         return goal;
     }
+
+    public void copy(BladeMachine otherBlade) {
+        config.clear();
+        config.putAll(otherBlade.config);
+        actions.clear();
+        actions.addAll(otherBlade.actions);
+        goal = otherBlade.goal;
+        enabled = otherBlade.enabled;
+        previousAction = otherBlade.previousAction;
+        frame = otherBlade.frame;
+        planner.copy(otherBlade.planner);
+    }
 }

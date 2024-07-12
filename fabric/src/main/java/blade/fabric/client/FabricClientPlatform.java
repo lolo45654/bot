@@ -5,6 +5,7 @@ import blade.platform.ClientPlatform;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -35,5 +36,11 @@ public class FabricClientPlatform implements ClientPlatform {
 
     public void setBot(Bot bot) {
         this.bot = bot;
+    }
+
+    public void onRespawn() {
+        Bot newBot = new Bot(Minecraft.getInstance().player, this);
+        newBot.copy(bot);
+        this.bot = newBot;
     }
 }

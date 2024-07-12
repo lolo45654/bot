@@ -11,6 +11,7 @@ import dev.xpple.clientarguments.arguments.CEntityArgument;
 import dev.xpple.clientarguments.arguments.CEntitySelector;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
@@ -53,8 +54,10 @@ public class ClientCommands {
                                             Bot bot = new Bot(Minecraft.getInstance().player, BotClientMod.PLATFORM);
                                             BladeMachine blade = bot.getBlade();
                                             blade.setGoal(new KillTargetGoal(() -> {
+                                                LocalPlayer player = Minecraft.getInstance().player;
+                                                if (player == null || player.isDeadOrDying()) return null;
                                                 try {
-                                                    Entity entity0 = arg.getEntity(source);
+                                                    Entity entity0 = arg.getEntity(BotClientMod.CLIENT_SOURCE);
                                                     if (entity0 instanceof LivingEntity livingEntity0) return livingEntity0;
                                                     BotClientMod.LOGGER.warn("Target is no longer a living entity.");
                                                 } catch (CommandSyntaxException e) {

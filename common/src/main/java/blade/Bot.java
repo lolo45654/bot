@@ -269,4 +269,9 @@ public class Bot {
     public boolean isDebug() {
         return debug;
     }
+
+    public void copy(Bot otherBot) {
+        blade.copy(otherBot.getBlade());
+        debug = otherBot.debug;
+    }
 }

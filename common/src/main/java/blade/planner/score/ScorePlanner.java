@@ -75,6 +75,11 @@ public class ScorePlanner {
         this.temperature = temperature;
     }
 
+    public void copy(ScorePlanner otherPlanner) {
+        temperature = otherPlanner.temperature;
+        random = otherPlanner.random;
+    }
+
     public static record Score(double score, double scoreWithGoal, double weight, boolean satisfied) {
         @Override
         public String toString() {
