@@ -2,10 +2,10 @@ package blade.platform;
 
 import blade.Bot;
 
-import java.util.concurrent.Executor;
+import java.util.concurrent.ScheduledExecutorService;
 
 public interface Platform {
-    Executor getExecutor();
+    ScheduledExecutorService getExecutor();
 
     boolean isClient();
 

@@ -15,22 +15,17 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 public class PaperPlatform implements ServerPlatform {
     public static JavaPlugin PLUGIN;
     public static final List<Bot> BOTS = new ArrayList<>();
-    public static final Executor EXECUTOR = new Executor() {
-        @Override
-        public void execute(@NotNull Runnable command) {
-            Bukkit.getScheduler().runTaskAsynchronously(PLUGIN, command);
-        }
-    };
+    public static final ScheduledExecutorService EXECUTOR = Executors.newScheduledThreadPool(2);
 
     public void register(JavaPlugin plugin) {
         PLUGIN = plugin;
@@ -77,7 +72,7 @@ public class PaperPlatform implements ServerPlatform {
     }
 
     @Override
-    public Executor getExecutor() {
+    public ScheduledExecutorService getExecutor() {
         return EXECUTOR;
     }
 

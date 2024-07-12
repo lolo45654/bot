@@ -10,11 +10,11 @@ import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 public class FabricPlatform implements ServerPlatform {
-    public static final Executor EXECUTOR = Executors.newCachedThreadPool();
+    public static final ScheduledExecutorService EXECUTOR = Executors.newScheduledThreadPool(2);
 
     public static final List<Bot> BOTS = new ArrayList<>();
 
@@ -39,7 +39,7 @@ public class FabricPlatform implements ServerPlatform {
     }
 
     @Override
-    public Executor getExecutor() {
+    public ScheduledExecutorService getExecutor() {
         return EXECUTOR;
     }
 

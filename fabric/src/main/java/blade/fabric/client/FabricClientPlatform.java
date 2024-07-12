@@ -6,16 +6,16 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.KeyMapping;
 
-import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 public class FabricClientPlatform implements ClientPlatform {
-    public static final Executor EXECUTOR = Executors.newCachedThreadPool();
+    public static final ScheduledExecutorService EXECUTOR = Executors.newScheduledThreadPool(2);
 
     private Bot bot = null;
 
     @Override
-    public Executor getExecutor() {
+    public ScheduledExecutorService getExecutor() {
         return EXECUTOR;
     }
 

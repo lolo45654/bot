@@ -40,7 +40,7 @@ public class Bot {
         this.isClient = platform.isClient();
         this.vanillaPlayer = vanillaPlayer;
         this.platform = platform;
-        this.scheduler = new BotScheduler(platform.getExecutor());
+        this.scheduler = new BotScheduler(this, platform.getExecutor());
         this.inventory = isClient ? new BotClientInventory(this) : new BotInventory(this);
         if (isClient) clientSimulator = null;
         else clientSimulator = new ClientSimulator((ServerPlayer) vanillaPlayer, inventory::hasInventoryOpen);
@@ -80,7 +80,7 @@ public class Bot {
                 vanillaPlayer.setJumping(false);
             }
         }
-        scheduler.tick(this);
+        scheduler.tick();
         blade.tick();
         if (clientSimulator != null) clientSimulator.tick();
     }
