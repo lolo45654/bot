@@ -25,6 +25,7 @@ public class BotClientInventory extends BotInventory {
 
     @Override
     public void openInventory() {
+        super.openInventory();
         Minecraft client = Minecraft.getInstance();
         if (client.screen != null) return;
         client.setScreen(new InventoryScreen(bot.getVanillaPlayer()));
@@ -32,6 +33,7 @@ public class BotClientInventory extends BotInventory {
 
     @Override
     public void closeInventory() {
+        super.closeInventory();
         Minecraft client = Minecraft.getInstance();
         if (!(client.screen instanceof InventoryScreen)) return;
         client.setScreen(null);
@@ -39,6 +41,6 @@ public class BotClientInventory extends BotInventory {
 
     @Override
     public boolean hasInventoryOpen() {
-        return Minecraft.getInstance().screen instanceof InventoryScreen;
+        return Minecraft.getInstance().screen instanceof InventoryScreen || super.hasInventoryOpen();
     }
 }
