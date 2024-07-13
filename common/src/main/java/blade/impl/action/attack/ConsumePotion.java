@@ -67,15 +67,15 @@ public class ConsumePotion extends BladeAction implements Attack {
         BotInventory inventory = bot.getInventory();
         Slot potionSlot = getPotionSlot();
         if (potionSlot == null) return;
-        if (!potionSlot.isHotBar()) {
+        if (!potionSlot.isHotbar()) {
             inventory.openInventory();
-            inventory.move(potionSlot, Slot.fromHotBar(2));
+            inventory.move(potionSlot, Slot.ofHotbar(2));
             return;
         }
 
         inventory.closeInventory();
         ItemStack potionStack = inventory.getItem(potionSlot);
-        inventory.setSelectedSlot(potionSlot.getHotBarIndex());
+        inventory.setSelectedSlot(potionSlot.getHotbarIndex());
         
         if (potionStack.is(Items.SPLASH_POTION)) {
             float time = ConfigKeys.getDifficultyReversedCubic(bot) * 1.2f;

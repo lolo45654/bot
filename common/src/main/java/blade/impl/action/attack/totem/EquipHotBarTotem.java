@@ -20,7 +20,7 @@ public class EquipHotBarTotem extends BladeAction implements Totem {
             inv.openInventory();
         }
         if (tick >= ConfigKeys.getDifficultyReversed(bot) * 3) {
-            inv.move(totemSlot, Slot.fromHotBar(1), true);
+            inv.move(totemSlot, Slot.ofHotbar(1), true);
         }
     }
 

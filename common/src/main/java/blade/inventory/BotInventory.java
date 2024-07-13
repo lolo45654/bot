@@ -11,7 +11,6 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
@@ -73,7 +72,7 @@ public class BotInventory {
                 bestVanillaIndex = index;
             }
         }
-        return bestVanillaIndex == null ? null : Slot.fromVanilla(bestVanillaIndex);
+        return bestVanillaIndex == null ? null : Slot.ofVanilla(bestVanillaIndex);
     }
 
     public List<ItemStack> getHotBar() {

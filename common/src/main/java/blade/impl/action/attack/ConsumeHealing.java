@@ -30,9 +30,9 @@ public class ConsumeHealing extends BladeAction implements Attack {
         if (healingSlot == null) return;
         Slot swordSlot = getSwordSlot();
         if (healingSlot.isOffHand() && swordSlot != null) {
-            bot.getInventory().setSelectedSlot(swordSlot.getHotBarIndex());
-        } else if (healingSlot.isHotBar()) {
-            bot.getInventory().setSelectedSlot(healingSlot.getHotBarIndex());
+            bot.getInventory().setSelectedSlot(swordSlot.getHotbarIndex());
+        } else if (healingSlot.isHotbar()) {
+            bot.getInventory().setSelectedSlot(healingSlot.getHotbarIndex());
         }
         lookAtEnemy(bot, tick);
         bot.setMoveForward(false);

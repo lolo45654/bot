@@ -23,7 +23,7 @@ public class EquipTotem extends BladeAction implements Totem {
             inv.openInventory();
         }
         if (tick >= ConfigKeys.getDifficultyReversedCubic(bot) * 0.8) {
-            inv.move(totemSlot, Slot.fromOffHand(), true);
+            inv.move(totemSlot, Slot.ofOffhand(), true);
         }
     }
 
@@ -49,7 +49,7 @@ public class EquipTotem extends BladeAction implements Totem {
 
         return Totem.getTotemScore(bot) +
                 (inv.getOffHand().is(Items.TOTEM_OF_UNDYING) ? -12 : 0) +
-                (hotBarSlot != null && inv.getSelectedSlot() == hotBarSlot.getHotBarIndex() ? 0.3 : 0) +
+                (hotBarSlot != null && inv.getSelectedSlot() == hotBarSlot.getHotbarIndex() ? 0.3 : 0) +
                 Math.min(Math.max(deltaY * 2, 0), 1.0) +
                 Math.min(health * health, 1) +
                 AttackUtil.isAttacking(target, bot.getVanillaPlayer()) +

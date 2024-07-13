@@ -30,8 +30,8 @@ public class PlaceCrystal extends BladeAction implements Crystal {
     public void onTick() {
         Slot crystalSlot = getCrystalSlot();
         if (crystalSlot == null) return;
-        if (crystalSlot.isHotBar()) {
-            bot.getInventory().setSelectedSlot(crystalSlot.getHotBarIndex());
+        if (crystalSlot.isHotbar()) {
+            bot.getInventory().setSelectedSlot(crystalSlot.getHotbarIndex());
         }
 
         float time = ConfigKeys.getDifficultyReversedCubic(bot) * 0.3f;

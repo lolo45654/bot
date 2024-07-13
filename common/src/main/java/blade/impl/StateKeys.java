@@ -30,7 +30,7 @@ public class StateKeys {
 
     public static final StateKey DOUBLE_HAND_TOTEM = StateKey.key("double_hand", bot -> {
         BotInventory inv = bot.getInventory();
-        return inv.getItem(Slot.fromHotBar(inv.getSelectedSlot())).is(Items.TOTEM_OF_UNDYING) && inv.getOffHand().is(Items.TOTEM_OF_UNDYING) ? 1 : 0;
+        return inv.getItem(Slot.ofHotbar(inv.getSelectedSlot())).is(Items.TOTEM_OF_UNDYING) && inv.getOffHand().is(Items.TOTEM_OF_UNDYING) ? 1 : 0;
     });
 
     public static final StateKey OFF_HAND_TOTEM = StateKey.key("off_hand_totem", bot -> bot.getInventory().getOffHand().is(Items.TOTEM_OF_UNDYING) ? 1 : 0);

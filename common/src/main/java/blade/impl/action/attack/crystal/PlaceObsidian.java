@@ -29,8 +29,8 @@ public class PlaceObsidian extends BladeAction implements Crystal {
     public void onTick() {
         Slot obsidianSlot = getObsidianSlot();
         if (obsidianSlot == null) return;
-        if (obsidianSlot.isHotBar()) {
-            bot.getInventory().setSelectedSlot(obsidianSlot.getHotBarIndex());
+        if (obsidianSlot.isHotbar()) {
+            bot.getInventory().setSelectedSlot(obsidianSlot.getHotbarIndex());
         }
 
         float time = ConfigKeys.getDifficultyReversedCubic(bot) * 0.3f;

@@ -14,7 +14,7 @@ public class SelectTotem extends BladeAction implements Totem {
         Slot totemSlot = Totem.getHotBarTotemSlot(bot);
         if (totemSlot == null) return;
         lookAtEnemy(bot, tick);
-        bot.getInventory().setSelectedSlot(totemSlot.getHotBarIndex());
+        bot.getInventory().setSelectedSlot(totemSlot.getHotbarIndex());
     }
 
     @Override

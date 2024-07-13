@@ -22,7 +22,7 @@ public class PearlTowardsEnemy extends BladeAction implements Crystal {
     public void onTick() {
         Slot pearlSlot = getPearlSlot();
         if (pearlSlot == null) return;
-        bot.getInventory().setSelectedSlot(pearlSlot.getHotBarIndex());
+        bot.getInventory().setSelectedSlot(pearlSlot.getHotbarIndex());
         float time = ConfigKeys.getDifficultyReversed(bot) * 0.3f;
         Vec3 direction = bot.getBlade().get(ConfigKeys.TARGET).position().subtract(bot.getVanillaPlayer().getEyePosition());
         if (tick < time) {

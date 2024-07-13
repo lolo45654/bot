@@ -4,7 +4,7 @@ import java.util.function.Predicate;
 
 public enum SlotFlag {
     MAIN(Slot::isMain),
-    HOT_BAR(Slot::isHotBar),
+    HOT_BAR(Slot::isHotbar),
     ARMOR(Slot::isArmor),
     OFF_HAND(Slot::isOffHand);
 

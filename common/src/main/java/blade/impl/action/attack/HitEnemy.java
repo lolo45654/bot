@@ -25,7 +25,7 @@ public class HitEnemy extends BladeAction implements Attack {
     public void onTick() {
         Slot swordSlot = getSwordSlot();
         if (swordSlot != null) {
-            bot.getInventory().setSelectedSlot(swordSlot.getHotBarIndex());
+            bot.getInventory().setSelectedSlot(swordSlot.getHotbarIndex());
         }
         lookAtEnemy(bot, tick);
         bot.setMoveForward(true);

@@ -2,28 +2,32 @@ package blade.inventory;
 
 import java.util.Objects;
 
+/**
+ * Helper class using the network slot.
+ * <a href="https://wiki.vg/Inventory#Player_Inventory">https://wiki.vg/Inventory#Player_Inventory</a>
+ */
 public class Slot {
-    public static Slot fromMain(int index) {
+    public static Slot ofMain(int index) {
         return new Slot(index + 9);
     }
 
-    public static Slot fromOffHand() {
+    public static Slot ofOffhand() {
         return new Slot(45);
     }
 
-    public static Slot fromArmor(int index) {
+    public static Slot ofArmor(int index) {
         return new Slot(index + 5);
     }
 
-    public static Slot fromHotBar(int index) {
+    public static Slot ofHotbar(int index) {
         return new Slot(index + 36);
     }
 
-    public static Slot fromVanilla(int index) {
-        if (index == 40) return fromOffHand();
-        if (index > 36 && index < 41) return fromArmor(index - 36);
-        if (index < 10) return fromHotBar(index);
-        return fromArmor(index - 9);
+    public static Slot ofVanilla(int index) {
+        if (index == 40) return ofOffhand();
+        if (index > 36 && index < 41) return ofArmor(index - 36);
+        if (index < 10) return ofHotbar(index);
+        return ofArmor(index - 9);
     }
 
     public static final int MAX_INDEX = 46;
@@ -42,7 +46,7 @@ public class Slot {
         return index - 5;
     }
 
-    public int getHotBarIndex() {
+    public int getHotbarIndex() {
         return index - 36;
     }
 
@@ -53,7 +57,7 @@ public class Slot {
     public int getVanillaIndex() {
         if (isOffHand()) return 40;
         if (isArmor()) return getArmorIndex() + 36;
-        if (isHotBar()) return getHotBarIndex();
+        if (isHotbar()) return getHotbarIndex();
         return getMainIndex() + 9;
     }
 
@@ -82,7 +86,7 @@ public class Slot {
         return index > 8 && index < 36;
     }
 
-    public boolean isHotBar() {
+    public boolean isHotbar() {
         return index > 35 && index < 45;
     }
 }
