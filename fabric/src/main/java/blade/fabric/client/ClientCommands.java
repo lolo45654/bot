@@ -60,8 +60,7 @@ public class ClientCommands {
                                                     Entity entity0 = arg.getEntity(BotClientMod.CLIENT_SOURCE);
                                                     if (entity0 instanceof LivingEntity livingEntity0) return livingEntity0;
                                                     BotClientMod.LOGGER.warn("Target is no longer a living entity.");
-                                                } catch (CommandSyntaxException e) {
-                                                    BotClientMod.LOGGER.warn("Syntax error in tick get target.");
+                                                } catch (CommandSyntaxException ignored) {
                                                 }
                                                 return null;
                                             }));
