@@ -124,12 +124,12 @@ public class BotScreen extends Screen {
             ScorePlannerDebug planner = frame.getPlanner();
             int color = -1;
             if (planner.getActionTaken() == action) color = YELLOW;
-            if (!planner.getScores().containsKey(action)) color = RED;
+            ScorePlanner.Score score = frame.getPlanner().getScores().get(action);
+            if (score == null || !score.satisfied()) color = RED;
             List<FormattedCharSequence> label = font.split(Component.literal(action.toString()), 175);
             if (!label.isEmpty()) {
                 guiGraphics.drawString(font, label.getFirst(), k, j, color, false);
             }
-            ScorePlanner.Score score = frame.getPlanner().getScores().get(action);
             if (score != null) {
                 guiGraphics.drawString(font, score.toString(), k, j + 10, color);
             }
