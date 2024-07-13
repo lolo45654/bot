@@ -12,7 +12,7 @@ import net.minecraft.world.item.Items;
 public interface Sword extends Attack {
     static void register(BladeMachine blade) {
         blade.addAction(new HitEnemy());
-        blade.addAction(new STap());
+        blade.addAction(new BackOff());
         blade.addAction(new Jump());
         blade.addAction(new MoveTowardsEnemy());
         blade.addAction(new ConsumeHealing());

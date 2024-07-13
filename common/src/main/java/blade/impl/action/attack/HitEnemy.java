@@ -34,6 +34,7 @@ public class HitEnemy extends BladeAction implements Attack {
         LivingEntity target = bot.getBlade().get(ConfigKeys.TARGET);
         if (bot.getCrossHairTarget() instanceof EntityHitResult entityHitResult && entityHitResult.getEntity() == target) {
             bot.attack();
+            state.setValue(StateKeys.RECENTLY_HIT_ENEMY, 1);
         }
     }
 
@@ -45,6 +46,10 @@ public class HitEnemy extends BladeAction implements Attack {
     @Override
     public void getResult(ScoreState result) {
         result.setValue(StateKeys.DOING_PVP, 1.0);
+        double recentlyHitEnemy = result.getValue(StateKeys.RECENTLY_HIT_ENEMY);
+        if (recentlyHitEnemy > 0) {
+            result.setValue(StateKeys.RECENTLY_HIT_ENEMY, recentlyHitEnemy < 0.03 ? 0.0 : recentlyHitEnemy * 0.9);
+        }
     }
 
     @Override

@@ -1,10 +1,8 @@
 package blade.impl.action.attack.sword;
 
-import blade.impl.ConfigKeys;
 import blade.impl.StateKeys;
 import blade.planner.score.ScoreState;
 import blade.util.blade.BladeAction;
-import net.minecraft.world.entity.LivingEntity;
 
 import static blade.impl.action.attack.Attack.isPvPSatisfied;
 import static blade.impl.action.attack.Attack.lookAtEnemy;
@@ -30,9 +28,8 @@ public class Jump extends BladeAction implements Sword {
 
     @Override
     public double getScore() {
-        LivingEntity target = bot.getBlade().get(ConfigKeys.TARGET);
         return Sword.getSwordScore(bot) +
-                target.hurtTime / 6.0 +
+                state.getValue(StateKeys.RECENTLY_HIT_ENEMY) +
                 bot.getRandom().nextDouble() * 0.6;
     }
 }

@@ -42,4 +42,6 @@ public class StateKeys {
     });
 
     public static final StateKey IS_HEALING = StateKey.key("is_healing", bot -> 0);
+
+    public static final StateKey RECENTLY_HIT_ENEMY = StateKey.key("recently_hit_enemy", bot -> 0);
 }
