@@ -2,6 +2,8 @@ package blade.inventory;
 
 import blade.Bot;
 import blade.event.InventoryEvents;
+import com.google.common.collect.ImmutableList;
+import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.server.level.ServerPlayer;
@@ -9,17 +11,21 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
 
 public class BotInventory {
     protected final Bot bot;
     protected final Inventory inventory;
+    protected final ImmutableList<NonNullList<ItemStack>> compartments;
     protected boolean inventoryOpen = false;
 
     public BotInventory(Bot bot) {
         this.bot = bot;
         this.inventory = bot.getVanillaPlayer().getInventory();
+        this.compartments = ImmutableList.of(inventory.items, inventory.armor, inventory.offhand);
     }
 
 
@@ -38,10 +44,7 @@ public class BotInventory {
     }
 
     public ItemStack getItem(Slot slot) {
-        if (slot.isOffHand()) return getOffHand();
-        if (slot.isArmor()) return getArmor().get(slot.getArmorIndex());
-        if (slot.isHotBar()) return getHotBar().get(slot.getHotBarIndex());
-        return getMain().get(slot.getMainIndex());
+        return inventory.getItem(slot.getVanillaIndex());
     }
 
     public Slot findFirst(Predicate<ItemStack> tester, SlotFlag... order) {
@@ -54,6 +57,23 @@ public class BotInventory {
             }
         }
         return null;
+    }
+
+    public Slot findBest(Predicate<ItemStack> tester, Comparator<ItemStack> sorter, SlotFlag... slots) {
+        if (slots.length == 0) slots = new SlotFlag[] { SlotFlag.MAIN, SlotFlag.HOT_BAR, SlotFlag.ARMOR, SlotFlag.OFF_HAND };
+        ItemStack bestStack = null;
+        Integer bestVanillaIndex = null;
+        int index = -1;
+        for (NonNullList<ItemStack> itemList : compartments) {
+            for (ItemStack stack : itemList) {
+                index++;
+                if (!tester.test(stack)) continue;
+                if (bestStack != null && sorter.compare(stack, bestStack) <= 0) continue;
+                bestStack = stack;
+                bestVanillaIndex = index;
+            }
+        }
+        return bestVanillaIndex == null ? null : Slot.fromVanilla(bestVanillaIndex);
     }
 
     public List<ItemStack> getHotBar() {

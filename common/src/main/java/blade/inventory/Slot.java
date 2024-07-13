@@ -18,6 +18,14 @@ public class Slot {
     public static Slot fromHotBar(int index) {
         return new Slot(index + 36);
     }
+
+    public static Slot fromVanilla(int index) {
+        if (index == 40) return fromOffHand();
+        if (index > 36 && index < 41) return fromArmor(index - 36);
+        if (index < 10) return fromHotBar(index);
+        return fromArmor(index - 9);
+    }
+
     public static final int MAX_INDEX = 46;
 
     private final int index;
