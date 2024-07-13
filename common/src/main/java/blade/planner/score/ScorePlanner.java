@@ -56,7 +56,7 @@ public class ScorePlanner {
             }
         }
 
-        throw new IllegalStateException("Scored planner has reached an impossible state.");
+        return null;
     }
 
     public Random getRandom() {
