@@ -6,7 +6,7 @@ import blade.util.blade.BladeGoal;
 import java.util.*;
 
 public class ScorePlanner {
-    private double temperature = 1.0;
+    private double temperature = 0.0;
     private Random random = new Random();
 
     public <Action extends ScoreAction> Action plan(List<Action> actions, BladeGoal goal, ScoreState state, ScorePlannerDebug debug) {
