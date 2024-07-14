@@ -59,7 +59,7 @@ public class UseShield extends BladeAction implements Shield {
         LivingEntity target = bot.getBlade().get(ConfigKeys.TARGET);
         Player player = bot.getVanillaPlayer();
         return (getShieldSlot(bot) == null ? -12 : 0) +
-                (player.isUsingItem() && player.getUseItem().is(Items.SHIELD) ? 0.3 : 0) +
+                (player.isUsingItem() && player.getUseItem().is(Items.SHIELD) ? Math.max(Math.max(tick - 12, 0) * -0.3, -1) : 0) +
                 (player.getCooldowns().isOnCooldown(Items.SHIELD) ? -12 : 0) +
                 AttackUtil.isAttacking(target, player) * 2.0;
     }
