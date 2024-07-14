@@ -28,7 +28,12 @@ public class UseShield extends BladeAction implements Shield {
             bot.getInventory().setSelectedSlot(totemSlot.getHotbarIndex());
         } else if (shieldSlot.isHotbar()) {
             bot.getInventory().setSelectedSlot(shieldSlot.getHotbarIndex());
+        } else {
+            bot.getInventory().openInventory();
+            bot.getInventory().move(shieldSlot, Slot.ofOffhand());
+            return;
         }
+        bot.getInventory().closeInventory();
         lookAtEnemy(bot, tick);
         bot.interact(true);
         bot.setSprint(false);
