@@ -23,6 +23,7 @@ public interface Attack {
         blade.addAction(new ConsumePotion(MobEffects.DAMAGE_RESISTANCE, 0.7));
         blade.addAction(new ConsumePotion(MobEffects.MOVEMENT_SPEED, 0.3));
         blade.addAction(new ConsumePotion(MobEffects.FIRE_RESISTANCE, 1.0));
+        blade.addAction(new ConsumePotion(MobEffects.INVISIBILITY, 0.3));
         blade.addAction(new ConsumeHealingPotion(MobEffects.HEAL, 1.0));
     }
 
