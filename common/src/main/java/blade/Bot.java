@@ -98,9 +98,14 @@ public class Bot {
         time = Mth.clamp(time, 0.0f, 1.0f);
         float yaw = vanillaPlayer.getYRot();
         float pitch = vanillaPlayer.getXRot();
-        float t = time * time;
-        setYaw((targetYaw - yaw) * t + yaw + random.nextFloat() * 6f * randomness);
-        setPitch((targetPitch - pitch) * t + pitch + random.nextFloat() * 6f * randomness);
+        float deltaYaw = targetYaw - yaw;
+        if (deltaYaw > 180) {
+            deltaYaw -= 360;
+        } else if (deltaYaw < -180) {
+            deltaYaw += 360;
+        }
+        setYaw(deltaYaw * time + yaw + random.nextFloat() * 6f * randomness);
+        setPitch((targetPitch - pitch) * time + pitch + random.nextFloat() * 6f * randomness);
     }
 
     public void jump() {
