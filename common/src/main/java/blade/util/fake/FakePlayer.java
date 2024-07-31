@@ -72,6 +72,7 @@ public class FakePlayer extends ServerPlayer {
 
         // Bukkit.getPluginManager().registerEvents(this, PaperPlatform.PLUGIN);
         world.addNewPlayer(this);
+        server.getPlayerList().getPlayers().add(this);
         invulnerableTime = 0;
         try {
             ServerPlayer$spawnInvulnerableTime.set(this, 0);
