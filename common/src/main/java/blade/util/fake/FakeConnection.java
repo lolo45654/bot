@@ -53,11 +53,14 @@ public class FakeConnection extends Connection {
         } else if (obj instanceof ClientboundEntityEventPacket packet) {
             if (packet.getEventId() != 31) return;
             if (!(packet.getEntity(player.level()) instanceof FishingHook hook)) return;
+            System.out.println("received relevant packet");
             Entity hookedIn = hook.getHookedIn();
             if (hookedIn == null || !hookedIn.getUUID().equals(player.getUUID())) return;
+            System.out.println("okay its ACTUALLY relevant!");
             // simulate #pullEntity
             Entity owner = hook.getOwner();
             if (owner == null) return;
+            System.out.println("weeeeeeee");
             Vec3 vec3 = new Vec3(owner.getX() - hook.getX(), owner.getY() - hook.getY(), owner.getZ() - hook.getZ()).scale(0.1);
             player.setDeltaMovement(player.getDeltaMovement(MovementSide.CLIENT).add(vec3), MovementSide.CLIENT);
         }
