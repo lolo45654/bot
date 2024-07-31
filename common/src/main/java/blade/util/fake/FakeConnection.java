@@ -51,6 +51,7 @@ public class FakeConnection extends Connection {
         } else if (obj instanceof ClientboundExplodePacket packet) {
             player.setDeltaMovement(player.getDeltaMovement(MovementSide.CLIENT).add(packet.getKnockbackX(), packet.getKnockbackY(), packet.getKnockbackZ()), MovementSide.CLIENT);
         } else if (obj instanceof ClientboundEntityEventPacket packet) {
+            System.out.println("SHHHHHHHH");
             if (packet.getEventId() != 31) return;
             System.out.println("31");
             if (!(packet.getEntity(player.level()) instanceof FishingHook hook)) return;
