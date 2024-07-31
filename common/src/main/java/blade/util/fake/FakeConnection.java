@@ -46,6 +46,7 @@ public class FakeConnection extends Connection {
 
     @Override
     public void send(Packet<?> obj, @Nullable PacketSendListener packetSendListener, boolean bl) {
+        System.out.println("packet: " + obj.toString());
         if (obj instanceof ClientboundSetEntityMotionPacket) {
             player.setDeltaMovement(player.getDeltaMovement(MovementSide.SERVER), MovementSide.CLIENT);
         } else if (obj instanceof ClientboundExplodePacket packet) {
