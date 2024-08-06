@@ -7,6 +7,7 @@ import blade.util.fake.FakePlayer;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.phys.Vec3;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.CraftWorld;
@@ -176,7 +177,8 @@ public class BotSettingGui {
                     .addLoreLines(MenuUtils.wrapMiniMessage("<gray>We lost contact, reconnecting..."))
                     .addLoreLines(MenuUtils.empty())
                     .addLoreLines(MenuUtils.wrapMiniMessage("<yellow>Click to teleport!")), click -> {
-                bot.getVanillaPlayer().teleportTo(player.serverLevel(), player.position());
+                Vec3 pos = player.position();
+                bot.getVanillaPlayer().teleportTo(player.serverLevel(), pos.x, pos.y, pos.z, player.getYRot(), player.getXRot());
                 click.getPlayer().closeInventory();
             }));
             gui.setItem(5, 5, new SimpleItem(new ItemBuilder(Material.TNT)

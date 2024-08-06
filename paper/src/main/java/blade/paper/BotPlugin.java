@@ -15,12 +15,8 @@ import dev.jorel.commandapi.arguments.*;
 import dev.jorel.commandapi.executors.CommandArguments;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
-import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.level.Explosion;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -256,53 +252,5 @@ public class BotPlugin extends JavaPlugin {
                                         bot.interact(false);
                                     }, null, 40L);
                                 })));
-    }
-
-    private float getSeenFraction(final Vec3 source, final net.minecraft.world.entity.Entity target,
-                                  final Explosion.ExplosionBlockCache[] blockCache,
-                                  final BlockPos.MutableBlockPos blockPos) {
-        final AABB boundingBox = target.getBoundingBox();
-        final double diffX = boundingBox.maxX - boundingBox.minX;
-        final double diffY = boundingBox.maxY - boundingBox.minY;
-        final double diffZ = boundingBox.maxZ - boundingBox.minZ;
-
-        final double incX = 1.0 / (diffX * 2.0 + 1.0);
-        final double incY = 1.0 / (diffY * 2.0 + 1.0);
-        final double incZ = 1.0 / (diffZ * 2.0 + 1.0);
-
-        if (incX < 0.0 || incY < 0.0 || incZ < 0.0) {
-            return 0.0f;
-        }
-
-        final double offX = (1.0 - Math.floor(1.0 / incX) * incX) * 0.5 + boundingBox.minX;
-        final double offY = boundingBox.minY;
-        final double offZ = (1.0 - Math.floor(1.0 / incZ) * incZ) * 0.5 + boundingBox.minZ;
-
-        final io.papermc.paper.util.CollisionUtil.LazyEntityCollisionContext context = new io.papermc.paper.util.CollisionUtil.LazyEntityCollisionContext(target);
-
-        int totalRays = 0;
-        int missedRays = 0;
-
-        for (double dx = 0.0; dx <= 1.0; dx += incX) {
-            final double fromX = Math.fma(dx, diffX, offX);
-            for (double dy = 0.0; dy <= 1.0; dy += incY) {
-                final double fromY = Math.fma(dy, diffY, offY);
-                for (double dz = 0.0; dz <= 1.0; dz += incZ) {
-                    ++totalRays;
-
-                    final Vec3 from = new Vec3(
-                            fromX,
-                            fromY,
-                            Math.fma(dz, diffZ, offZ)
-                    );
-
-                    if (!false) {
-                        ++missedRays;
-                    }
-                }
-            }
-        }
-
-        return (float)missedRays / (float)totalRays;
     }
 }

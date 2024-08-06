@@ -21,7 +21,7 @@ dependencies {
     paperweight.paperDevBundle(project.paper_version)
 
     implementation "dev.jorel:commandapi-bukkit-shade:9.5.1"
-    implementation "xyz.xenondevs.invui:invui:1.30"
+    implementation "xyz.xenondevs.invui:invui:1.32"
     implementation project(path: ":common", configuration: "namedElements")
 }
 
