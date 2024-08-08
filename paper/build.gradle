@@ -23,6 +23,7 @@ dependencies {
     implementation "dev.jorel:commandapi-bukkit-shade:9.5.1"
     implementation "xyz.xenondevs.invui:invui:1.32"
     implementation project(path: ":common", configuration: "namedElements")
+    implementation 'org.bstats:bstats-bukkit:3.0.2'
 }
 
 shadowJar {
@@ -30,6 +31,7 @@ shadowJar {
 
     relocate("xyz.xenondevs.invui", "blade.libs.invui")
     relocate("dev.jorel.commandapi", "blade.libs.commandapi")
+    relocate("org.bstats", "blade.bstats")
 }
 
 assemble {

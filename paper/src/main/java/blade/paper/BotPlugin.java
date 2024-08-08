@@ -17,6 +17,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -53,6 +54,8 @@ public class BotPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         CommandAPI.onEnable();
+        new Metrics(this, 22946);
+
         platform = new PaperPlatform();
         platform.register(this);
 
