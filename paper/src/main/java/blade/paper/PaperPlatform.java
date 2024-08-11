@@ -11,7 +11,6 @@ import net.minecraft.server.level.ChunkMap;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.projectile.FishingHook;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
@@ -68,6 +67,7 @@ public class PaperPlatform implements ServerPlatform {
                 ChunkMap.TrackedEntity trackedEntity = ((ServerLevel) bot.getVanillaPlayer().level()).getChunkSource().chunkMap.entityMap.get(nearbyEntity.getEntityId());
                 System.out.println("fishingHook.seenBy.contains(bot) = " + trackedEntity.seenBy.contains(((ServerPlayer) bot.getVanillaPlayer()).connection));
             }
+            System.out.println("entityMap.contains(bot) = " + (((ServerLevel) bot.getVanillaPlayer().level()).getChunkSource().chunkMap.entityMap.containsKey(bot.getVanillaPlayer().getId())));
             if (bot.isDestroyed()) {
                 bot.destroy();
                 task.cancel();
@@ -89,7 +89,7 @@ public class PaperPlatform implements ServerPlatform {
 
     @Override
     public void declareFakePlayer(FakePlayer player) {
-        // player.isRealPlayer = false;
+        player.isRealPlayer = false;
     }
 
     @Override
