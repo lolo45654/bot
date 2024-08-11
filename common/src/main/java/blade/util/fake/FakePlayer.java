@@ -86,6 +86,7 @@ public class FakePlayer extends ServerPlayer {
         forcedMovementSide = MovementSide.BOTH;
         this.doTick();
         forcedMovementSide = null;
+        serverLevel().getChunkSource().move(this);
     }
 
     @Override
