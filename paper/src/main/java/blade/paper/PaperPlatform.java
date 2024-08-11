@@ -89,7 +89,7 @@ public class PaperPlatform implements ServerPlatform {
 
     @Override
     public void declareFakePlayer(FakePlayer player) {
-        player.isRealPlayer = false;
+        // player.isRealPlayer = false;
     }
 
     @Override
