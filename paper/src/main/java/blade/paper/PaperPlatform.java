@@ -21,6 +21,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -67,7 +68,7 @@ public class PaperPlatform implements ServerPlatform {
                 if (!(nearbyEntity instanceof FishHook)) continue;
                 ChunkMap.TrackedEntity trackedEntity = ((ServerLevel) bot.getVanillaPlayer().level()).getChunkSource().chunkMap.entityMap.get(nearbyEntity.getEntityId());
                 System.out.println("fishingHook.seenBy.contains(bot) = " + trackedEntity.seenBy.contains(((ServerPlayer) bot.getVanillaPlayer()).connection));
-                System.out.println("fishingHook.playersInRange.contains(bot) = " + (((CraftEntity) nearbyEntity).getHandle().getPlayersInTrackRange().contains(bot.getVanillaPlayer())));
+                System.out.println("level.players().contains(bot) = " + (((ServerLevel) bot.getVanillaPlayer().level()).players().contains(bot.getVanillaPlayer())));
             }
             System.out.println("entityMap.contains(bot) = " + (((ServerLevel) bot.getVanillaPlayer().level()).getChunkSource().chunkMap.entityMap.containsKey(bot.getVanillaPlayer().getId())));
             if (bot.isDestroyed()) {
