@@ -7,10 +7,15 @@ import blade.util.fake.FakeConnection;
 import blade.util.fake.FakePlayer;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
+import net.minecraft.server.level.ChunkMap;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.projectile.FishingHook;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.FishHook;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -57,6 +62,12 @@ public class PaperPlatform implements ServerPlatform {
         BOTS.add(bot);
         bot.getVanillaPlayer().getBukkitEntity().getScheduler().runAtFixedRate(PLUGIN, task -> {
             bot.doTick();
+
+            for (Entity nearbyEntity : bot.getVanillaPlayer().getBukkitLivingEntity().getNearbyEntities(32, 32, 32)) {
+                if (!(nearbyEntity instanceof FishHook)) continue;
+                ChunkMap.TrackedEntity trackedEntity = ((ServerLevel) bot.getVanillaPlayer().level()).getChunkSource().chunkMap.entityMap.get(nearbyEntity.getEntityId());
+                System.out.println("fishingHook.seenBy.contains(bot) = " + trackedEntity.seenBy.contains(((ServerPlayer) bot.getVanillaPlayer()).connection));
+            }
             if (bot.isDestroyed()) {
                 bot.destroy();
                 task.cancel();
