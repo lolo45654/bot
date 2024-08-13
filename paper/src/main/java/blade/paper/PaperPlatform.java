@@ -5,6 +5,7 @@ import blade.platform.ServerPlatform;
 import blade.util.ClientSimulator;
 import blade.util.fake.FakeConnection;
 import blade.util.fake.FakePlayer;
+import com.destroystokyo.paper.event.entity.EntityAddToWorldEvent;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.server.level.ChunkMap;
@@ -12,7 +13,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.entity.CraftEntity;
+import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.FishHook;
@@ -21,7 +22,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -56,6 +56,13 @@ public class PaperPlatform implements ServerPlatform {
                     }
                 }
             }
+
+            @EventHandler
+            public void onEntityAddToWorldEvent(EntityAddToWorldEvent event) {
+                ChunkMap chunkMap = ((CraftWorld) event.getWorld()).getHandle().getChunkSource().chunkMap;
+                System.out.println("entity add to world event: entity.seenBy.size() = " + chunkMap.entityMap.get(event.getEntity().getEntityId()).seenBy.size());
+
+            }
         }, plugin);
     }
 
@@ -64,13 +71,14 @@ public class PaperPlatform implements ServerPlatform {
         bot.getVanillaPlayer().getBukkitEntity().getScheduler().runAtFixedRate(PLUGIN, task -> {
             bot.doTick();
 
+            ChunkMap chunkMap = ((ServerLevel) bot.getVanillaPlayer().level()).getChunkSource().chunkMap;
             for (Entity nearbyEntity : bot.getVanillaPlayer().getBukkitLivingEntity().getNearbyEntities(32, 32, 32)) {
                 if (!(nearbyEntity instanceof FishHook)) continue;
-                ChunkMap.TrackedEntity trackedEntity = ((ServerLevel) bot.getVanillaPlayer().level()).getChunkSource().chunkMap.entityMap.get(nearbyEntity.getEntityId());
+                ChunkMap.TrackedEntity trackedEntity = chunkMap.entityMap.get(nearbyEntity.getEntityId());
                 System.out.println("fishingHook.seenBy.contains(bot) = " + trackedEntity.seenBy.contains(((ServerPlayer) bot.getVanillaPlayer()).connection));
-                System.out.println("level.players().contains(bot) = " + (((ServerLevel) bot.getVanillaPlayer().level()).players().contains(bot.getVanillaPlayer())));
             }
-            System.out.println("entityMap.contains(bot) = " + (((ServerLevel) bot.getVanillaPlayer().level()).getChunkSource().chunkMap.entityMap.containsKey(bot.getVanillaPlayer().getId())));
+            System.out.println("level.players().contains(bot) = " + (((ServerLevel) bot.getVanillaPlayer().level()).players().contains(bot.getVanillaPlayer())));
+            System.out.println("entityMap.contains(bot) = " + (chunkMap.entityMap.containsKey(bot.getVanillaPlayer().getId())));
             if (bot.isDestroyed()) {
                 bot.destroy();
                 task.cancel();
