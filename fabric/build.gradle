@@ -19,7 +19,7 @@ dependencies {
 
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-    include modImplementation("dev.xpple:clientarguments:1.8")
+    include modImplementation("dev.xpple:clientarguments:1.9")
     implementation project(path: ":common", configuration: "namedElements")
 }
 
