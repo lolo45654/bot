@@ -16,7 +16,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.helpers.NOPLogger;
@@ -25,6 +24,7 @@ import java.util.Random;
 
 @SuppressWarnings("UnusedReturnValue")
 public class Bot {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Bot.class);
     protected final Player vanillaPlayer;
     protected final Platform platform;
     protected final BotScheduler scheduler;
@@ -67,7 +67,7 @@ public class Bot {
         try {
             tick();
         } catch (Throwable t) {
-            t.printStackTrace();
+            LOGGER.warn("Failed ticking bot", t);
         }
         BotLifecycleEvents.TICK_END.call(this).onTickEnd(this);
     }
@@ -224,16 +224,8 @@ public class Bot {
         return vanillaPlayer.onGround();
     }
 
-    public void setVelocity(Vec3 velocity) {
-        vanillaPlayer.setDeltaMovement(velocity);
-    }
-
     public boolean isDead() {
         return vanillaPlayer.isDeadOrDying();
-    }
-
-    public boolean isValid() {
-        return !isDestroyed();
     }
 
     public boolean isDestroyed() {
@@ -259,7 +251,7 @@ public class Bot {
         return clientSimulator.getCrossHairTarget();
     }
 
-    public Logger getLogger(String name) {
+    public Logger createLogger(String name) {
         if (!debug) return NOPLogger.NOP_LOGGER;
         return LoggerFactory.getLogger("BOT-" + name);
     }
@@ -267,7 +259,7 @@ public class Bot {
     public void setDebug(boolean debug) {
         this.debug = debug;
         for (BladeAction action : blade.getActions()) {
-            action.logger = getLogger(action.getClass().getSimpleName());
+            action.logger = createLogger(action.getClass().getSimpleName());
         }
     }
 

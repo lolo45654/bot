@@ -2,14 +2,18 @@ package blade;
 
 import blade.debug.BladeDebug;
 import blade.debug.DebugFrame;
-import blade.debug.ErrorOccurrence;
 import blade.debug.ReportError;
+import blade.debug.planner.ScorePlannerDebug;
+import blade.debug.visual.VisualDebug;
 import blade.impl.BladeImpl;
 import blade.planner.score.ScorePlanner;
 import blade.planner.score.ScoreState;
 import blade.util.blade.BladeAction;
 import blade.util.blade.BladeGoal;
 import blade.util.blade.ConfigKey;
+import com.google.common.collect.ImmutableList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,17 +21,19 @@ import java.util.List;
 import java.util.Map;
 
 public class BladeMachine {
+    private static final Logger LOGGER = LoggerFactory.getLogger(BladeMachine.class);
+
     protected final Bot bot;
     protected final ScoreState state = new ScoreState();
     protected final ScorePlanner planner = new ScorePlanner();
-    protected final BladeDebug report = new BladeDebug();
-    private final Map<ConfigKey<?>, Object> config = new HashMap<>();
-
+    protected final BladeDebug report = new BladeDebug(new ArrayList<>());
+    protected final Map<ConfigKey<?>, Object> config = new HashMap<>();
     protected final List<BladeAction> actions = new ArrayList<>();
+
     protected BladeGoal goal = null;
-    protected boolean enabled = false;
     protected BladeAction previousAction;
     protected DebugFrame frame;
+    protected List<VisualDebug> visuals = new ArrayList<>();
 
     public BladeMachine(Bot bot) {
         this.bot = bot;
@@ -35,10 +41,13 @@ public class BladeMachine {
     }
 
     public void tick() {
-        if (!enabled) return;
         if (goal == null) return;
-        frame = report.newFrame();
-        ReportError.wrap(() -> {
+
+        ScoreState stateCopy = null;
+        ScorePlannerDebug plannerDebug = null;
+        Throwable error = null;
+        visuals = new ArrayList<>();
+        try {
             for (BladeAction action : actions) {
                 action.setBot(bot);
                 action.setState(state);
@@ -46,21 +55,28 @@ public class BladeMachine {
             goal.setBot(bot);
             goal.tick();
             produceState();
-            frame.setState(state.copy());
-            BladeAction action = planner.plan(actions, goal, state, frame.getPlanner());
+            stateCopy = state.copy();
+
+            BladeAction action = planner.plan(actions, goal, state);
+            plannerDebug = planner.getLastDebug();
             if (action == null) {
                 previousAction = null;
                 return;
-            }
-            if (previousAction != null && !action.equals(previousAction)) {
-                ReportError.wrap(() -> previousAction.onRelease(action), frame, ErrorOccurrence.ACTION_RELEASE);
-                ReportError.wrap(previousAction::prepare, frame, ErrorOccurrence.ACTION_PREPARE);
+            } else if (previousAction != null && !action.equals(previousAction)) {
+                previousAction.onRelease(action);
+                previousAction.prepare();
             }
 
-            ReportError.wrap(action::onTick, frame, ErrorOccurrence.ACTION_TICK);
-            ReportError.wrap(action::postTick, frame, ErrorOccurrence.ACTION_POST_TICK);
+            action.onTick();
+            action.postTick();
             previousAction = action;
-        }, frame, ErrorOccurrence.OTHER);
+        } catch (Throwable throwable) {
+            LOGGER.warn("Uncaught exception in Blade.", throwable);
+            error = throwable;
+        } finally {
+            frame = new DebugFrame(error == null ? ImmutableList.of() : ImmutableList.of(ReportError.from(error)), stateCopy, plannerDebug, ImmutableList.copyOf(visuals));
+            report.addTick(frame);
+        }
     }
 
     public void produceState() {
@@ -72,7 +88,6 @@ public class BladeMachine {
     }
 
     public void setGoal(BladeGoal goal) {
-        setEnabled(true);
         this.goal = goal;
     }
 
@@ -96,20 +111,6 @@ public class BladeMachine {
         return frame;
     }
 
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void causePanic(String detailedReason) {
-        bot.destroy();
-        DebugFrame frame = report.newFrame();
-        frame.addError(ReportError.from(new Exception("Panic: " + detailedReason), ErrorOccurrence.PANIC));
-    }
-
     public void registerDefault() {
         BladeImpl.register(this);
     }
@@ -127,13 +128,16 @@ public class BladeMachine {
         return goal;
     }
 
+    public void addVisualDebug(VisualDebug visual) {
+        visuals.add(visual);
+    }
+
     public void copy(BladeMachine otherBlade) {
         config.clear();
         config.putAll(otherBlade.config);
         actions.clear();
         actions.addAll(otherBlade.actions);
         goal = otherBlade.goal;
-        enabled = otherBlade.enabled;
         previousAction = otherBlade.previousAction;
         frame = otherBlade.frame;
         planner.copy(otherBlade.planner);

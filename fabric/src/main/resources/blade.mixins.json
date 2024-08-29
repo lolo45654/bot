@@ -8,12 +8,10 @@
     "ClientPacketListenerMixin",
     "ClientSuggestionProviderMixin",
     "DeathScreenMixin",
-    "GuiMixin",
+    "DebugScreenOverlayMixin",
     "KeyMappingAccessor",
     "MinecraftMixin",
     "PauseScreenMixin"
-  ],
-  "client": [
   ],
   "injectors": {
     "defaultRequire": 1

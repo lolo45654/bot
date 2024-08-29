@@ -39,6 +39,7 @@ public class FabricClientPlatform implements ClientPlatform {
     }
 
     public void onRespawn() {
+        if (bot == null) return;
         Bot newBot = new Bot(Minecraft.getInstance().player, this);
         newBot.copy(bot);
         this.bot = newBot;

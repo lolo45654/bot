@@ -1,5 +1,7 @@
 package blade.impl.action.attack.crystal;
 
+import blade.debug.visual.VisualBox;
+import blade.debug.visual.VisualText;
 import blade.impl.ConfigKeys;
 import blade.impl.StateKeys;
 import blade.impl.util.CrystalPosition;
@@ -11,12 +13,10 @@ import blade.util.blade.BladeAction;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import static blade.impl.action.attack.Attack.isPvPSatisfied;
-import static blade.impl.action.attack.crystal.Crystal.getCrystalScore;
 
 public class PlaceObsidian extends BladeAction implements Crystal {
     private CrystalPosition crystalPos = null;
@@ -30,8 +30,11 @@ public class PlaceObsidian extends BladeAction implements Crystal {
         Slot obsidianSlot = getObsidianSlot();
         if (obsidianSlot == null) return;
         if (obsidianSlot.isHotbar()) {
-            bot.getInventory().setSelectedSlot(obsidianSlot.getHotbarIndex());
+            bot.getInventory().setSelectedSlot(obsidianSlot.hotbarIndex());
         }
+
+        bot.getBlade().addVisualDebug(new VisualBox(new AABB(crystalPos.obsidian()), 0.3f, 0.8f, 0.3f, 0.5f));
+        bot.getBlade().addVisualDebug(new VisualText(Vec3.atCenterOf(crystalPos.obsidian().above()), String.format("C: %.3f", crystalPos.confidence())));
 
         float time = ConfigKeys.getDifficultyReversedCubic(bot) * 0.3f;
         Vec3 lookAt = crystalPos.placeAgainst();
@@ -47,7 +50,10 @@ public class PlaceObsidian extends BladeAction implements Crystal {
 
     @Override
     public boolean isSatisfied() {
-        return isPvPSatisfied(bot) && (crystalPos = CrystalPosition.get(bot, crystalPos)) != null;
+        crystalPos = CrystalPosition.get(bot, crystalPos);
+        return isPvPSatisfied(bot) && crystalPos != null &&
+                bot.getVanillaPlayer().level().getBlockState(crystalPos.obsidian()).isAir() &&
+                getObsidianSlot() != null;
     }
 
     @Override
@@ -58,18 +64,16 @@ public class PlaceObsidian extends BladeAction implements Crystal {
     @Override
     public double getScore() {
         LivingEntity target = bot.getBlade().get(ConfigKeys.TARGET);
+        double targetY = target.getDeltaMovement().y;
         Player player = bot.getVanillaPlayer();
-        Level world = bot.getVanillaPlayer().level();
         Vec3 eyePos = player.getEyePosition();
         Vec3 closestPoint = BotMath.getClosestPoint(eyePos, target.getBoundingBox());
-        double distSq = closestPoint.distanceToSqr(eyePos);
-        BlockState obsidian = world.getBlockState(crystalPos.obsidian());
+        double distSq = closestPoint.distanceToSqr(eyePos); // TODO rework distSq
 
-        return getCrystalScore(bot) +
-                (distSq > 3 * 3 ? -8 : (Math.min(distSq, 3))) +
+        return state.getValue(StateKeys.CRYSTAL_MODE) +
+                (distSq > 3 * 3 ? -8 : (Math.min(distSq, 1))) +
                 (Math.max(Math.min(crystalPos.confidence() / 3, 3), 0)) +
-                (getObsidianSlot() == null ? -8 : 0) +
-                (obsidian.isAir() ? 0 : -12);
+                Math.min(targetY * 4, 0.4);
     }
 
     @Override

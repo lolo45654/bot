@@ -4,7 +4,6 @@ import blade.fabric.adapter.MinecraftAdapter;
 import blade.fabric.client.BotClientMod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
-import net.minecraft.client.gui.screens.Overlay;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
 import org.jetbrains.annotations.Nullable;
@@ -20,13 +19,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Minecraft.class)
 public class MinecraftMixin implements MinecraftAdapter {
     @Shadow public Screen screen;
-    @Shadow private Overlay overlay;
 
-    @Shadow @Nullable public LocalPlayer player;
-    @Shadow protected int missTime;
-    @Shadow @Final public Options options;
-    @Unique
-    private boolean overlayAccessed = false;
+    @Shadow @Nullable
+    public LocalPlayer player;
+    @Shadow
+    public int missTime;
+    @Shadow @Final
+    public Options options;
     @Unique
     private int previousMissTime = 0;
     @Unique
@@ -34,18 +33,9 @@ public class MinecraftMixin implements MinecraftAdapter {
     @Unique
     private int lastInteractClicks = 0;
 
-    @Redirect(method = "tick", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Minecraft;overlay:Lnet/minecraft/client/gui/screens/Overlay;"))
-    public Overlay onOverlayAccess(Minecraft instance) {
-        if (BotClientMod.PLATFORM.getBot() == null || player == null) return overlay;
-        overlayAccessed = overlay == null;
-        return null;
-    }
-
-    @Redirect(method = "tick", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Minecraft;screen:Lnet/minecraft/client/gui/screens/Screen;"))
+    @Redirect(method = "tick", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Minecraft;screen:Lnet/minecraft/client/gui/screens/Screen;", ordinal = 6))
     public Screen onScreenAccess(Minecraft instance) {
-        if (!overlayAccessed) return screen;
         if (BotClientMod.PLATFORM.getBot() == null || player == null) return screen;
-        overlayAccessed = false;
         if (missTime == 10000) {
             missTime = previousMissTime;
         }

@@ -44,10 +44,10 @@ public class StrafeRight extends BladeAction implements Sword {
         Vec3 closestPoint = BotMath.getClosestPoint(eyePos, target.getBoundingBox());
         double distSq = closestPoint.distanceToSqr(eyePos);
 
-        return Sword.getSwordScore(bot) +
-                (1 - Math.min(distSq / (24 * 24), 1)) * 0.4 +
+        return state.getValue(StateKeys.SWORD_MODE) +
+                (1 - Math.min(distSq / (24 * 24), 1)) * 0.3 +
                 AttackUtil.isAttacking(target, bot.getVanillaPlayer()) / 2 +
-                Math.min(tick / 3.0, 0.3) +
+                Math.min(tick / 3.0, 0.2) +
                 bot.getRandom().nextDouble() * 0.2;
     }
 }

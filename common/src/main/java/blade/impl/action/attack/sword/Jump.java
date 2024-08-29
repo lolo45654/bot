@@ -28,7 +28,7 @@ public class Jump extends BladeAction implements Sword {
 
     @Override
     public double getScore() {
-        return Sword.getSwordScore(bot) +
+        return state.getValue(StateKeys.SWORD_MODE) +
                 state.getValue(StateKeys.RECENTLY_HIT_ENEMY) +
                 bot.getRandom().nextDouble() * 0.6;
     }

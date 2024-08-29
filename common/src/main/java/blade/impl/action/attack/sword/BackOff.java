@@ -41,9 +41,16 @@ public class BackOff extends BladeAction implements Sword {
         if (target instanceof Player player) range = player.entityInteractionRange();
         range -= ConfigKeys.getDifficultyReversedCubic(bot) * 1.5;
 
-        return Sword.getSwordScore(bot) +
+        return state.getValue(StateKeys.SWORD_MODE) +
                 state.getValue(StateKeys.RECENTLY_HIT_ENEMY) / 2 +
                 Math.min((range - Math.min(distSq / (range * range), range)) / range, 1.0) +
                 bot.getRandom().nextDouble() * 0.3;
+    }
+
+    @Override
+    public void onRelease(BladeAction next) {
+        super.onRelease(next);
+        bot.setMoveBackward(false);
+        bot.setMoveForward(false);
     }
 }

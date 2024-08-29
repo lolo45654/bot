@@ -2,16 +2,19 @@ package blade.planner.score;
 
 import blade.debug.planner.ScorePlannerDebug;
 import blade.util.blade.BladeGoal;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
 public class ScorePlanner {
     private double temperature = 0.0;
     private Random random = new Random();
+    private ScorePlannerDebug lastDebug = null;
 
-    public <Action extends ScoreAction> Action plan(List<Action> actions, BladeGoal goal, ScoreState state, ScorePlannerDebug debug) {
+    @SuppressWarnings("unchecked")
+    public <Action extends ScoreAction> @Nullable Action plan(@NotNull List<Action> actions, @NotNull BladeGoal goal, @NotNull ScoreState state) {
         Objects.requireNonNull(goal);
-        debug.setTemperature(temperature);
         Map<Action, Score> scores = new HashMap<>();
         double totalWeight = 0.0;
         Action highestScoreAction = null;
@@ -42,7 +45,6 @@ public class ScorePlanner {
             Score score = entry.getValue();
             entry.setValue(new Score(score.score, score.scoreWithGoal, score.weight / totalWeight, score.satisfied));
         }
-        debug.setScores((Map<ScoreAction, Score>) scores);
 
         double rand = random.nextDouble();
         double cumulativeWeight = 0.0;
@@ -51,11 +53,12 @@ public class ScorePlanner {
             cumulativeWeight += entry.getValue().weight;
             if (rand <= cumulativeWeight) {
                 Action action = entry.getKey();
-                debug.setActionTaken(action);
+                lastDebug = new ScorePlannerDebug(temperature, action, (Map<ScoreAction, Score>) scores);
                 return action;
             }
         }
 
+        lastDebug = new ScorePlannerDebug(temperature, null, (Map<ScoreAction, Score>) scores);
         return null;
     }
 
@@ -75,12 +78,16 @@ public class ScorePlanner {
         this.temperature = temperature;
     }
 
+    public ScorePlannerDebug getLastDebug() {
+        return lastDebug;
+    }
+
     public void copy(ScorePlanner otherPlanner) {
         temperature = otherPlanner.temperature;
         random = otherPlanner.random;
     }
 
-    public static record Score(double score, double scoreWithGoal, double weight, boolean satisfied) {
+    public record Score(double score, double scoreWithGoal, double weight, boolean satisfied) {
         @Override
         public String toString() {
             return String.format(Locale.ROOT, "S: %.3f SG: %.3f W: %.3f C: %s", score, scoreWithGoal, weight, satisfied);

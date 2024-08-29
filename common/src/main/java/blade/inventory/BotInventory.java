@@ -15,6 +15,10 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
 
+/**
+ * Abstraction over vanilla inventory.
+ * @see BotClientInventory
+ */
 public class BotInventory {
     protected final Bot bot;
     protected final Inventory inventory;
@@ -27,52 +31,12 @@ public class BotInventory {
         this.compartments = ImmutableList.of(inventory.items, inventory.armor, inventory.offhand);
     }
 
-
     public Bot getBot() {
         return bot;
     }
 
-    public void move(Slot from, Slot to) {
-        move(from, to, false);
-    }
-
-    public void move(Slot from, Slot to, boolean force) {
-        if (from.equals(to)) return;
-        InventoryEvents.MOVE_ITEM.call(bot).onMoveItem(bot, from, to);
-        moveInternally(from, to);
-    }
-
     public ItemStack getItem(Slot slot) {
-        return inventory.getItem(slot.getVanillaIndex());
-    }
-
-    public Slot findFirst(Predicate<ItemStack> tester, SlotFlag... order) {
-        if (order.length == 0) order = new SlotFlag[] { SlotFlag.MAIN, SlotFlag.HOT_BAR, SlotFlag.ARMOR, SlotFlag.OFF_HAND };
-        for (SlotFlag flag : order) {
-            for (int i = 0; i < Slot.MAX_INDEX; i++) {
-                Slot slot = new Slot(i);
-                if (!flag.matchesSlot(slot)) continue;
-                if (tester.test(getItem(slot))) return slot;
-            }
-        }
-        return null;
-    }
-
-    public Slot findBest(Predicate<ItemStack> tester, Comparator<ItemStack> sorter, SlotFlag... slots) {
-        if (slots.length == 0) slots = new SlotFlag[] { SlotFlag.MAIN, SlotFlag.HOT_BAR, SlotFlag.ARMOR, SlotFlag.OFF_HAND };
-        ItemStack bestStack = null;
-        Integer bestVanillaIndex = null;
-        int index = -1;
-        for (NonNullList<ItemStack> itemList : compartments) {
-            for (ItemStack stack : itemList) {
-                index++;
-                if (!tester.test(stack)) continue;
-                if (bestStack != null && sorter.compare(stack, bestStack) <= 0) continue;
-                bestStack = stack;
-                bestVanillaIndex = index;
-            }
-        }
-        return bestVanillaIndex == null ? null : Slot.ofVanilla(bestVanillaIndex);
+        return inventory.getItem(slot.vanillaIndex());
     }
 
     public List<ItemStack> getHotBar() {
@@ -99,21 +63,8 @@ public class BotInventory {
         inventory.selected = slot;
     }
 
-    public void moveInternally(Slot from, Slot to) {
-        if (bot.isClient) throw new UnsupportedOperationException("use BotClientInventory");
-        int fromVanillaIndex = from.getVanillaIndex();
-        int toVanillaIndex = to.getVanillaIndex();
-        ItemStack tmp = inventory.getItem(fromVanillaIndex);
-        inventory.setItem(fromVanillaIndex, inventory.getItem(toVanillaIndex));
-        inventory.setItem(toVanillaIndex, tmp);
-        if (getBot().getVanillaPlayer() instanceof ServerPlayer serverPlayer) {
-            serverPlayer.connection.send(new ClientboundContainerSetSlotPacket(serverPlayer.containerMenu.containerId, serverPlayer.containerMenu.incrementStateId(), from.getIndex(), inventory.getItem(from.getIndex())));
-            serverPlayer.connection.send(new ClientboundContainerSetSlotPacket(serverPlayer.containerMenu.containerId, serverPlayer.containerMenu.incrementStateId(), to.getIndex(), inventory.getItem(to.getIndex())));
-        }
-    }
-
-    public void drop(boolean entireStack) {
-        ((ServerPlayer) bot.getVanillaPlayer()).drop(entireStack);
+    public Inventory getVanilla() {
+        return inventory;
     }
 
     public void openInventory() {
@@ -128,11 +79,77 @@ public class BotInventory {
         return inventoryOpen;
     }
 
-    public Inventory getVanilla() {
-        return inventory;
+    /**
+     * Swap item from one slot to another.
+     */
+    public void move(Slot from, Slot to) {
+        if (from.equals(to)) return;
+        InventoryEvents.MOVE_ITEM.call(bot).onMoveItem(bot, from, to);
+        moveInternally(from, to);
     }
 
-    public Slot getBestFood(Predicate<FoodProperties> tester, SlotFlag... slots) {
+    public void moveInternally(Slot from, Slot to) {
+        if (bot.isClient) throw new UnsupportedOperationException("use BotClientInventory");
+
+        int fromVanillaIndex = from.vanillaIndex();
+        int toVanillaIndex = to.vanillaIndex();
+        ItemStack tmp = inventory.getItem(fromVanillaIndex);
+        inventory.setItem(fromVanillaIndex, inventory.getItem(toVanillaIndex));
+        inventory.setItem(toVanillaIndex, tmp);
+        if (getBot().getVanillaPlayer() instanceof ServerPlayer serverPlayer) {
+            serverPlayer.connection.send(new ClientboundContainerSetSlotPacket(serverPlayer.containerMenu.containerId, serverPlayer.containerMenu.incrementStateId(), from.index(), inventory.getItem(from.index())));
+            serverPlayer.connection.send(new ClientboundContainerSetSlotPacket(serverPlayer.containerMenu.containerId, serverPlayer.containerMenu.incrementStateId(), to.index(), inventory.getItem(to.index())));
+        }
+    }
+
+    /**
+     * Drops the main hand item.
+     */
+    public void drop(boolean entireStack) {
+        if (bot.isClient) throw new UnsupportedOperationException("use BotClientInventory");
+
+        ((ServerPlayer) bot.getVanillaPlayer()).drop(entireStack);
+    }
+
+    /**
+     * Retrieve slot with a matching item. Order can also be used to exclude slot regions.
+     */
+    public Slot findFirst(Predicate<ItemStack> tester, SlotFlag... order) {
+        if (order.length == 0) order = new SlotFlag[] { SlotFlag.MAIN, SlotFlag.HOT_BAR, SlotFlag.ARMOR, SlotFlag.OFF_HAND };
+        for (SlotFlag flag : order) {
+            for (int i = 0; i < Slot.MAX_INDEX; i++) {
+                Slot slot = new Slot(i);
+                if (!flag.matchesSlot(slot)) continue;
+                if (tester.test(getItem(slot))) return slot;
+            }
+        }
+        return null;
+    }
+
+    public Slot find(Comparator<ItemStack> comparator) {
+        return findBest(stack -> true, comparator);
+    }
+
+    /**
+     * Retrieve best slot using comparator.
+     */
+    public Slot findBest(Predicate<ItemStack> tester, Comparator<ItemStack> sorter) {
+        ItemStack bestStack = null;
+        Integer bestVanillaIndex = null;
+        int index = -1;
+        for (NonNullList<ItemStack> itemList : compartments) {
+            for (ItemStack stack : itemList) {
+                index++;
+                if (!tester.test(stack)) continue;
+                if (bestStack != null && sorter.compare(stack, bestStack) <= 0) continue;
+                bestStack = stack;
+                bestVanillaIndex = index;
+            }
+        }
+        return bestVanillaIndex == null ? null : Slot.ofVanilla(bestVanillaIndex);
+    }
+
+    public Slot findBestFood(Predicate<FoodProperties> tester, SlotFlag... slots) {
         Slot bestSlot = null;
         float bestNum = Float.MIN_NORMAL;
         for (int i = 0; i < Slot.MAX_INDEX; i++) {

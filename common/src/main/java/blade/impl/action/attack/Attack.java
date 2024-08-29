@@ -3,6 +3,7 @@ package blade.impl.action.attack;
 import blade.BladeMachine;
 import blade.Bot;
 import blade.impl.ConfigKeys;
+import blade.impl.action.attack.anchor.Anchor;
 import blade.impl.action.attack.crystal.Crystal;
 import blade.impl.action.attack.shield.Shield;
 import blade.impl.action.attack.sword.Sword;
@@ -16,6 +17,7 @@ public interface Attack {
     static void register(BladeMachine blade) {
         Totem.register(blade);
         Crystal.register(blade);
+        Anchor.register(blade);
         Sword.register(blade);
         Shield.register(blade);
 

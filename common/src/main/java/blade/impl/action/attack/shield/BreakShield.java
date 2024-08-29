@@ -26,7 +26,7 @@ public class BreakShield extends BladeAction implements Shield {
         Slot axeSlot = getAxeSlot();
         int previousSelected = bot.getInventory().getSelectedSlot();
         if (axeSlot != null) {
-            bot.getInventory().setSelectedSlot(axeSlot.getHotbarIndex());
+            bot.getInventory().setSelectedSlot(axeSlot.hotbarIndex());
         }
         lookAtEnemy(bot, tick);
         bot.setMoveForward(true);

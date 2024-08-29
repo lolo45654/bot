@@ -6,8 +6,11 @@ import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.inventory.ClickType;
 
+/**
+ * Implements {@link BotInventory} for the client.
+ * @see BotInventory
+ */
 public class BotClientInventory extends BotInventory {
-
     public BotClientInventory(Bot bot) {
         super(bot);
     }
@@ -15,7 +18,7 @@ public class BotClientInventory extends BotInventory {
     @Override
     public void moveInternally(Slot from, Slot to) {
         LocalPlayer player = (LocalPlayer) bot.getVanillaPlayer();
-        Minecraft.getInstance().gameMode.handleInventoryMouseClick(player.containerMenu.containerId, from.getVanillaIndex(), to.getVanillaIndex(), ClickType.SWAP, player);
+        Minecraft.getInstance().gameMode.handleInventoryMouseClick(player.containerMenu.containerId, from.vanillaIndex(), to.vanillaIndex(), ClickType.SWAP, player);
     }
 
     @Override

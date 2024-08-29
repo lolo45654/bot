@@ -1,5 +1,7 @@
 package blade.impl.action.attack.crystal;
 
+import blade.debug.visual.VisualBox;
+import blade.debug.visual.VisualText;
 import blade.impl.ConfigKeys;
 import blade.impl.StateKeys;
 import blade.impl.util.CrystalPosition;
@@ -8,16 +10,17 @@ import blade.inventory.SlotFlag;
 import blade.planner.score.ScoreState;
 import blade.util.BotMath;
 import blade.util.blade.BladeAction;
+import com.google.common.collect.ImmutableList;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
 import static blade.impl.action.attack.Attack.isPvPSatisfied;
-import static blade.impl.action.attack.crystal.Crystal.getCrystalScore;
 
 public class PlaceCrystal extends BladeAction implements Crystal {
     private CrystalPosition crystalPos = null;
@@ -31,8 +34,11 @@ public class PlaceCrystal extends BladeAction implements Crystal {
         Slot crystalSlot = getCrystalSlot();
         if (crystalSlot == null) return;
         if (crystalSlot.isHotbar()) {
-            bot.getInventory().setSelectedSlot(crystalSlot.getHotbarIndex());
+            bot.getInventory().setSelectedSlot(crystalSlot.hotbarIndex());
         }
+
+        bot.getBlade().addVisualDebug(new VisualBox(crystalPos.crystalAABB(), 0.9f, 0.8f, 0.9f, 0.5f));
+        bot.getBlade().addVisualDebug(new VisualText(Vec3.atCenterOf(crystalPos.obsidian().above()), String.format("C: %.3f", crystalPos.confidence())));
 
         float time = ConfigKeys.getDifficultyReversedCubic(bot) * 0.3f;
         Vec3 lookAt = crystalPos.placeAgainst();
@@ -48,7 +54,14 @@ public class PlaceCrystal extends BladeAction implements Crystal {
 
     @Override
     public boolean isSatisfied() {
-        return isPvPSatisfied(bot) && (crystalPos = CrystalPosition.get(bot, crystalPos)) != null;
+        crystalPos = CrystalPosition.get(bot, crystalPos);
+        if (crystalPos == null) return false;
+        Level world = bot.getVanillaPlayer().level();
+        List<EndCrystal> endCrystals = world.getEntitiesOfClass(EndCrystal.class, crystalPos.crystalAABB());
+
+        return isPvPSatisfied(bot) && crystalPos != null && getCrystalSlot() != null &&
+                !world.getBlockState(crystalPos.obsidian()).isAir() &&
+                endCrystals.isEmpty();
     }
 
     @Override
@@ -58,14 +71,12 @@ public class PlaceCrystal extends BladeAction implements Crystal {
 
     @Override
     public double getScore() {
-        Level world = bot.getVanillaPlayer().level();
-        List<EndCrystal> endCrystals = world.getEntitiesOfClass(EndCrystal.class, crystalPos.crystalAABB());
-        BlockState obsidian = world.getBlockState(crystalPos.obsidian());
-        return getCrystalScore(bot) +
+        LivingEntity target = bot.getBlade().get(ConfigKeys.TARGET);
+        double targetY = target.getDeltaMovement().y;
+
+        return state.getValue(StateKeys.CRYSTAL_MODE) +
                 (Math.max(Math.min(crystalPos.confidence() / 3, 3), 0)) +
-                (endCrystals.isEmpty() ? -12 : 2) +
-                (obsidian.isAir() ? -12 : 0) +
-                (getCrystalSlot() == null ? -12 : 0);
+                Math.min(targetY * 4, 0.4);
     }
 
     @Override

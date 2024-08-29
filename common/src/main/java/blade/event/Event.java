@@ -12,7 +12,7 @@ public class Event<T> {
     private final Class<? extends T> typeClass;
     private final T empty;
     private final Function<T[], T> factory;
-    private Map<Bot, Invoker<T>> invokers = new WeakHashMap<>();
+    private final Map<Bot, Invoker<T>> invokers = new WeakHashMap<>();
 
     @SuppressWarnings("unchecked")
     public Event(Class<? extends T> typeClass, Function<T[], T> factory) {

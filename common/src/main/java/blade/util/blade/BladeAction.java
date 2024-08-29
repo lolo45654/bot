@@ -13,7 +13,7 @@ public abstract class BladeAction implements ScoreAction {
 
     public void setBot(Bot bot) {
         if (logger == null || this.bot != bot) {
-            logger = bot.getLogger(getClass().getSimpleName());
+            logger = bot.createLogger(getClass().getSimpleName());
         }
         this.bot = bot;
     }
@@ -33,10 +33,6 @@ public abstract class BladeAction implements ScoreAction {
 
     public void postTick() {
         tick++;
-    }
-
-    protected void panic(String detailedReason) {
-        bot.getBlade().causePanic(detailedReason);
     }
 
     @Override

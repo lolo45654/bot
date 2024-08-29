@@ -5,7 +5,6 @@ import blade.Bot;
 import blade.bot.IServerBot;
 import blade.bot.ServerBot;
 import blade.bot.ServerBotSettings;
-import blade.debug.BladeDebug;
 import blade.impl.goal.KillTargetGoal;
 import blade.util.fake.FakePlayer;
 import dev.jorel.commandapi.CommandAPI;
@@ -34,16 +33,13 @@ import org.bukkit.plugin.java.JavaPlugin;
 import xyz.xenondevs.invui.item.builder.ItemBuilder;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class BotPlugin extends JavaPlugin {
     public static final TextColor PRIMARY = TextColor.color(0xFFCBD5);
     public static PaperPlatform platform;
-    private static final Map<String, BladeDebug> reports = new HashMap<>();
 
     @Override
     public void onLoad() {
