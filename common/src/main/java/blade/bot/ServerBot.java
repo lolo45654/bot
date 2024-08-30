@@ -5,8 +5,11 @@ import blade.platform.Platform;
 import blade.util.BotMath;
 import blade.util.ItemUtil;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
+import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Inventory;
@@ -49,9 +52,16 @@ public class ServerBot extends Bot implements IServerBot {
         if (settings.autoHealing) {
             tickHealing(player);
         }
+
         if (settings.shield) {
             tickShield(player, inventory);
         }
+
+        for (Holder<MobEffect> effect : settings.effects) {
+            player.addEffect(new MobEffectInstance(effect, 1, 5));
+        }
+
+        setMoveForward(settings.moveTowardsSpawner && player.distanceToSqr(spawner) > 2*2);
 
         FoodData food = player.getFoodData();
         food.setExhaustion(0.0f);
@@ -98,20 +108,27 @@ public class ServerBot extends Bot implements IServerBot {
     }
 
     protected void applyArmor(Inventory inventory) {
-        ItemStack helmet = new ItemStack(settings.armor.itemTypes.get(EquipmentSlot.HEAD));
-        helmet.enchant(ItemUtil.getEnchantment(Enchantments.PROTECTION, vanillaPlayer.level()), 4);
+        ServerBotSettings.ArmorPiece armorPiece = settings.armor.get(EquipmentSlot.HEAD);
+        ItemStack helmet = new ItemStack(armorPiece.base());
+        helmet.enchant(ItemUtil.getEnchantment(armorPiece.blastProtection() ? Enchantments.BLAST_PROTECTION : Enchantments.PROTECTION, vanillaPlayer.level()), 4);
         helmet.set(DataComponents.UNBREAKABLE, new Unbreakable(true));
         inventory.setItem(39, helmet);
-        ItemStack chestplate = new ItemStack(settings.armor.itemTypes.get(EquipmentSlot.CHEST));
-        chestplate.enchant(ItemUtil.getEnchantment(Enchantments.PROTECTION, vanillaPlayer.level()), 4);
+
+        armorPiece = settings.armor.get(EquipmentSlot.CHEST);
+        ItemStack chestplate = new ItemStack(armorPiece.base());
+        chestplate.enchant(ItemUtil.getEnchantment(armorPiece.blastProtection() ? Enchantments.BLAST_PROTECTION : Enchantments.PROTECTION, vanillaPlayer.level()), 4);
         chestplate.set(DataComponents.UNBREAKABLE, new Unbreakable(true));
         inventory.setItem(38, chestplate);
-        ItemStack leggings = new ItemStack(settings.armor.itemTypes.get(EquipmentSlot.LEGS));
-        leggings.enchant(settings.blastProtection ? ItemUtil.getEnchantment(Enchantments.BLAST_PROTECTION, vanillaPlayer.level()) : ItemUtil.getEnchantment(Enchantments.PROTECTION, vanillaPlayer.level()), 4);
+
+        armorPiece = settings.armor.get(EquipmentSlot.LEGS);
+        ItemStack leggings = new ItemStack(armorPiece.base());
+        leggings.enchant(ItemUtil.getEnchantment(armorPiece.blastProtection() ? Enchantments.BLAST_PROTECTION : Enchantments.PROTECTION, vanillaPlayer.level()), 4);
         leggings.set(DataComponents.UNBREAKABLE, new Unbreakable(true));
         inventory.setItem(37, leggings);
-        ItemStack boots = new ItemStack(settings.armor.itemTypes.get(EquipmentSlot.FEET));
-        boots.enchant(ItemUtil.getEnchantment(Enchantments.PROTECTION, vanillaPlayer.level()), 4);
+
+        armorPiece = settings.armor.get(EquipmentSlot.FEET);
+        ItemStack boots = new ItemStack(armorPiece.base());
+        boots.enchant(ItemUtil.getEnchantment(armorPiece.blastProtection() ? Enchantments.BLAST_PROTECTION : Enchantments.PROTECTION, vanillaPlayer.level()), 4);
         boots.set(DataComponents.UNBREAKABLE, new Unbreakable(true));
         inventory.setItem(36, boots);
     }

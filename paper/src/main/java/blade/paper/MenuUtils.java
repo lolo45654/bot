@@ -6,7 +6,7 @@ import xyz.xenondevs.inventoryaccess.component.AdventureComponentWrapper;
 import xyz.xenondevs.inventoryaccess.component.ComponentWrapper;
 
 public class MenuUtils {
-    public static ComponentWrapper wrapMiniMessage(String miniMessage) {
+    public static ComponentWrapper wrap(String miniMessage) {
         return new AdventureComponentWrapper(MiniMessage.miniMessage().deserialize(miniMessage));
     }
 
