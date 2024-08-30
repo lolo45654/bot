@@ -10,8 +10,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.Vec3;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -221,23 +219,9 @@ public class BotSettingGui {
                         .addLoreLines(wrap("<yellow>Click to enable!"))
                         .get(),
                 v -> settings.armor.put(slot, armor.withBlastProtection(v)));
-        final Item netherite = switch (slot) {
-            case HEAD -> Items.NETHERITE_HELMET;
-            case CHEST -> Items.NETHERITE_CHESTPLATE;
-            case LEGS -> Items.NETHERITE_LEGGINGS;
-            case FEET -> Items.NETHERITE_BOOTS;
-            default -> Items.RED_DYE;
-        };
-        final Item diamond = switch (slot) {
-            case HEAD -> Items.DIAMOND_HELMET;
-            case CHEST -> Items.DIAMOND_CHESTPLATE;
-            case LEGS -> Items.DIAMOND_LEGGINGS;
-            case FEET -> Items.DIAMOND_BOOTS;
-            default -> Items.RED_DYE;
-        };
-        setCycleItem(gui, show, x, y, armor.base(), new Item[] { netherite, diamond },
+        setCycleItem(gui, show, x, y, armor.type(), new ServerBotSettings.ArmorType[] { ServerBotSettings.ArmorType.NETHERITE, ServerBotSettings.ArmorType.DIAMOND },
                 new ItemStack[] {
-                        new ItemBuilder(CraftItemStack.asNewCraftStack(netherite))
+                        new ItemBuilder(CraftItemStack.asNewCraftStack(armor.type().slotToItem.get(slot)))
                                 .addEnchantment(Enchantment.MENDING, 1, true)
                                 .addItemFlags(ItemFlag.HIDE_ENCHANTS)
                                 .setDisplayName(wrap("<aqua>Armor Type"))
@@ -247,7 +231,7 @@ public class BotSettingGui {
                                 .addLoreLines(empty())
                                 .addLoreLines(wrap("<yellow>Click to cycle!"))
                                 .get(),
-                        new ItemBuilder(CraftItemStack.asNewCraftStack(diamond))
+                        new ItemBuilder(CraftItemStack.asNewCraftStack(armor.type().slotToItem.get(slot)))
                                 .addEnchantment(Enchantment.MENDING, 1, true)
                                 .addItemFlags(ItemFlag.HIDE_ENCHANTS)
                                 .setDisplayName(wrap("<aqua>Armor Type"))
@@ -257,7 +241,7 @@ public class BotSettingGui {
                                 .addLoreLines(empty())
                                 .addLoreLines(wrap("<yellow>Click to cycle!"))
                                 .get(),
-                }, v -> settings.armor.put(slot, armor.withBase(v)));
+                }, v -> settings.armor.put(slot, armor.withType(v)));
     }
 
     private static <O> void setCycleItem(Gui gui, Runnable show, int x, int y, O currently, O[] options, ItemStack[] optionItems, Consumer<O> setter) {
