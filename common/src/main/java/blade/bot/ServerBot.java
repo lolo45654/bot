@@ -7,6 +7,7 @@ import blade.util.ItemUtil;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -62,7 +63,8 @@ public class ServerBot extends Bot implements IServerBot {
         }
 
         for (Holder<MobEffect> effect : settings.effects) {
-            player.addEffect(new MobEffectInstance(effect, 1, 5));
+            spawner.sendSystemMessage(Component.literal("Added " + effect.unwrapKey().get().toString()));
+            player.addEffect(new MobEffectInstance(effect, 5, 1));
         }
 
         boolean moving = settings.moveTowardsSpawner && player.distanceToSqr(spawner) > 2 * 2;
