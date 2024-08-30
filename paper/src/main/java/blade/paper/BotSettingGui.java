@@ -130,8 +130,6 @@ public class BotSettingGui {
 
         setBoolItem(gui, show, 4, 3, settings.moveTowardsSpawner,
                 new ItemBuilder(Material.CHEST_MINECART)
-                        .addEnchantment(Enchantment.MENDING, 1, true)
-                        .addItemFlags(ItemFlag.HIDE_ENCHANTS)
                         .setDisplayName(wrap("<aqua>Run at you"))
                         .addLoreLines(empty())
                         .addLoreLines(wrap("<gray>Causes the Bot to move towards you,"))
@@ -210,7 +208,7 @@ public class BotSettingGui {
                         .addLoreLines(empty())
                         .addLoreLines(wrap("<yellow>Click to disable!"))
                         .get(),
-                new ItemBuilder(Material.ENCHANTED_BOOK)
+                new ItemBuilder(Material.BOOK)
                         .setDisplayName(wrap("<aqua>Blast Protection"))
                         .addLoreLines(wrap(String.format("<dark_gray>for the %s", ItemUtil.getSlotName(slot))))
                         .addLoreLines(empty())
