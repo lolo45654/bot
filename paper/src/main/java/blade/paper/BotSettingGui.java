@@ -128,7 +128,7 @@ public class BotSettingGui {
                     else settings.effects.remove(MobEffects.SLOW_FALLING);
                 });
 
-        setBoolItem(gui, show, 4, 2, settings.moveTowardsSpawner,
+        setBoolItem(gui, show, 4, 3, settings.moveTowardsSpawner,
                 new ItemBuilder(Material.CHEST_MINECART)
                         .addEnchantment(Enchantment.MENDING, 1, true)
                         .addItemFlags(ItemFlag.HIDE_ENCHANTS)
@@ -219,7 +219,7 @@ public class BotSettingGui {
                         .addLoreLines(wrap("<yellow>Click to enable!"))
                         .get(),
                 v -> settings.armor.put(slot, armor.withBlastProtection(v)));
-        setCycleItem(gui, show, x, y, armor.type(), new ServerBotSettings.ArmorType[] { ServerBotSettings.ArmorType.NETHERITE, ServerBotSettings.ArmorType.DIAMOND },
+        setCycleItem(gui, show, x + 1, y, armor.type(), new ServerBotSettings.ArmorType[] { ServerBotSettings.ArmorType.NETHERITE, ServerBotSettings.ArmorType.DIAMOND },
                 new ItemStack[] {
                         new ItemBuilder(CraftItemStack.asNewCraftStack(armor.type().slotToItem.get(slot)))
                                 .addEnchantment(Enchantment.MENDING, 1, true)
