@@ -71,13 +71,15 @@ public class ServerBot extends Bot implements IServerBot {
             player.addEffect(new MobEffectInstance(effect, 3, 1));
         }
 
-        boolean moving = settings.moveTowardsSpawner && player.distanceToSqr(spawner) > 2 * 2 && (lastPopped == null || Duration.between(lastPopped, Instant.now()).toMillis() > 100L);
+        boolean moving = settings.moveTowardsSpawner && player.distanceToSqr(spawner) > 2 * 2 && (lastPopped == null || Duration.between(lastPopped, Instant.now()).toMillis() > 200L);
         Vec3 currentPosition = player.position();
         setMoveForward(moving);
         if (moving && prevPosition != null && (prevPosition.x == currentPosition.x || prevPosition.z == currentPosition.z)) {
             jump();
         }
-        prevPosition = currentPosition;
+        if (moving) {
+            prevPosition = currentPosition;
+        }
 
         FoodData food = player.getFoodData();
         food.setExhaustion(0.0f);
