@@ -22,6 +22,9 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
+import java.time.Duration;
+import java.time.Instant;
+
 public class ServerBot extends Bot implements IServerBot {
     private final ServerPlayer spawner;
     private ServerBotSettings settings;
@@ -30,6 +33,7 @@ public class ServerBot extends Bot implements IServerBot {
     private int noShieldTicks = 0;
     private boolean prevShieldCooldown = false;
     private Vec3 prevPosition = null;
+    private Instant lastPopped = null;
 
 
     public ServerBot(Player vanillaPlayer, Platform platform, ServerPlayer spawner, ServerBotSettings settings) {
@@ -50,6 +54,8 @@ public class ServerBot extends Bot implements IServerBot {
         }
 
         player.lookAt(EntityAnchorArgument.Anchor.EYES, BotMath.getClosestPoint(player.getEyePosition(), spawner.getBoundingBox()));
+        if (!inventory.getItem(40).is(Items.TOTEM_OF_UNDYING)) lastPopped = Instant.now();
+        if (!settings.shield && !inventory.getItem(inventory.selected).is(Items.TOTEM_OF_UNDYING)) lastPopped = Instant.now();
         inventory.setItem(40, new ItemStack(Items.TOTEM_OF_UNDYING));
         inventory.setItem(inventory.selected, new ItemStack(Items.TOTEM_OF_UNDYING));
 
@@ -65,7 +71,7 @@ public class ServerBot extends Bot implements IServerBot {
             player.addEffect(new MobEffectInstance(effect, 3, 1));
         }
 
-        boolean moving = settings.moveTowardsSpawner && player.distanceToSqr(spawner) > 2 * 2;
+        boolean moving = settings.moveTowardsSpawner && player.distanceToSqr(spawner) > 2 * 2 && (lastPopped == null || Duration.between(lastPopped, Instant.now()).toMillis() > 100L);
         Vec3 currentPosition = player.position();
         setMoveForward(moving);
         if (moving && prevPosition != null && (prevPosition.x == currentPosition.x || prevPosition.z == currentPosition.z)) {
