@@ -47,7 +47,6 @@ public class FakePlayer extends ServerPlayer {
      */
     public Vec3 serverSideDelta = Vec3.ZERO;
     public MovementSide forcedMovementSide = null;
-    public boolean preventMove = false;
 
     public FakePlayer(ServerPlatform platform, MinecraftServer server, Vec3 pos, float yaw, float pitch, ServerLevel world, GameProfile profile) {
         super(server, world, profile, new ClientInformation("en_us", 2, ChatVisiblity.HIDDEN, true, 0x7F, HumanoidArm.RIGHT, false, false));
@@ -161,9 +160,6 @@ public class FakePlayer extends ServerPlayer {
 
     @Override
     public void setPos(double d, double e, double f) {
-        if (preventMove) {
-            return;
-        }
         super.setPos(d, e, f);
     }
 
