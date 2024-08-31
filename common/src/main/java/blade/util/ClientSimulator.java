@@ -140,6 +140,11 @@ public class ClientSimulator {
         if (backKey) {
             player.zza -= 1;
         }
+
+        if (player.isUsingItem() && !player.isPassenger()) {
+            player.xxa *= 0.2f;
+            player.zza *= 0.2f;
+        }
     }
 
     public void tickUsingItem() {
