@@ -71,15 +71,13 @@ public class ServerBot extends Bot implements IServerBot {
             player.addEffect(new MobEffectInstance(effect, 3, 1));
         }
 
-        boolean moving = settings.moveTowardsSpawner && player.distanceToSqr(spawner) > 2 * 2 && (lastPopped == null || Duration.between(lastPopped, Instant.now()).toMillis() > 200L);
+        boolean shouldMove = settings.moveTowardsSpawner && player.distanceToSqr(spawner) > 2 * 2 && (lastPopped == null || Duration.between(lastPopped, Instant.now()).toMillis() > 200L);
         Vec3 currentPosition = player.position();
-        setMoveForward(moving);
-        if (moving && prevPosition != null && (prevPosition.x == currentPosition.x || prevPosition.z == currentPosition.z)) {
+        setMoveForward(shouldMove);
+        if (shouldMove && prevPosition != null && (prevPosition.x == currentPosition.x || prevPosition.z == currentPosition.z)) {
             jump();
         }
-        if (moving) {
-            prevPosition = currentPosition;
-        }
+        prevPosition = currentPosition;
 
         FoodData food = player.getFoodData();
         food.setExhaustion(0.0f);
@@ -127,10 +125,10 @@ public class ServerBot extends Bot implements IServerBot {
 
     protected void applyArmor(Inventory inventory) {
         Level world = vanillaPlayer.level();
-        inventory.setItem(39, settings.armor.get(EquipmentSlot.HEAD).stack(EquipmentSlot.HEAD, world));
-        inventory.setItem(38, settings.armor.get(EquipmentSlot.CHEST).stack(EquipmentSlot.CHEST, world));
-        inventory.setItem(37, settings.armor.get(EquipmentSlot.LEGS).stack(EquipmentSlot.LEGS, world));
-        inventory.setItem(36, settings.armor.get(EquipmentSlot.FEET).stack(EquipmentSlot.FEET, world));
+        inventory.setItem(39, settings.armor.get(EquipmentSlot.HEAD).buildStack(EquipmentSlot.HEAD, world));
+        inventory.setItem(38, settings.armor.get(EquipmentSlot.CHEST).buildStack(EquipmentSlot.CHEST, world));
+        inventory.setItem(37, settings.armor.get(EquipmentSlot.LEGS).buildStack(EquipmentSlot.LEGS, world));
+        inventory.setItem(36, settings.armor.get(EquipmentSlot.FEET).buildStack(EquipmentSlot.FEET, world));
     }
 
     @Override

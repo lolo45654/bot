@@ -62,7 +62,7 @@ public class ServerBotSettings implements Cloneable {
             return new ArmorPiece(v, blastProtection);
         }
 
-        public ItemStack stack(EquipmentSlot slot, Level world) {
+        public ItemStack buildStack(EquipmentSlot slot, Level world) {
             ItemStack stack = new ItemStack(type.slotToItem.get(slot));
             stack.enchant(ItemUtil.getEnchantment(blastProtection ? Enchantments.BLAST_PROTECTION : Enchantments.PROTECTION, world), 4);
             stack.set(DataComponents.UNBREAKABLE, new Unbreakable(true));
