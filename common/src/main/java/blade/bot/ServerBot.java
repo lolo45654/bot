@@ -5,8 +5,11 @@ import blade.platform.Platform;
 import blade.util.BotMath;
 import blade.util.ItemUtil;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
+import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Inventory;
@@ -16,6 +19,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.Unbreakable;
 import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
+
+import java.time.Duration;
+import java.time.Instant;
 
 public class ServerBot extends Bot implements IServerBot {
     private final ServerPlayer spawner;
@@ -24,6 +32,9 @@ public class ServerBot extends Bot implements IServerBot {
     private int healTicks = 0;
     private int noShieldTicks = 0;
     private boolean prevShieldCooldown = false;
+    private Vec3 prevPosition = null;
+    private Instant lastPopped = null;
+
 
     public ServerBot(Player vanillaPlayer, Platform platform, ServerPlayer spawner, ServerBotSettings settings) {
         super(vanillaPlayer, platform);
@@ -43,15 +54,30 @@ public class ServerBot extends Bot implements IServerBot {
         }
 
         player.lookAt(EntityAnchorArgument.Anchor.EYES, BotMath.getClosestPoint(player.getEyePosition(), spawner.getBoundingBox()));
+        if (!inventory.getItem(40).is(Items.TOTEM_OF_UNDYING)) lastPopped = Instant.now();
+        if (!settings.shield && !inventory.getItem(inventory.selected).is(Items.TOTEM_OF_UNDYING)) lastPopped = Instant.now();
         inventory.setItem(40, new ItemStack(Items.TOTEM_OF_UNDYING));
         inventory.setItem(inventory.selected, new ItemStack(Items.TOTEM_OF_UNDYING));
 
         if (settings.autoHealing) {
             tickHealing(player);
         }
+
         if (settings.shield) {
             tickShield(player, inventory);
         }
+
+        for (Holder<MobEffect> effect : settings.effects) {
+            player.addEffect(new MobEffectInstance(effect, 3, 1));
+        }
+
+        boolean shouldMove = settings.moveTowardsSpawner && player.distanceToSqr(spawner) > 2 * 2 && (lastPopped == null || Duration.between(lastPopped, Instant.now()).toMillis() > 200L);
+        Vec3 currentPosition = player.position();
+        setMoveForward(shouldMove);
+        if (shouldMove && prevPosition != null && (prevPosition.x == currentPosition.x || prevPosition.z == currentPosition.z)) {
+            jump();
+        }
+        prevPosition = currentPosition;
 
         FoodData food = player.getFoodData();
         food.setExhaustion(0.0f);
@@ -98,22 +124,11 @@ public class ServerBot extends Bot implements IServerBot {
     }
 
     protected void applyArmor(Inventory inventory) {
-        ItemStack helmet = new ItemStack(settings.armor.itemTypes.get(EquipmentSlot.HEAD));
-        helmet.enchant(ItemUtil.getEnchantment(Enchantments.PROTECTION, vanillaPlayer.level()), 4);
-        helmet.set(DataComponents.UNBREAKABLE, new Unbreakable(true));
-        inventory.setItem(39, helmet);
-        ItemStack chestplate = new ItemStack(settings.armor.itemTypes.get(EquipmentSlot.CHEST));
-        chestplate.enchant(ItemUtil.getEnchantment(Enchantments.PROTECTION, vanillaPlayer.level()), 4);
-        chestplate.set(DataComponents.UNBREAKABLE, new Unbreakable(true));
-        inventory.setItem(38, chestplate);
-        ItemStack leggings = new ItemStack(settings.armor.itemTypes.get(EquipmentSlot.LEGS));
-        leggings.enchant(settings.blastProtection ? ItemUtil.getEnchantment(Enchantments.BLAST_PROTECTION, vanillaPlayer.level()) : ItemUtil.getEnchantment(Enchantments.PROTECTION, vanillaPlayer.level()), 4);
-        leggings.set(DataComponents.UNBREAKABLE, new Unbreakable(true));
-        inventory.setItem(37, leggings);
-        ItemStack boots = new ItemStack(settings.armor.itemTypes.get(EquipmentSlot.FEET));
-        boots.enchant(ItemUtil.getEnchantment(Enchantments.PROTECTION, vanillaPlayer.level()), 4);
-        boots.set(DataComponents.UNBREAKABLE, new Unbreakable(true));
-        inventory.setItem(36, boots);
+        Level world = vanillaPlayer.level();
+        inventory.setItem(39, settings.armor.get(EquipmentSlot.HEAD).buildStack(EquipmentSlot.HEAD, world));
+        inventory.setItem(38, settings.armor.get(EquipmentSlot.CHEST).buildStack(EquipmentSlot.CHEST, world));
+        inventory.setItem(37, settings.armor.get(EquipmentSlot.LEGS).buildStack(EquipmentSlot.LEGS, world));
+        inventory.setItem(36, settings.armor.get(EquipmentSlot.FEET).buildStack(EquipmentSlot.FEET, world));
     }
 
     @Override

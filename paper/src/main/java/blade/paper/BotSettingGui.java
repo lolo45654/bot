@@ -1,16 +1,20 @@
 package blade.paper;
 
 import blade.bot.IServerBot;
+import blade.bot.KitBot;
 import blade.bot.ServerBot;
 import blade.bot.ServerBotSettings;
+import blade.util.ItemUtil;
 import blade.util.fake.FakePlayer;
-import com.mojang.authlib.GameProfile;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.phys.Vec3;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.util.CraftLocation;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
@@ -25,219 +29,219 @@ import xyz.xenondevs.invui.item.impl.SimpleItem;
 import xyz.xenondevs.invui.window.Window;
 
 import java.util.Arrays;
-import java.util.UUID;
 import java.util.function.Consumer;
+
+import static blade.paper.MenuUtils.empty;
+import static blade.paper.MenuUtils.wrap;
 
 public class BotSettingGui {
     public static void show(ServerPlayer player, PaperPlatform platform, ServerBotSettings settings, @Nullable IServerBot bot) {
         Runnable show = () -> show(player, platform, settings, bot);
         Gui gui = Gui.empty(9, 6);
         gui.setBackground(new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE)
-                .setDisplayName(MenuUtils.empty()));
+                .setDisplayName(empty()));
 
-        ItemStack baseItem = new ItemBuilder(Material.OAK_BUTTON)
-                .setDisplayName(MenuUtils.wrapMiniMessage("<aqua>Armor"))
-                .get();
-        setCycleItem(gui, show, 2, 2,
-                settings.armor, new ServerBotSettings.Armor[] { ServerBotSettings.Armor.DIAMOND, ServerBotSettings.Armor.NETHERITE },
-                new ItemStack[] {
-                        new ItemBuilder(withType(baseItem, Material.DIAMOND_CHESTPLATE))
-                                .addEnchantment(Enchantment.MENDING, 1, true)
-                                .addItemFlags(ItemFlag.HIDE_ENCHANTS)
-                                .addLoreLines(MenuUtils.empty())
-                                .addLoreLines(MenuUtils.wrapMiniMessage("<gray>Selected: <aqua><bold>DIAMOND"))
-                                .addLoreLines(MenuUtils.empty())
-                                .addLoreLines(MenuUtils.wrapMiniMessage("<yellow>Click to cycle!"))
-                                .get(),
-                        new ItemBuilder(withType(baseItem, Material.NETHERITE_CHESTPLATE))
-                                .addEnchantment(Enchantment.MENDING, 1, true)
-                                .addItemFlags(ItemFlag.HIDE_ENCHANTS)
-                                .addLoreLines(MenuUtils.empty())
-                                .addLoreLines(MenuUtils.wrapMiniMessage("<gray>Selected: <light_purple><bold>NETHERITE"))
-                                .addLoreLines(MenuUtils.empty())
-                                .addLoreLines(MenuUtils.wrapMiniMessage("<yellow>Click to cycle!"))
-                                .get()
-                }, val -> settings.armor = val);
+        if (bot instanceof KitBot) {
+            gui.setItem(4, 2, new SimpleItem(new ItemBuilder(Material.RED_DYE)
+                    .setDisplayName(wrap("<red>You can't edit a Kit Bot."))));
 
-        baseItem = new ItemBuilder(Material.OAK_BUTTON)
-                .setDisplayName(MenuUtils.wrapMiniMessage("<aqua>Blast Protection"))
-                .addLoreLines(MenuUtils.empty())
-                .addLoreLines(MenuUtils.wrapMiniMessage("<gray>Are <aqua>Blast Protection</aqua> Leggings really needed?"))
-                .get();
-        setBoolItem(gui, show, 2, 3,
-                settings.blastProtection,
-                new ItemBuilder(withType(baseItem, Material.LIME_DYE))
-                        .addLoreLines(MenuUtils.empty())
-                        .addLoreLines(MenuUtils.wrapMiniMessage("<gray>Selected: <green><bold>ON"))
-                        .addLoreLines(MenuUtils.empty())
-                        .addLoreLines(MenuUtils.wrapMiniMessage("<yellow>Click to toggle!"))
-                        .get(),
-                new ItemBuilder(withType(baseItem, Material.GRAY_DYE))
-                        .addLoreLines(MenuUtils.empty())
-                        .addLoreLines(MenuUtils.wrapMiniMessage("<gray>Selected: <red><bold>OFF"))
-                        .addLoreLines(MenuUtils.empty())
-                        .addLoreLines(MenuUtils.wrapMiniMessage("<yellow>Click to toggle!"))
-                        .get(), val -> settings.blastProtection = val);
+            gui.setItem(4, 5, new SimpleItem(new ItemBuilder(Material.BARRIER)
+                    .setDisplayName(wrap("<red>Close")), click -> {
+                click.getPlayer().closeInventory();
+            }));
+            Window.single()
+                    .setGui(gui)
+                    .setTitle(wrap("<aqua>Bot Settings"))
+                    .build(player.getBukkitEntity()).open();
+            return;
+        }
 
-        baseItem = new ItemBuilder(Material.OAK_BUTTON)
-                .setDisplayName(MenuUtils.wrapMiniMessage("<aqua>Reach"))
-                .addLoreLines(MenuUtils.empty())
-                .addLoreLines(MenuUtils.wrapMiniMessage("<gray>This only affects auto hit."))
-                .get();
-        setCycleItem(gui, show, 4, 2,
-                settings.reach, new Float[] { 1.0f, 1.5f, 2.0f, 2.5f, 3.0f, 3.5f },
-                new ItemStack[] {
-                        new ItemBuilder(withType(baseItem, Material.LIGHT_BLUE_DYE))
-                                .addLoreLines(MenuUtils.empty())
-                                .addLoreLines(MenuUtils.wrapMiniMessage("<gray>Selected: <aqua><bold>1"))
-                                .addLoreLines(MenuUtils.empty())
-                                .addLoreLines(MenuUtils.wrapMiniMessage("<yellow>Click to cycle!"))
-                                .get(),
-                        new ItemBuilder(withType(baseItem, Material.LIME_DYE))
-                                .addLoreLines(MenuUtils.empty())
-                                .addLoreLines(MenuUtils.wrapMiniMessage("<gray>Selected: <light_purple><bold>1.5"))
-                                .addLoreLines(MenuUtils.empty())
-                                .addLoreLines(MenuUtils.wrapMiniMessage("<yellow>Click to cycle!"))
-                                .get(),
-                        new ItemBuilder(withType(baseItem, Material.YELLOW_DYE))
-                                .addLoreLines(MenuUtils.empty())
-                                .addLoreLines(MenuUtils.wrapMiniMessage("<gray>Selected: <light_purple><bold>2"))
-                                .addLoreLines(MenuUtils.empty())
-                                .addLoreLines(MenuUtils.wrapMiniMessage("<yellow>Click to cycle!"))
-                                .get(),
-                        new ItemBuilder(withType(baseItem, Material.ORANGE_DYE))
-                                .addLoreLines(MenuUtils.empty())
-                                .addLoreLines(MenuUtils.wrapMiniMessage("<gray>Selected: <light_purple><bold>2.5"))
-                                .addLoreLines(MenuUtils.empty())
-                                .addLoreLines(MenuUtils.wrapMiniMessage("<yellow>Click to cycle!"))
-                                .get(),
-                        new ItemBuilder(withType(baseItem, Material.RED_DYE))
-                                .addLoreLines(MenuUtils.empty())
-                                .addLoreLines(MenuUtils.wrapMiniMessage("<gray>Selected: <light_purple><bold>3"))
-                                .addLoreLines(MenuUtils.empty())
-                                .addLoreLines(MenuUtils.wrapMiniMessage("<yellow>Click to cycle!"))
-                                .get(),
-                        new ItemBuilder(withType(baseItem, Material.PURPLE_DYE))
-                                .addLoreLines(MenuUtils.empty())
-                                .addLoreLines(MenuUtils.wrapMiniMessage("<gray>Selected: <light_purple><bold>3.5"))
-                                .addLoreLines(MenuUtils.empty())
-                                .addLoreLines(MenuUtils.wrapMiniMessage("<yellow>Click to cycle!"))
-                                .get()
-                }, val -> settings.reach = val);
+        addEquipmentItems(gui, show, 1, 1, EquipmentSlot.HEAD, settings);
+        addEquipmentItems(gui, show, 1, 2, EquipmentSlot.CHEST, settings);
+        addEquipmentItems(gui, show, 1, 3, EquipmentSlot.LEGS, settings);
+        addEquipmentItems(gui, show, 1, 4, EquipmentSlot.FEET, settings);
 
         if (settings.shield) {
             gui.setItem(6, 2, new SimpleItem(new ItemBuilder(Material.SHIELD)
                     .addEnchantment(Enchantment.MENDING, 1, true)
                     .addItemFlags(ItemFlag.HIDE_ENCHANTS)
-                    .setDisplayName(MenuUtils.wrapMiniMessage("<aqua>Shield"))
-                    .addLoreLines(MenuUtils.empty())
-                    .addLoreLines(MenuUtils.wrapMiniMessage("<gray>Status: <green><bold>ENABLED"))
-                    .addLoreLines(MenuUtils.empty())
-                    .addLoreLines(MenuUtils.wrapMiniMessage("<yellow>Click to disable!")), click -> {
+                    .setDisplayName(wrap("<aqua>Shield"))
+                    .addLoreLines(empty())
+                    .addLoreLines(wrap("<gray>Selected: <green><bold>ON"))
+                    .addLoreLines(empty())
+                    .addLoreLines(wrap("<yellow>Click to disable!")), click -> {
                 settings.shield = false;
                 show.run();
             }));
-            gui.setItem(6, 3, new SimpleItem(new ItemBuilder(Material.REDSTONE)
-                    .setDisplayName(MenuUtils.wrapMiniMessage("<aqua>Shield Settings"))
-                    .addLoreLines(MenuUtils.empty())
-                    .addLoreLines(MenuUtils.wrapMiniMessage("<gray>That's more settings."))
-                    .addLoreLines(MenuUtils.empty())
-                    .addLoreLines(MenuUtils.wrapMiniMessage("<yellow>Click to edit! ")), click -> {
-                showShieldGroup(player, platform, settings, bot, show);
-            }));
+            ItemStack baseItem = new ItemBuilder(Material.OAK_BUTTON)
+                    .setDisplayName(wrap("<aqua>Auto Hit"))
+                    .get();
+            setBoolItem(gui, show, 6, 3,
+                    settings.autoHit,
+                    new ItemBuilder(withType(baseItem, Material.DIAMOND_SWORD))
+                            .addEnchantment(Enchantment.MENDING, 1, true)
+                            .addItemFlags(ItemFlag.HIDE_ENCHANTS)
+                            .addLoreLines(empty())
+                            .addLoreLines(wrap("<gray>Selected: <green><bold>ON"))
+                            .addLoreLines(empty())
+                            .addLoreLines(wrap("<yellow>Click to toggle!"))
+                            .get(),
+                    new ItemBuilder(withType(baseItem, Material.WOODEN_SWORD))
+                            .addLoreLines(empty())
+                            .addLoreLines(wrap("<gray>Selected: <red><bold>OFF"))
+                            .addLoreLines(empty())
+                            .addLoreLines(wrap("<yellow>Click to toggle!"))
+                            .get(), val -> settings.autoHit = val);
         } else {
             gui.setItem(6, 2, new SimpleItem(new ItemBuilder(Material.SHIELD)
                     .addEnchantment(Enchantment.MENDING, 1, true)
                     .addItemFlags(ItemFlag.HIDE_ENCHANTS)
-                    .setDisplayName(MenuUtils.wrapMiniMessage("<aqua>Shield"))
-                    .addLoreLines(MenuUtils.empty())
-                    .addLoreLines(MenuUtils.wrapMiniMessage("<gray>Status: <red><bold>DISABLED"))
-                    .addLoreLines(MenuUtils.empty())
-                    .addLoreLines(MenuUtils.wrapMiniMessage("<yellow>Click to enable!")), click -> {
+                    .setDisplayName(wrap("<aqua>Shield"))
+                    .addLoreLines(empty())
+                    .addLoreLines(wrap("<gray>Selected: <red><bold>OFF"))
+                    .addLoreLines(empty())
+                    .addLoreLines(wrap("<yellow>Click to enable!")), click -> {
                 settings.shield = true;
                 show.run();
             }));
         }
 
+        setBoolItem(gui, show, 4, 2, settings.effects.contains(MobEffects.SLOW_FALLING),
+                new ItemBuilder(Material.FEATHER)
+                        .addEnchantment(Enchantment.MENDING, 1, true)
+                        .addItemFlags(ItemFlag.HIDE_ENCHANTS)
+                        .setDisplayName(wrap("<aqua>Feather Falling"))
+                        .addLoreLines(empty())
+                        .addLoreLines(wrap("<gray>Selected: <green><bold>ON"))
+                        .addLoreLines(empty())
+                        .addLoreLines(wrap("<yellow>Click to toggle!"))
+                        .get(),
+                new ItemBuilder(Material.FEATHER)
+                        .setDisplayName(wrap("<aqua>Feather Falling"))
+                        .addLoreLines(empty())
+                        .addLoreLines(wrap("<gray>Selected: <red><bold>OFF"))
+                        .addLoreLines(empty())
+                        .addLoreLines(wrap("<yellow>Click to toggle!"))
+                        .get(),
+                v -> {
+                    if (v) settings.effects.add(MobEffects.SLOW_FALLING);
+                    else settings.effects.remove(MobEffects.SLOW_FALLING);
+                });
+
+        setBoolItem(gui, show, 4, 3, settings.moveTowardsSpawner,
+                new ItemBuilder(Material.CHEST_MINECART)
+                        .setDisplayName(wrap("<aqua>Run at you"))
+                        .addLoreLines(empty())
+                        .addLoreLines(wrap("<gray>Causes the Bot to move towards you,"))
+                        .addLoreLines(wrap("<gray>while keeping its distance at 2 blocks."))
+                        .addLoreLines(wrap("<dark_gray>Doesn't move right after popping!"))
+                        .addLoreLines(empty())
+                        .addLoreLines(wrap("<gray>Selected: <green><bold>ON"))
+                        .addLoreLines(empty())
+                        .addLoreLines(wrap("<yellow>Click to toggle!"))
+                        .get(),
+                new ItemBuilder(Material.MINECART)
+                        .setDisplayName(wrap("<aqua>Run at you"))
+                        .addLoreLines(empty())
+                        .addLoreLines(wrap("<gray>Causes the Bot to move towards you,"))
+                        .addLoreLines(wrap("<gray>while keeping its distance at 2 blocks."))
+                        .addLoreLines(wrap("<dark_gray>Doesn't move right after popping!"))
+                        .addLoreLines(empty())
+                        .addLoreLines(wrap("<gray>Selected: <red><bold>OFF"))
+                        .addLoreLines(empty())
+                        .addLoreLines(wrap("<yellow>Click to toggle!"))
+                        .get(),
+                v -> settings.moveTowardsSpawner = v);
+
         if (bot == null) {
             gui.setItem(5, 5, new SimpleItem(new ItemBuilder(Material.DIAMOND)
-                    .setDisplayName(MenuUtils.wrapMiniMessage("<aqua>Spawn Bot"))
-                    .addLoreLines(MenuUtils.empty())
-                    .addLoreLines(MenuUtils.wrapMiniMessage("<yellow>Click to spawn!")), click -> {
+                    .setDisplayName(wrap("<aqua>Spawn Bot"))
+                    .addLoreLines(empty())
+                    .addLoreLines(wrap("<yellow>Click to spawn!")), click -> {
                 Location pos = click.getPlayer().getLocation();
-                FakePlayer fakePlayer = new FakePlayer(platform, MinecraftServer.getServer(), CraftLocation.toVec3D(pos), pos.getYaw(), pos.getPitch(), ((CraftWorld) pos.getWorld()).getHandle(), new GameProfile(UUID.randomUUID(), "SimpleBot"));
+                FakePlayer fakePlayer = new FakePlayer(platform, MinecraftServer.getServer(), CraftLocation.toVec3D(pos), pos.getYaw(), pos.getPitch(), ((CraftWorld) pos.getWorld()).getHandle(), IServerBot.getProfile());
                 ServerBot spawningBot = new ServerBot(fakePlayer, platform, player, settings);
                 platform.addBot(spawningBot);
                 click.getPlayer().closeInventory();
             }));
         } else {
             gui.setItem(3, 5, new SimpleItem(new ItemBuilder(Material.ENDER_PEARL)
-                    .setDisplayName(MenuUtils.wrapMiniMessage("<aqua>Teleport to you"))
-                    .addLoreLines(MenuUtils.empty())
-                    .addLoreLines(MenuUtils.wrapMiniMessage("<gray>We lost contact, reconnecting..."))
-                    .addLoreLines(MenuUtils.empty())
-                    .addLoreLines(MenuUtils.wrapMiniMessage("<yellow>Click to teleport!")), click -> {
+                    .setDisplayName(wrap("<aqua>Teleport to You"))
+                    .addLoreLines(empty())
+                    .addLoreLines(wrap("<gray>We lost contact, attempting automatic"))
+                    .addLoreLines(wrap("<gray>reconnecting ... failed, requires"))
+                    .addLoreLines(wrap("<gray>Human validation."))
+                    .addLoreLines(empty())
+                    .addLoreLines(wrap("<yellow>Click to reconnect!")), click -> {
                 Vec3 pos = player.position();
                 bot.getVanillaPlayer().teleportTo(player.serverLevel(), pos.x, pos.y, pos.z, player.getYRot(), player.getXRot());
                 click.getPlayer().closeInventory();
             }));
             gui.setItem(5, 5, new SimpleItem(new ItemBuilder(Material.TNT)
-                    .setDisplayName(MenuUtils.wrapMiniMessage("<aqua>Despawn"))
-                    .addLoreLines(MenuUtils.empty())
-                    .addLoreLines(MenuUtils.wrapMiniMessage("<gray>No longer want it to exist?"))
-                    .addLoreLines(MenuUtils.empty())
-                    .addLoreLines(MenuUtils.wrapMiniMessage("<yellow>Click to despawn!")), click -> {
+                    .setDisplayName(wrap("<aqua>Despawn"))
+                    .addLoreLines(empty())
+                    .addLoreLines(wrap("<gray>No longer want it to exist? You're"))
+                    .addLoreLines(wrap("<gray>just a click away from destroying this .. bot?"))
+                    .addLoreLines(empty())
+                    .addLoreLines(wrap("<yellow>Click to despawn!")), click -> {
                 bot.destroy();
                 click.getPlayer().closeInventory();
             }));
         }
+
         gui.setItem(4, 5, new SimpleItem(new ItemBuilder(Material.BARRIER)
-                .setDisplayName(MenuUtils.wrapMiniMessage("<red>Close")), click -> {
+                .setDisplayName(wrap("<red>Close")), click -> {
             click.getPlayer().closeInventory();
         }));
-
         Window.single()
                 .setGui(gui)
-                .setTitle(MenuUtils.wrapMiniMessage("<aqua>Bot Settings"))
+                .setTitle(wrap("<aqua>Bot Settings"))
                 .build(player.getBukkitEntity()).open();
     }
 
-    public static void showShieldGroup(ServerPlayer player, PaperPlatform platform, ServerBotSettings settings, @Nullable IServerBot bot, Runnable back) {
-        Runnable show = () -> showShieldGroup(player, platform, settings, bot, back);
-        Gui gui = Gui.empty(9, 6);
-        gui.setBackground(new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE)
-                .setDisplayName(MenuUtils.empty()));
-
-        ItemStack baseItem = new ItemBuilder(Material.OAK_BUTTON)
-                .setDisplayName(MenuUtils.wrapMiniMessage("<aqua>Auto Hit"))
-                .get();
-        setBoolItem(gui, show, 2, 2,
-                settings.autoHit,
-                new ItemBuilder(withType(baseItem, Material.DIAMOND_SWORD))
-                        .addEnchantment(Enchantment.MENDING, 1, true)
-                        .addItemFlags(ItemFlag.HIDE_ENCHANTS)
-                        .addLoreLines(MenuUtils.empty())
-                        .addLoreLines(MenuUtils.wrapMiniMessage("<gray>Selected: <green><bold>ON"))
-                        .addLoreLines(MenuUtils.empty())
-                        .addLoreLines(MenuUtils.wrapMiniMessage("<yellow>Click to toggle!"))
+    private static void addEquipmentItems(Gui gui, Runnable show, int x, int y, EquipmentSlot slot, ServerBotSettings settings) {
+        ServerBotSettings.ArmorPiece armor = settings.armor.get(slot);
+        setBoolItem(gui, show, x, y, armor.blastProtection(),
+                new ItemBuilder(Material.ENCHANTED_BOOK)
+                        .setDisplayName(wrap("<aqua>Blast Protection"))
+                        .addLoreLines(wrap(String.format("<dark_gray>for the %s", ItemUtil.getSlotName(slot))))
+                        .addLoreLines(empty())
+                        .addLoreLines(wrap("<gray>Selected: <green><bold>ON"))
+                        .addLoreLines(empty())
+                        .addLoreLines(wrap("<yellow>Click to disable!"))
                         .get(),
-                new ItemBuilder(withType(baseItem, Material.WOODEN_SWORD))
-                        .addLoreLines(MenuUtils.empty())
-                        .addLoreLines(MenuUtils.wrapMiniMessage("<gray>Selected: <red><bold>OFF"))
-                        .addLoreLines(MenuUtils.empty())
-                        .addLoreLines(MenuUtils.wrapMiniMessage("<yellow>Click to toggle!"))
-                        .get(), val -> settings.autoHit = val);
-
-
-        gui.setItem(4, 5, new SimpleItem(new ItemBuilder(Material.OAK_DOOR)
-                .setDisplayName(MenuUtils.wrapMiniMessage("<aqua>Go back")), click -> {
-            back.run();
-        }));
-
-        Window.single()
-                .setGui(gui)
-                .setTitle(MenuUtils.wrapMiniMessage("<aqua>Shield"))
-                .build(player.getBukkitEntity()).open();
+                new ItemBuilder(Material.BOOK)
+                        .setDisplayName(wrap("<aqua>Blast Protection"))
+                        .addLoreLines(wrap(String.format("<dark_gray>for the %s", ItemUtil.getSlotName(slot))))
+                        .addLoreLines(empty())
+                        .addLoreLines(wrap("<gray>Selected: <red><bold>OFF"))
+                        .addLoreLines(empty())
+                        .addLoreLines(wrap("<yellow>Click to enable!"))
+                        .get(),
+                v -> settings.armor.put(slot, armor.withBlastProtection(v)));
+        setCycleItem(gui, show, x + 1, y, armor.type(), new ServerBotSettings.ArmorType[] { ServerBotSettings.ArmorType.NETHERITE, ServerBotSettings.ArmorType.DIAMOND },
+                new ItemStack[] {
+                        new ItemBuilder(CraftItemStack.asNewCraftStack(armor.type().slotToItem.get(slot)))
+                                .addEnchantment(Enchantment.MENDING, 1, true)
+                                .addItemFlags(ItemFlag.HIDE_ENCHANTS)
+                                .setDisplayName(wrap("<aqua>Armor Type"))
+                                .addLoreLines(wrap(String.format("<dark_gray>for the %s", ItemUtil.getSlotName(slot))))
+                                .addLoreLines(empty())
+                                .addLoreLines(wrap("<gray>Selected: <light_purple><bold>NETHERITE"))
+                                .addLoreLines(empty())
+                                .addLoreLines(wrap("<yellow>Click to cycle!"))
+                                .get(),
+                        new ItemBuilder(CraftItemStack.asNewCraftStack(armor.type().slotToItem.get(slot)))
+                                .addEnchantment(Enchantment.MENDING, 1, true)
+                                .addItemFlags(ItemFlag.HIDE_ENCHANTS)
+                                .setDisplayName(wrap("<aqua>Armor Type"))
+                                .addLoreLines(wrap(String.format("<dark_gray>for the %s", ItemUtil.getSlotName(slot))))
+                                .addLoreLines(empty())
+                                .addLoreLines(wrap("<gray>Selected: <aqua><bold>DIAMOND"))
+                                .addLoreLines(empty())
+                                .addLoreLines(wrap("<yellow>Click to cycle!"))
+                                .get(),
+                }, v -> settings.armor.put(slot, armor.withType(v)));
     }
 
     private static <O> void setCycleItem(Gui gui, Runnable show, int x, int y, O currently, O[] options, ItemStack[] optionItems, Consumer<O> setter) {
