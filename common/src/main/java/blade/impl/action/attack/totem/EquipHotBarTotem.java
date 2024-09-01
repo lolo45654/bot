@@ -2,7 +2,6 @@ package blade.impl.action.attack.totem;
 
 import blade.impl.ConfigKeys;
 import blade.impl.StateKeys;
-import blade.impl.action.attack.Attack;
 import blade.impl.util.AttackUtil;
 import blade.inventory.BotInventory;
 import blade.inventory.Slot;

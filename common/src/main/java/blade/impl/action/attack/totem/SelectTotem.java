@@ -2,16 +2,13 @@ package blade.impl.action.attack.totem;
 
 import blade.impl.ConfigKeys;
 import blade.impl.StateKeys;
-import blade.impl.action.attack.Attack;
 import blade.impl.util.AttackUtil;
 import blade.inventory.BotInventory;
 import blade.inventory.Slot;
-import blade.inventory.SlotFlag;
 import blade.planner.score.ScoreState;
 import blade.util.blade.BladeAction;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Items;
 
 import static blade.impl.action.attack.Attack.isPvPSatisfied;
 import static blade.impl.action.attack.Attack.lookAtEnemy;

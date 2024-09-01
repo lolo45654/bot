@@ -10,12 +10,10 @@ import blade.inventory.SlotFlag;
 import blade.planner.score.ScoreState;
 import blade.util.BotMath;
 import blade.util.blade.BladeAction;
-import com.google.common.collect.ImmutableList;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
