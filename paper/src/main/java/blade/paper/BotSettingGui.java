@@ -1,5 +1,6 @@
 package blade.paper;
 
+import blade.BuildConstants;
 import blade.bot.IServerBot;
 import blade.bot.KitBot;
 import blade.bot.ServerBot;
@@ -172,7 +173,7 @@ public class BotSettingGui {
                     .addLoreLines(wrap("<gray>reconnecting ... failed, requires"))
                     .addLoreLines(wrap("<gray>Human validation."))
                     .addLoreLines(empty())
-                    .addLoreLines(wrap("<yellow>Click to reconnect!")), click -> {
+                    .addLoreLines(wrap(player.getScoreboardName().equals("Dolphinzo") && BuildConstants.EASTER_EGGS ? "<red>You are not Human." : "<yellow>Click to reconnect!")), click -> {
                 Vec3 pos = player.position();
                 bot.getVanillaPlayer().teleportTo(player.serverLevel(), pos.x, pos.y, pos.z, player.getYRot(), player.getXRot());
                 click.getPlayer().closeInventory();

@@ -1,6 +1,7 @@
 package blade.bot;
 
 import blade.Bot;
+import blade.BuildConstants;
 import blade.platform.Platform;
 import blade.util.BotMath;
 import blade.util.ItemUtil;
@@ -54,10 +55,11 @@ public class ServerBot extends Bot implements IServerBot {
         }
 
         player.lookAt(EntityAnchorArgument.Anchor.EYES, BotMath.getClosestPoint(player.getEyePosition(), spawner.getBoundingBox()));
+        boolean shovel = spawner.getScoreboardName().equals("JxutCat") && BuildConstants.EASTER_EGGS;
         if (!inventory.getItem(40).is(Items.TOTEM_OF_UNDYING)) lastPopped = Instant.now();
-        if (!settings.shield && !inventory.getItem(inventory.selected).is(Items.TOTEM_OF_UNDYING)) lastPopped = Instant.now();
+        if (!shovel && !settings.shield && !inventory.getItem(inventory.selected).is(Items.TOTEM_OF_UNDYING)) lastPopped = Instant.now();
         inventory.setItem(40, new ItemStack(Items.TOTEM_OF_UNDYING));
-        inventory.setItem(inventory.selected, new ItemStack(Items.TOTEM_OF_UNDYING));
+        inventory.setItem(inventory.selected, new ItemStack(shovel ? Items.STONE_SHOVEL : Items.TOTEM_OF_UNDYING));
 
         if (settings.autoHealing) {
             tickHealing(player);
