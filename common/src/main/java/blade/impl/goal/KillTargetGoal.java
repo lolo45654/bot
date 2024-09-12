@@ -3,7 +3,7 @@ package blade.impl.goal;
 import blade.impl.ConfigKeys;
 import blade.impl.StateKeys;
 import blade.planner.score.ScoreState;
-import blade.util.blade.BladeGoal;
+import blade.utils.blade.BladeGoal;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 

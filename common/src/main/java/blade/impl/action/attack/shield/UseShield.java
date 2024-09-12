@@ -7,13 +7,13 @@ import blade.inventory.BotInventory;
 import blade.inventory.Slot;
 import blade.inventory.SlotFlag;
 import blade.planner.score.ScoreState;
-import blade.util.ItemUtil;
-import blade.util.blade.BladeAction;
+import blade.utils.ItemUtils;
+import blade.utils.blade.BladeAction;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
 
-import static blade.impl.action.attack.Attack.isPvPSatisfied;
+import static blade.impl.action.attack.Attack.isAttackSatisfied;
 import static blade.impl.action.attack.Attack.lookAtEnemy;
 import static blade.impl.action.attack.shield.Shield.getShieldSlot;
 
@@ -21,8 +21,8 @@ public class UseShield extends BladeAction implements Shield {
     public Slot getNonUsingSlot() {
         BotInventory inv = bot.getInventory();
         Slot selectedSlot = Slot.ofHotbar(inv.getSelectedSlot());
-        if (!ItemUtil.isUsingItem(inv.getItem(selectedSlot))) return selectedSlot;
-        return inv.findFirst(stack -> !ItemUtil.isUsingItem(stack), SlotFlag.HOT_BAR);
+        if (!ItemUtils.isUsingItem(inv.getItem(selectedSlot))) return selectedSlot;
+        return inv.findFirst(stack -> !ItemUtils.isUsingItem(stack), SlotFlag.HOT_BAR);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class UseShield extends BladeAction implements Shield {
 
     @Override
     public boolean isSatisfied() {
-        return isPvPSatisfied(bot) && getShieldSlot(bot) != null && !bot.getVanillaPlayer().getCooldowns().isOnCooldown(Items.SHIELD);
+        return isAttackSatisfied(bot) && getShieldSlot(bot) != null && !bot.getVanillaPlayer().getCooldowns().isOnCooldown(Items.SHIELD);
     }
 
     @Override
@@ -70,8 +70,12 @@ public class UseShield extends BladeAction implements Shield {
     public double getScore() {
         LivingEntity target = bot.getBlade().get(ConfigKeys.TARGET);
         Player player = bot.getVanillaPlayer();
+        float ourHealthRatio = bot.getVanillaPlayer().getHealth() / bot.getVanillaPlayer().getMaxHealth();
+        float targetHealthRatio = target.getHealth() / target.getMaxHealth();
+
         return (player.isUsingItem() && player.getUseItem().is(Items.SHIELD) ? Math.max(Math.max(tick - 12, 0) * -0.3, -1) : 0) +
-                AttackUtil.isAttacking(target, player) * 2.0
+                AttackUtil.isAttacking(target, player) * 2.0 +
+                ((targetHealthRatio - ourHealthRatio) * 2 - bot.getBlade().get(ConfigKeys.DIFFICULTY))
                 - state.getValue(StateKeys.CRYSTAL_MODE);
     }
 }

@@ -2,9 +2,9 @@ package blade.impl.action.attack.sword;
 
 import blade.impl.StateKeys;
 import blade.planner.score.ScoreState;
-import blade.util.blade.BladeAction;
+import blade.utils.blade.BladeAction;
 
-import static blade.impl.action.attack.Attack.isPvPSatisfied;
+import static blade.impl.action.attack.Attack.isAttackSatisfied;
 import static blade.impl.action.attack.Attack.lookAtEnemy;
 
 public class Jump extends BladeAction implements Sword {
@@ -18,7 +18,7 @@ public class Jump extends BladeAction implements Sword {
 
     @Override
     public boolean isSatisfied() {
-        return isPvPSatisfied(bot);
+        return isAttackSatisfied(bot);
     }
 
     @Override

@@ -7,12 +7,12 @@ import blade.inventory.BotInventory;
 import blade.inventory.Slot;
 import blade.inventory.SlotFlag;
 import blade.planner.score.ScoreState;
-import blade.util.blade.BladeAction;
+import blade.utils.blade.BladeAction;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
 
-import static blade.impl.action.attack.Attack.isPvPSatisfied;
+import static blade.impl.action.attack.Attack.isAttackSatisfied;
 import static blade.impl.action.attack.totem.Totem.getInventoryTotemSlot;
 import static blade.impl.action.attack.totem.Totem.isTotemSatisfied;
 
@@ -25,14 +25,14 @@ public class EquipOffhandTotem extends BladeAction implements Totem {
         if (tick == 0) {
             inv.openInventory();
         }
-        if (tick >= ConfigKeys.getDifficultyReversedCubic(bot) * 1.4) {
+        if (tick >= ConfigKeys.getDifficultyReversedCubic(bot) * 4) {
             inv.move(totemSlot, Slot.ofOffhand());
         }
     }
 
     @Override
     public boolean isSatisfied() {
-        return isPvPSatisfied(bot) && isTotemSatisfied(bot) &&
+        return isAttackSatisfied(bot) && isTotemSatisfied(bot) &&
                 getInventoryTotemSlot(bot) != null &&
                 !bot.getInventory().getOffHand().is(Items.TOTEM_OF_UNDYING);
     }

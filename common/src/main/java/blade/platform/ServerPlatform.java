@@ -1,6 +1,6 @@
 package blade.platform;
 
-import blade.util.fake.FakePlayer;
+import blade.utils.fake.FakePlayer;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 
 import java.util.EnumSet;

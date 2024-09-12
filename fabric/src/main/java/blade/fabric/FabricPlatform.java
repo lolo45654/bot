@@ -3,7 +3,7 @@ package blade.fabric;
 import blade.Bot;
 import blade.fabric.mixin.ClientboundPlayerInfoUpdatePacketAccessor;
 import blade.platform.ServerPlatform;
-import blade.util.fake.FakePlayer;
+import blade.utils.fake.FakePlayer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 

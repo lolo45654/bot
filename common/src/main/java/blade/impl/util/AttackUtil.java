@@ -1,6 +1,6 @@
 package blade.impl.util;
 
-import blade.util.ClientSimulator;
+import blade.utils.ClientSimulator;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeMap;

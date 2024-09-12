@@ -7,7 +7,7 @@ import blade.impl.goal.KillTargetGoal;
 import blade.paper.BotPlugin;
 import blade.paper.PaperPlatform;
 import blade.platform.Platform;
-import blade.util.fake.FakePlayer;
+import blade.utils.fake.FakePlayer;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;

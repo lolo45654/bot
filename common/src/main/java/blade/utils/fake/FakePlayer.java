@@ -1,4 +1,4 @@
-package blade.util.fake;
+package blade.utils.fake;
 
 import blade.platform.ServerPlatform;
 import com.mojang.authlib.GameProfile;

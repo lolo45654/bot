@@ -3,13 +3,13 @@ package blade.impl.action.attack.sword;
 import blade.impl.ConfigKeys;
 import blade.impl.StateKeys;
 import blade.planner.score.ScoreState;
-import blade.util.BotMath;
-import blade.util.blade.BladeAction;
+import blade.utils.BotMath;
+import blade.utils.blade.BladeAction;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 
-import static blade.impl.action.attack.Attack.isPvPSatisfied;
+import static blade.impl.action.attack.Attack.isAttackSatisfied;
 import static blade.impl.action.attack.Attack.lookAtEnemy;
 
 public class BackOff extends BladeAction implements Sword {
@@ -23,7 +23,7 @@ public class BackOff extends BladeAction implements Sword {
 
     @Override
     public boolean isSatisfied() {
-        return isPvPSatisfied(bot);
+        return isAttackSatisfied(bot);
     }
 
     @Override

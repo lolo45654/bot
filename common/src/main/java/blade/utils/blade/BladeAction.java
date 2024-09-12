@@ -1,4 +1,4 @@
-package blade.util.blade;
+package blade.utils.blade;
 
 import blade.Bot;
 import blade.planner.score.ScoreAction;

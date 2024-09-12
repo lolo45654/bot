@@ -1,6 +1,6 @@
-package blade.util;
+package blade.utils;
 
-import blade.util.fake.FakePlayer;
+import blade.utils.fake.FakePlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;

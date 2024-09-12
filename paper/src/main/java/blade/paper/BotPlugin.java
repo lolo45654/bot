@@ -6,7 +6,7 @@ import blade.bot.IServerBot;
 import blade.bot.ServerBot;
 import blade.bot.ServerBotSettings;
 import blade.impl.goal.KillTargetGoal;
-import blade.util.fake.FakePlayer;
+import blade.utils.fake.FakePlayer;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPIBukkitConfig;
 import dev.jorel.commandapi.CommandTree;

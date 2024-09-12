@@ -2,8 +2,8 @@ package blade.bot;
 
 import blade.Bot;
 import blade.platform.Platform;
-import blade.util.BotMath;
-import blade.util.ItemUtil;
+import blade.utils.BotMath;
+import blade.utils.ItemUtils;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
@@ -93,7 +93,7 @@ public class ServerBot extends Bot implements IServerBot {
         boolean shielding = !shieldCooldown && noShieldTicks <= 0;
 
         ItemStack shield = new ItemStack(Items.SHIELD);
-        shield.enchant(ItemUtil.getEnchantment(Enchantments.MENDING, player.level()), 1);
+        shield.enchant(ItemUtils.getEnchantment(Enchantments.MENDING, player.level()), 1);
         shield.set(DataComponents.UNBREAKABLE, new Unbreakable(true));
         inventory.setItem(inventory.selected, shield);
         interact(shielding);

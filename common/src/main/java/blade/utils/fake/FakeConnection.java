@@ -1,6 +1,6 @@
-package blade.util.fake;
+package blade.utils.fake;
 
-import blade.util.fake.FakePlayer.MovementSide;
+import blade.utils.fake.FakePlayer.MovementSide;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.embedded.EmbeddedChannel;
 import net.minecraft.network.Connection;

@@ -3,14 +3,13 @@ package blade.impl.action.attack.totem;
 import blade.impl.ConfigKeys;
 import blade.impl.StateKeys;
 import blade.impl.util.AttackUtil;
-import blade.inventory.BotInventory;
 import blade.inventory.Slot;
 import blade.planner.score.ScoreState;
-import blade.util.blade.BladeAction;
+import blade.utils.blade.BladeAction;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 
-import static blade.impl.action.attack.Attack.isPvPSatisfied;
+import static blade.impl.action.attack.Attack.isAttackSatisfied;
 import static blade.impl.action.attack.Attack.lookAtEnemy;
 import static blade.impl.action.attack.totem.Totem.getHotBarTotemSlot;
 
@@ -25,8 +24,7 @@ public class SelectTotem extends BladeAction implements Totem {
 
     @Override
     public boolean isSatisfied() {
-        Slot hotBarTotemSlot = getHotBarTotemSlot(bot);
-        return isPvPSatisfied(bot) && (hotBarTotemSlot != null && hotBarTotemSlot.hotbarIndex() != bot.getInventory().getSelectedSlot());
+        return isAttackSatisfied(bot);
     }
 
     @Override
@@ -37,7 +35,6 @@ public class SelectTotem extends BladeAction implements Totem {
 
     @Override
     public double getScore() {
-        BotInventory inv = bot.getInventory();
         Player player = bot.getVanillaPlayer();
         LivingEntity target = bot.getBlade().get(ConfigKeys.TARGET);
         double deltaY = player.getDeltaMovement().y;

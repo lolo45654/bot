@@ -6,7 +6,7 @@ import blade.debug.DebugFrame;
 import blade.debug.planner.ScorePlannerDebug;
 import blade.impl.ConfigKeys;
 import blade.planner.score.ScorePlanner;
-import blade.util.blade.BladeAction;
+import blade.utils.blade.BladeAction;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.client.GameNarrator;
 import net.minecraft.client.Minecraft;

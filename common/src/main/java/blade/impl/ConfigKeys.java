@@ -1,7 +1,7 @@
 package blade.impl;
 
 import blade.Bot;
-import blade.util.blade.ConfigKey;
+import blade.utils.blade.ConfigKey;
 import net.minecraft.world.entity.LivingEntity;
 
 public class ConfigKeys {
@@ -11,7 +11,7 @@ public class ConfigKeys {
     public static final ConfigKey<Float> DIFFICULTY = ConfigKey.key("difficulty", 0.5f);
 
     public static float getDifficultyReversed(Bot bot) {
-        return 0.9999f - bot.getBlade().get(DIFFICULTY);
+        return 1f - bot.getBlade().get(DIFFICULTY);
     }
 
     public static float getDifficultyReversedCubic(Bot bot) {

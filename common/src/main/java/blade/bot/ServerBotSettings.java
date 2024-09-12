@@ -1,6 +1,6 @@
 package blade.bot;
 
-import blade.util.ItemUtil;
+import blade.utils.ItemUtils;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.effect.MobEffect;
@@ -64,7 +64,7 @@ public class ServerBotSettings implements Cloneable {
 
         public ItemStack buildStack(EquipmentSlot slot, Level world) {
             ItemStack stack = new ItemStack(type.slotToItem.get(slot));
-            stack.enchant(ItemUtil.getEnchantment(blastProtection ? Enchantments.BLAST_PROTECTION : Enchantments.PROTECTION, world), 4);
+            stack.enchant(ItemUtils.getEnchantment(blastProtection ? Enchantments.BLAST_PROTECTION : Enchantments.PROTECTION, world), 4);
             stack.set(DataComponents.UNBREAKABLE, new Unbreakable(true));
             return stack;
         }

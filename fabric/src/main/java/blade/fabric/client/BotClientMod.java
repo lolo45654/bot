@@ -38,6 +38,12 @@ public class BotClientMod implements ClientModInitializer {
                 bot.doTick();
             }
         });
+        WorldRenderEvents.START.register(context -> {
+            Bot bot = PLATFORM.getBot();
+            if (bot != null) {
+                bot.updateRotation();
+            }
+        });
         WorldRenderEvents.LAST.register(context -> {
             if (!Minecraft.getInstance().getEntityRenderDispatcher().shouldRenderHitBoxes()) return;
             MultiBufferSource bufferSource = context.consumers();

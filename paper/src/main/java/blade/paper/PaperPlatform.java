@@ -2,9 +2,9 @@ package blade.paper;
 
 import blade.Bot;
 import blade.platform.ServerPlatform;
-import blade.util.ClientSimulator;
-import blade.util.fake.FakeConnection;
-import blade.util.fake.FakePlayer;
+import blade.utils.ClientSimulator;
+import blade.utils.fake.FakeConnection;
+import blade.utils.fake.FakePlayer;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.server.level.ServerPlayer;

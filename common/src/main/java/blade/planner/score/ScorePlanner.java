@@ -1,7 +1,7 @@
 package blade.planner.score;
 
 import blade.debug.planner.ScorePlannerDebug;
-import blade.util.blade.BladeGoal;
+import blade.utils.blade.BladeGoal;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

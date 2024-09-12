@@ -1,19 +1,18 @@
 package blade;
 
-import blade.event.BotLifecycleEvents;
 import blade.inventory.BotClientInventory;
 import blade.inventory.BotInventory;
 import blade.platform.ClientPlatform;
 import blade.platform.Platform;
 import blade.scheduler.BotScheduler;
-import blade.util.ClientSimulator;
-import blade.util.blade.BladeAction;
-import blade.util.fake.FakePlayer;
+import blade.utils.ClientSimulator;
+import blade.utils.RotationManager;
+import blade.utils.blade.BladeAction;
+import blade.utils.fake.FakePlayer;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.HitResult;
 import org.slf4j.Logger;
@@ -31,6 +30,7 @@ public class Bot {
     protected final Random random = new Random();
     protected final BotInventory inventory;
     protected final ClientSimulator clientSimulator;
+    protected final RotationManager rotationManager = new RotationManager();
     public final boolean isClient;
     protected final BladeMachine blade = new BladeMachine(this);
     protected boolean jumped = false;
@@ -63,13 +63,11 @@ public class Bot {
             destroy();
             return;
         }
-        BotLifecycleEvents.TICK_START.call(this).onTickStart(this);
         try {
             tick();
         } catch (Throwable t) {
             LOGGER.warn("Failed ticking bot", t);
         }
-        BotLifecycleEvents.TICK_END.call(this).onTickEnd(this);
     }
 
     protected void tick() {
@@ -82,7 +80,12 @@ public class Bot {
         }
         scheduler.tick();
         blade.tick();
+        updateRotation();
         if (clientSimulator != null) clientSimulator.tick();
+    }
+
+    public void updateRotation() {
+        rotationManager.update(this);
     }
 
     public Random getRandom() {
@@ -93,19 +96,8 @@ public class Bot {
         return blade;
     }
 
-    public void lookRealistic(float targetYaw, float targetPitch, float time, float randomness) {
-        if (true) randomness = 0.0f; // Randomness disabled
-        time = Mth.clamp(time, 0.0f, 1.0f);
-        float yaw = vanillaPlayer.getYRot();
-        float pitch = vanillaPlayer.getXRot();
-        float deltaYaw = targetYaw - yaw;
-        if (deltaYaw > 180) {
-            deltaYaw -= 360;
-        } else if (deltaYaw < -180) {
-            deltaYaw += 360;
-        }
-        setYaw(deltaYaw * time + yaw + random.nextFloat() * 6f * randomness);
-        setPitch((targetPitch - pitch) * time + pitch + random.nextFloat() * 6f * randomness);
+    public void setRotationTarget(float targetYaw, float targetPitch, float speed) {
+        rotationManager.setTarget(vanillaPlayer.getYRot(), vanillaPlayer.getXRot(), targetYaw, targetPitch, speed);
     }
 
     public void jump() {

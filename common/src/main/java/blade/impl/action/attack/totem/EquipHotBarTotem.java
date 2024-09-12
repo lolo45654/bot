@@ -7,12 +7,12 @@ import blade.inventory.BotInventory;
 import blade.inventory.Slot;
 import blade.inventory.SlotFlag;
 import blade.planner.score.ScoreState;
-import blade.util.blade.BladeAction;
+import blade.utils.blade.BladeAction;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
 
-import static blade.impl.action.attack.Attack.isPvPSatisfied;
+import static blade.impl.action.attack.Attack.isAttackSatisfied;
 import static blade.impl.action.attack.totem.Totem.getHotBarTotemSlot;
 
 public class EquipHotBarTotem extends BladeAction implements Totem {
@@ -24,14 +24,14 @@ public class EquipHotBarTotem extends BladeAction implements Totem {
         if (tick == 0) {
             inv.openInventory();
         }
-        if (tick >= ConfigKeys.getDifficultyReversed(bot) * 3) {
+        if (tick >= ConfigKeys.getDifficultyReversed(bot) * 4) {
             inv.move(totemSlot, Slot.ofHotbar(1));
         }
     }
 
     @Override
     public boolean isSatisfied() {
-        return isPvPSatisfied(bot) && getHotBarTotemSlot(bot) == null;
+        return isAttackSatisfied(bot) && getHotBarTotemSlot(bot) == null && Totem.getInventoryTotemSlot(bot) != null;
     }
 
     @Override

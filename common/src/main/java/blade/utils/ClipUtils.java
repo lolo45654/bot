@@ -1,4 +1,4 @@
-package blade.util;
+package blade.utils;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
@@ -10,7 +10,7 @@ import net.minecraft.world.phys.*;
 
 import java.util.function.Predicate;
 
-public class ClipUtil {
+public class ClipUtils {
     public static boolean hasLineOfSight(Level world, Vec3 start, Vec3 end, Predicate<BlockState> tester) {
         return world.isBlockInLine(new ClipBlockStateContext(start, end, state -> !state.isAir() && tester.test(state))).getType() == HitResult.Type.MISS;
     }

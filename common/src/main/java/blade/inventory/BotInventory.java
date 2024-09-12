@@ -1,7 +1,6 @@
 package blade.inventory;
 
 import blade.Bot;
-import blade.event.InventoryEvents;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
@@ -84,7 +83,6 @@ public class BotInventory {
      */
     public void move(Slot from, Slot to) {
         if (from.equals(to)) return;
-        InventoryEvents.MOVE_ITEM.call(bot).onMoveItem(bot, from, to);
         moveInternally(from, to);
     }
 

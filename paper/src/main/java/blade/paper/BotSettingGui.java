@@ -4,8 +4,8 @@ import blade.bot.IServerBot;
 import blade.bot.KitBot;
 import blade.bot.ServerBot;
 import blade.bot.ServerBotSettings;
-import blade.util.ItemUtil;
-import blade.util.fake.FakePlayer;
+import blade.utils.ItemUtils;
+import blade.utils.fake.FakePlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffects;
@@ -204,7 +204,7 @@ public class BotSettingGui {
         setBoolItem(gui, show, x, y, armor.blastProtection(),
                 new ItemBuilder(Material.ENCHANTED_BOOK)
                         .setDisplayName(wrap("<aqua>Blast Protection"))
-                        .addLoreLines(wrap(String.format("<dark_gray>for the %s", ItemUtil.getSlotName(slot))))
+                        .addLoreLines(wrap(String.format("<dark_gray>for the %s", ItemUtils.getSlotName(slot))))
                         .addLoreLines(empty())
                         .addLoreLines(wrap("<gray>Selected: <green><bold>ON"))
                         .addLoreLines(empty())
@@ -212,7 +212,7 @@ public class BotSettingGui {
                         .get(),
                 new ItemBuilder(Material.BOOK)
                         .setDisplayName(wrap("<aqua>Blast Protection"))
-                        .addLoreLines(wrap(String.format("<dark_gray>for the %s", ItemUtil.getSlotName(slot))))
+                        .addLoreLines(wrap(String.format("<dark_gray>for the %s", ItemUtils.getSlotName(slot))))
                         .addLoreLines(empty())
                         .addLoreLines(wrap("<gray>Selected: <red><bold>OFF"))
                         .addLoreLines(empty())
@@ -225,7 +225,7 @@ public class BotSettingGui {
                                 .addEnchantment(Enchantment.MENDING, 1, true)
                                 .addItemFlags(ItemFlag.HIDE_ENCHANTS)
                                 .setDisplayName(wrap("<aqua>Armor Type"))
-                                .addLoreLines(wrap(String.format("<dark_gray>for the %s", ItemUtil.getSlotName(slot))))
+                                .addLoreLines(wrap(String.format("<dark_gray>for the %s", ItemUtils.getSlotName(slot))))
                                 .addLoreLines(empty())
                                 .addLoreLines(wrap("<gray>Selected: <light_purple><bold>NETHERITE"))
                                 .addLoreLines(empty())
@@ -235,7 +235,7 @@ public class BotSettingGui {
                                 .addEnchantment(Enchantment.MENDING, 1, true)
                                 .addItemFlags(ItemFlag.HIDE_ENCHANTS)
                                 .setDisplayName(wrap("<aqua>Armor Type"))
-                                .addLoreLines(wrap(String.format("<dark_gray>for the %s", ItemUtil.getSlotName(slot))))
+                                .addLoreLines(wrap(String.format("<dark_gray>for the %s", ItemUtils.getSlotName(slot))))
                                 .addLoreLines(empty())
                                 .addLoreLines(wrap("<gray>Selected: <aqua><bold>DIAMOND"))
                                 .addLoreLines(empty())
