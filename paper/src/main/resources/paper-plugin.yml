@@ -4,3 +4,4 @@ main: blade.paper.BotPlugin
 api-version: '1.21.1'
 description: '${description}'
 authors: [ loloed ]
+folia-supported: true
