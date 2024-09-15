@@ -49,6 +49,7 @@ public class ServerBotSettings implements Cloneable {
         try {
             ServerBotSettings clone = (ServerBotSettings) super.clone();
             clone.armor = new HashMap<>(clone.armor);
+            clone.effects = new HashSet<>(clone.effects);
             return clone;
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();
