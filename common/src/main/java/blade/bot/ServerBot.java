@@ -59,7 +59,7 @@ public class ServerBot extends Bot implements IServerBot {
         if (!inventory.getItem(40).is(Items.TOTEM_OF_UNDYING)) lastPopped = Instant.now();
         if (!shovel && !settings.shield && !inventory.getItem(inventory.selected).is(Items.TOTEM_OF_UNDYING)) lastPopped = Instant.now();
         inventory.setItem(40, new ItemStack(Items.TOTEM_OF_UNDYING));
-        inventory.setItem(inventory.selected, new ItemStack(shovel ? Items.STONE_SHOVEL : Items.TOTEM_OF_UNDYING));
+        inventory.setItem(inventory.selected, new ItemStack(shovel ? Items.GOLDEN_SHOVEL : Items.TOTEM_OF_UNDYING));
 
         if (settings.autoHealing) {
             tickHealing(player);
