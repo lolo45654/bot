@@ -5,9 +5,4 @@ import net.minecraft.client.KeyMapping;
 
 public interface ClientPlatform extends Platform {
     InputConstants.Key getKey(KeyMapping mapping);
-
-    @Override
-    default boolean isClient() {
-        return true;
-    }
 }

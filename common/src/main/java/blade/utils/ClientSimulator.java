@@ -1,5 +1,6 @@
 package blade.utils;
 
+import blade.platform.ServerPlatform;
 import blade.utils.fake.FakePlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -11,7 +12,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.ItemStack;
@@ -23,22 +23,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.*;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
 public class ClientSimulator {
-    public static Method LivingEntity$updatingUsingItem;
-
-    static {
-        try {
-            LivingEntity$updatingUsingItem = LivingEntity.class.getDeclaredMethod("updatingUsingItem");
-            LivingEntity$updatingUsingItem.setAccessible(true);
-        } catch (NoSuchMethodException ignored) {
-        }
-    }
-
     public static HitResult findCrosshairTarget(Entity camera, double blockInteractionRange, double entityInteractionRange, float tickDelta) {
         double d = Math.max(blockInteractionRange, entityInteractionRange);
         double e = Mth.square(d);
@@ -71,7 +59,8 @@ public class ClientSimulator {
             return hitResult;
         }
     }
-    
+
+    private final ServerPlatform platform;
     private final ServerPlayer player;
     private final Supplier<Boolean> inventoryOpen;
     private boolean forwardKey = false;
@@ -93,7 +82,8 @@ public class ClientSimulator {
     private BlockPos currentBreakingPos;
     private BiConsumer<Vec3i, Float> blockDamageHandler = null;
 
-    public ClientSimulator(ServerPlayer player, Supplier<Boolean> inventoryOpen) {
+    public ClientSimulator(ServerPlatform platform, ServerPlayer player, Supplier<Boolean> inventoryOpen) {
+        this.platform = platform;
         this.player = player;
         this.inventoryOpen = inventoryOpen;
     }
@@ -102,7 +92,7 @@ public class ClientSimulator {
         crosshairTarget = findCrosshairTarget(player, player.blockInteractionRange(), player.entityInteractionRange(), 1f);
         ensureVariables();
         tickMove();
-        tickUsingItem();
+        platform.tickUsingItem(player);
         tickMouse();
         if (!(player instanceof FakePlayer)) {
             player.tick();
@@ -146,14 +136,6 @@ public class ClientSimulator {
             player.zza *= 0.2f;
         }
     }
-
-    public void tickUsingItem() {
-        try {
-            LivingEntity$updatingUsingItem.invoke(player);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException(e);
-        }
-    }
     
     public void tickMouse() {
         if (inventoryOpen.get()) {
@@ -165,7 +147,7 @@ public class ClientSimulator {
             if (!item.isEmpty()) {
                 item.releaseUsing(player.level(), player, useItemRemaining);
                 if (item.useOnRelease()) {
-                    tickUsingItem();
+                    platform.tickUsingItem(player);
                 }
             }
             player.stopUsingItem();

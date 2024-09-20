@@ -1,5 +1,6 @@
 package blade.utils.fake;
 
+import blade.platform.ServerPlatform;
 import blade.utils.fake.FakePlayer.MovementSide;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.embedded.EmbeddedChannel;
@@ -12,28 +13,13 @@ import net.minecraft.network.protocol.game.ClientboundExplodePacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Field;
-
 public class FakeConnection extends Connection {
-    public static Field Connection$channel;
-
-    static {
-        try {
-            Connection$channel = Connection.class.getDeclaredField("channel");
-        } catch (NoSuchFieldException e) {
-        }
-    }
-
     private final FakePlayer player;
 
-    public FakeConnection(FakePlayer player) {
+    public FakeConnection(ServerPlatform platform, FakePlayer player) {
         super(PacketFlow.CLIENTBOUND);
         this.player = player;
-        try {
-            Connection$channel.set(this, new EmbeddedChannel());
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+        platform.setChannel(this, new EmbeddedChannel());
     }
 
     @Override

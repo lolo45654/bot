@@ -23,19 +23,9 @@ import net.minecraft.world.scores.Scoreboard;
 import net.minecraft.world.scores.Team;
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.Field;
 import java.util.EnumSet;
 
 public class FakePlayer extends ServerPlayer {
-    public static Field ServerPlayer$spawnInvulnerableTime;
-    static {
-        try {
-            ServerPlayer$spawnInvulnerableTime = ServerPlayer.class.getDeclaredField("spawnInvulnerableTime");
-            ServerPlayer$spawnInvulnerableTime.setAccessible(true);
-        } catch (NoSuchFieldException ignored) {
-        }
-    }
-
     private final ClientboundPlayerInfoUpdatePacket.Entry fakePlayerEntry;
     private final ServerPlatform platform;
 
@@ -57,7 +47,7 @@ public class FakePlayer extends ServerPlayer {
         platform.declareFakePlayer(this);
         fakePlayerEntry = new ClientboundPlayerInfoUpdatePacket.Entry(getUUID(), getGameProfile(), false, 0,
                 GameType.SURVIVAL, getDisplayName(), null);
-        connection = new ServerGamePacketListenerImpl(server, new FakeConnection(this), this, CommonListenerCookie.createInitial(profile, false));
+        connection = new ServerGamePacketListenerImpl(server, new FakeConnection(platform, this), this, CommonListenerCookie.createInitial(profile, false));
         updateAll();
 
         Scoreboard scoreboard = getScoreboard();
@@ -72,11 +62,7 @@ public class FakePlayer extends ServerPlayer {
         // Bukkit.getPluginManager().registerEvents(this, PaperPlatform.PLUGIN);
         world.addNewPlayer(this);
         invulnerableTime = 0;
-        try {
-            ServerPlayer$spawnInvulnerableTime.set(this, 0);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+        platform.setSpawnInvulnerableTime(this, 0);
     }
 
     @Override

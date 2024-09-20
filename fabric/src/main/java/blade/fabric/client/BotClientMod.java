@@ -64,6 +64,6 @@ public class BotClientMod implements ClientModInitializer {
                 }
             }
         });
-        ClientCommandRegistrationCallback.EVENT.register((ClientCommands::register));
+        ClientCommandRegistrationCallback.EVENT.register(ClientCommands::register);
     }
 }

@@ -4,6 +4,7 @@ import blade.inventory.BotClientInventory;
 import blade.inventory.BotInventory;
 import blade.platform.ClientPlatform;
 import blade.platform.Platform;
+import blade.platform.ServerPlatform;
 import blade.scheduler.BotScheduler;
 import blade.utils.ClientSimulator;
 import blade.utils.RotationManager;
@@ -37,13 +38,13 @@ public class Bot {
     protected boolean debug = false;
 
     public Bot(Player vanillaPlayer, Platform platform) {
-        this.isClient = platform.isClient();
+        this.isClient = platform instanceof ClientPlatform;
         this.vanillaPlayer = vanillaPlayer;
         this.platform = platform;
         this.scheduler = new BotScheduler(this, platform.getExecutor());
         this.inventory = isClient ? new BotClientInventory(this) : new BotInventory(this);
         if (isClient) clientSimulator = null;
-        else clientSimulator = new ClientSimulator((ServerPlayer) vanillaPlayer, inventory::hasInventoryOpen);
+        else clientSimulator = new ClientSimulator((ServerPlatform) platform, (ServerPlayer) vanillaPlayer, inventory::hasInventoryOpen);
     }
 
     public Player getVanillaPlayer() {
@@ -225,7 +226,7 @@ public class Bot {
     }
 
     public void destroy() {
-        platform.destroyBot(this);
+        platform.removeBot(this);
         if (isClient) {
             return;
         }

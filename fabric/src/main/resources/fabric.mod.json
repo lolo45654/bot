@@ -15,6 +15,9 @@
   "entrypoints": {
     "client": [
       "blade.fabric.client.BotClientMod"
+    ],
+    "main": [
+      "blade.fabric.BotMod"
     ]
   },
   "mixins": [
