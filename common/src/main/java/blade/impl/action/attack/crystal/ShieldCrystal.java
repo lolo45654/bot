@@ -17,7 +17,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.Vec3;
 
 import static blade.impl.action.attack.Attack.isAttackSatisfied;
-import static blade.impl.action.attack.Attack.lookAtEnemy;
 import static blade.impl.action.attack.shield.Shield.getShieldSlot;
 
 public class ShieldCrystal extends BladeAction implements Shield {
@@ -39,7 +38,7 @@ public class ShieldCrystal extends BladeAction implements Shield {
             bot.getInventory().setSelectedSlot(shieldSlot.hotbarIndex());
         } else {
             bot.getInventory().openInventory();
-            bot.getInventory().move(shieldSlot, Slot.ofOffhand());
+            bot.getInventory().move(shieldSlot, Slot.ofHotbar(2));
             return;
         }
         bot.getInventory().closeInventory();
@@ -68,8 +67,8 @@ public class ShieldCrystal extends BladeAction implements Shield {
 
         return isAttackSatisfied(bot) && getShieldSlot(bot) != null &&
                 !bot.getVanillaPlayer().getCooldowns().isOnCooldown(Items.SHIELD) &&
-                (crystalPos = CrystalPosition.produce(target, crystalPos, bot.getVanillaPlayer())) != null ||
-                (anchorPos = AnchorPosition.produce(target, anchorPos, bot.getVanillaPlayer())) != null;
+                ((crystalPos = CrystalPosition.produce(target, crystalPos, bot.getVanillaPlayer())) != null ||
+                (anchorPos = AnchorPosition.produce(target, anchorPos, bot.getVanillaPlayer())) != null);
     }
 
     @Override
@@ -96,7 +95,7 @@ public class ShieldCrystal extends BladeAction implements Shield {
         return (player.isUsingItem() && player.getUseItem().is(Items.SHIELD) ? Math.max(Math.max(tick - 12, 0) * -0.3, -1) : 0) +
                 AttackUtil.isAttacking(target, player) * 2.0 +
                 ((targetHealthRatio - ourHealthRatio) * 2 - bot.getBlade().get(ConfigKeys.DIFFICULTY)) +
-                Math.max(crystalConfidence, anchorConfidence) +
+                Math.max(crystalConfidence, anchorConfidence) / 3 +
                 state.getValue(StateKeys.CRYSTAL_MODE);
     }
 }

@@ -39,7 +39,7 @@ public class DestroyCrystal extends BladeAction implements Crystal {
 
     @Override
     public void onTick() {
-        Vec3 lookAt = endCrystals.getFirst().position().add(0, 0.2, 0);
+        Vec3 lookAt = endCrystals.getFirst().position().add(0, 0.5, 0);
         Vec3 eyePos = bot.getVanillaPlayer().getEyePosition();
         Vec3 direction = lookAt.subtract(eyePos);
         float yaw = BotMath.getYaw(direction);

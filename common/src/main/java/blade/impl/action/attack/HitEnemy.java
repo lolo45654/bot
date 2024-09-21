@@ -14,20 +14,19 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
 import static blade.impl.action.attack.Attack.*;
 
 public class HitEnemy extends BladeAction implements Attack {
-    public Slot getSwordSlot() {
-        return bot.getInventory().findFirst(stack -> stack.is(ItemTags.SWORDS), SlotFlag.HOT_BAR);
+    public Slot getWeaponSlot() {
+        return bot.getInventory().findFirst(stack -> stack.is(ItemTags.SWORDS) || stack.is(ItemTags.AXES), SlotFlag.HOT_BAR);
     }
 
     @Override
     public void onTick() {
         LivingEntity target = bot.getBlade().get(ConfigKeys.TARGET);
-        Slot swordSlot = getSwordSlot();
+        Slot swordSlot = getWeaponSlot();
         if (swordSlot != null) {
             bot.getInventory().setSelectedSlot(swordSlot.hotbarIndex());
         }
@@ -74,9 +73,11 @@ public class HitEnemy extends BladeAction implements Attack {
         double distSq = closestPoint.distanceToSqr(eyePos);
         float attackStrength = player.getAttackStrengthScale(0.5f);
         double reach = getReach(bot);
+        Slot swordSlot = getWeaponSlot();
 
         return (1 - (distSq / (reach * reach)) * 2) +
-                (attackStrength < 0.4f ? -8 : attackStrength > 0.9f ? 2.0f : attackStrength * 4 - 3) +
+                (attackStrength < 0.4f ? -2 : attackStrength > 0.9f ? 2.0f : attackStrength * 4 - 3) /
+                        (swordSlot == null || (swordSlot.isHotbar() && bot.getInventory().getSelectedSlot() == swordSlot.hotbarIndex()) ? 1 : 3) +
                 AttackUtil.isAttacking(player, target);
     }
 }

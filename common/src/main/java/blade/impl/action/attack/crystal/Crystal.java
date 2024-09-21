@@ -9,7 +9,6 @@ public interface Crystal extends Attack {
         blade.addAction(new DestroyCrystal());
         blade.addAction(new PlaceObsidian());
         blade.addAction(new PlaceCrystal());
-        blade.addAction(new ShieldCrystal());
-        // TODO CrystalShield, shielding specific to crystal
+        // blade.addAction(new ShieldCrystal());
     }
 }
