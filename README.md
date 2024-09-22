@@ -1,6 +1,6 @@
 # Bot
 
-A project creating minecraft bots for 1.20.6.
+A project creating minecraft bots for 1.21.1.
 
 ## Usage
 
