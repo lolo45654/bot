@@ -5,10 +5,8 @@ import blade.Bot;
 import blade.impl.ConfigKeys;
 import blade.impl.goal.KillTargetGoal;
 import blade.paper.BotPlugin;
-import blade.paper.PaperPlatform;
 import blade.platform.Platform;
-import blade.util.fake.FakePlayer;
-import com.mojang.authlib.GameProfile;
+import blade.utils.fake.FakePlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -20,7 +18,8 @@ import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.craftbukkit.util.CraftLocation;
 import org.bukkit.entity.LivingEntity;
 
-import java.util.UUID;
+import java.util.ArrayList;
+import java.util.List;
 
 public class KitBot extends Bot implements IServerBot {
     /**
@@ -33,14 +32,15 @@ public class KitBot extends Bot implements IServerBot {
      * @return the newly spawned bot as a bukkit player
      */
     public static org.bukkit.entity.Player create(Location pos, org.bukkit.entity.Player spawner, LivingEntity target, float difficulty, double temperature) {
-        for (int i = 0; i < PaperPlatform.BOTS.size(); i++) {
-            Bot bot = PaperPlatform.BOTS.get(i);
+        List<Bot> bots = new ArrayList<>(BotPlugin.PLATFORM.getBots());
+        for (Bot bot : bots) {
             if (bot instanceof IServerBot sBot && sBot.getSpawner().getUUID().equals(spawner.getUniqueId())) {
                 bot.destroy();
             }
         }
-        FakePlayer fakePlayer = new FakePlayer(BotPlugin.platform, MinecraftServer.getServer(), CraftLocation.toVec3D(pos), pos.getYaw(), pos.getPitch(), ((CraftWorld) pos.getWorld()).getHandle(), IServerBot.getProfile());
-        KitBot bot = new KitBot(fakePlayer, BotPlugin.platform, ((CraftPlayer) spawner).getHandle());
+
+        FakePlayer fakePlayer = new FakePlayer(BotPlugin.PLATFORM, MinecraftServer.getServer(), CraftLocation.toVec3D(pos), pos.getYaw(), pos.getPitch(), ((CraftWorld) pos.getWorld()).getHandle(), IServerBot.getProfile());
+        KitBot bot = new KitBot(fakePlayer, BotPlugin.PLATFORM, ((CraftPlayer) spawner).getHandle());
         BladeMachine blade = bot.getBlade();
         blade.set(ConfigKeys.DIFFICULTY, difficulty);
         blade.getPlanner().setTemperature(temperature);
@@ -51,25 +51,12 @@ public class KitBot extends Bot implements IServerBot {
             }
             return ((CraftLivingEntity) target).getHandle();
         }));
-        BotPlugin.platform.addBot(bot);
+        BotPlugin.PLATFORM.addBot(bot);
         return fakePlayer.getBukkitEntity();
     }
 
     public static org.bukkit.entity.Player create(Location pos, org.bukkit.entity.Player spawner, LivingEntity target) {
         return create(pos, spawner, target, 0.5f, 0.3);
-    }
-
-    @Deprecated(forRemoval = true)
-    public static org.bukkit.entity.Player create(Location pos, org.bukkit.entity.Player spawner) {
-        for (Bot bot : PaperPlatform.BOTS) {
-            if (bot instanceof IServerBot sBot && sBot.getSpawner().getUUID().equals(spawner.getUniqueId())) {
-                bot.destroy();
-            }
-        }
-        FakePlayer fakePlayer = new FakePlayer(BotPlugin.platform, MinecraftServer.getServer(), CraftLocation.toVec3D(pos), pos.getYaw(), pos.getPitch(), ((CraftWorld) pos.getWorld()).getHandle(), new GameProfile(UUID.randomUUID(), "KitBot"));
-        KitBot bot = new KitBot(fakePlayer, BotPlugin.platform, ((CraftPlayer) spawner).getHandle());
-        BotPlugin.platform.addBot(bot);
-        return fakePlayer.getBukkitEntity();
     }
 
     private final ServerPlayer spawner;

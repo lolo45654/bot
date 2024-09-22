@@ -1,8 +1,10 @@
 package blade.impl.util;
 
-import blade.util.ClientSimulator;
+import blade.utils.ClientSimulator;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeMap;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -13,7 +15,8 @@ public class AttackUtil {
         score += canCrit(attacker) ? 1.0 : 0.0;
         score += canAttack(attacker, victim) ? 2.0 : 0.0;
         score += attacker instanceof Player player ? player.getAttackStrengthScale(0.5f) : 0;
-        return score / 4.0;
+        score += Math.min(getDamage(attacker) / 10, 1);
+        return score / 5.0;
     }
 
     public static boolean canCritIgnoreSprint(LivingEntity entity) {
@@ -35,5 +38,10 @@ public class AttackUtil {
 
     public static double getBlockInteractionRange(LivingEntity entity) {
         return entity instanceof Player player ? player.blockInteractionRange() : 4.5;
+    }
+
+    public static double getDamage(LivingEntity entity) {
+        AttributeMap attributes = entity.getAttributes();
+        return attributes.hasAttribute(Attributes.ATTACK_DAMAGE) ? attributes.getValue(Attributes.ATTACK_DAMAGE) : 0;
     }
 }

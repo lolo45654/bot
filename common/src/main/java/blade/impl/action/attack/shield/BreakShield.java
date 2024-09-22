@@ -6,8 +6,8 @@ import blade.impl.util.AttackUtil;
 import blade.inventory.Slot;
 import blade.inventory.SlotFlag;
 import blade.planner.score.ScoreState;
-import blade.util.BotMath;
-import blade.util.blade.BladeAction;
+import blade.utils.BotMath;
+import blade.utils.blade.BladeAction;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -26,7 +26,7 @@ public class BreakShield extends BladeAction implements Shield {
         Slot axeSlot = getAxeSlot();
         int previousSelected = bot.getInventory().getSelectedSlot();
         if (axeSlot != null) {
-            bot.getInventory().setSelectedSlot(axeSlot.getHotbarIndex());
+            bot.getInventory().setSelectedSlot(axeSlot.hotbarIndex());
         }
         lookAtEnemy(bot, tick);
         bot.setMoveForward(true);
@@ -41,7 +41,7 @@ public class BreakShield extends BladeAction implements Shield {
 
     @Override
     public boolean isSatisfied() {
-        return isPvPSatisfied(bot) && getAxeSlot() != null;
+        return isAttackSatisfied(bot) && getAxeSlot() != null;
     }
 
     @Override

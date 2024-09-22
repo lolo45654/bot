@@ -1,22 +1,21 @@
 package blade;
 
-import blade.event.BotLifecycleEvents;
 import blade.inventory.BotClientInventory;
 import blade.inventory.BotInventory;
 import blade.platform.ClientPlatform;
 import blade.platform.Platform;
+import blade.platform.ServerPlatform;
 import blade.scheduler.BotScheduler;
-import blade.util.ClientSimulator;
-import blade.util.blade.BladeAction;
-import blade.util.fake.FakePlayer;
+import blade.utils.ClientSimulator;
+import blade.utils.RotationManager;
+import blade.utils.blade.BladeAction;
+import blade.utils.fake.FakePlayer;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.helpers.NOPLogger;
@@ -25,25 +24,27 @@ import java.util.Random;
 
 @SuppressWarnings("UnusedReturnValue")
 public class Bot {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Bot.class);
     protected final Player vanillaPlayer;
     protected final Platform platform;
     protected final BotScheduler scheduler;
     protected final Random random = new Random();
     protected final BotInventory inventory;
     protected final ClientSimulator clientSimulator;
+    protected final RotationManager rotationManager = new RotationManager();
     public final boolean isClient;
     protected final BladeMachine blade = new BladeMachine(this);
     protected boolean jumped = false;
     protected boolean debug = false;
 
     public Bot(Player vanillaPlayer, Platform platform) {
-        this.isClient = platform.isClient();
+        this.isClient = platform instanceof ClientPlatform;
         this.vanillaPlayer = vanillaPlayer;
         this.platform = platform;
         this.scheduler = new BotScheduler(this, platform.getExecutor());
         this.inventory = isClient ? new BotClientInventory(this) : new BotInventory(this);
         if (isClient) clientSimulator = null;
-        else clientSimulator = new ClientSimulator((ServerPlayer) vanillaPlayer, inventory::hasInventoryOpen);
+        else clientSimulator = new ClientSimulator((ServerPlatform) platform, (ServerPlayer) vanillaPlayer, inventory::hasInventoryOpen);
     }
 
     public Player getVanillaPlayer() {
@@ -63,13 +64,11 @@ public class Bot {
             destroy();
             return;
         }
-        BotLifecycleEvents.TICK_START.call(this).onTickStart(this);
         try {
             tick();
         } catch (Throwable t) {
-            t.printStackTrace();
+            LOGGER.warn("Failed ticking bot", t);
         }
-        BotLifecycleEvents.TICK_END.call(this).onTickEnd(this);
     }
 
     protected void tick() {
@@ -82,7 +81,12 @@ public class Bot {
         }
         scheduler.tick();
         blade.tick();
+        updateRotation();
         if (clientSimulator != null) clientSimulator.tick();
+    }
+
+    public void updateRotation() {
+        rotationManager.update(this);
     }
 
     public Random getRandom() {
@@ -93,19 +97,8 @@ public class Bot {
         return blade;
     }
 
-    public void lookRealistic(float targetYaw, float targetPitch, float time, float randomness) {
-        if (true) randomness = 0.0f; // Randomness disabled
-        time = Mth.clamp(time, 0.0f, 1.0f);
-        float yaw = vanillaPlayer.getYRot();
-        float pitch = vanillaPlayer.getXRot();
-        float deltaYaw = targetYaw - yaw;
-        if (deltaYaw > 180) {
-            deltaYaw -= 360;
-        } else if (deltaYaw < -180) {
-            deltaYaw += 360;
-        }
-        setYaw(deltaYaw * time + yaw + random.nextFloat() * 6f * randomness);
-        setPitch((targetPitch - pitch) * time + pitch + random.nextFloat() * 6f * randomness);
+    public void setRotationTarget(float targetYaw, float targetPitch, float speed) {
+        rotationManager.setTarget(vanillaPlayer.getYRot(), vanillaPlayer.getXRot(), targetYaw, targetPitch, speed);
     }
 
     public void jump() {
@@ -224,16 +217,8 @@ public class Bot {
         return vanillaPlayer.onGround();
     }
 
-    public void setVelocity(Vec3 velocity) {
-        vanillaPlayer.setDeltaMovement(velocity);
-    }
-
     public boolean isDead() {
         return vanillaPlayer.isDeadOrDying();
-    }
-
-    public boolean isValid() {
-        return !isDestroyed();
     }
 
     public boolean isDestroyed() {
@@ -241,7 +226,7 @@ public class Bot {
     }
 
     public void destroy() {
-        platform.destroyBot(this);
+        platform.removeBot(this);
         if (isClient) {
             return;
         }
@@ -259,7 +244,7 @@ public class Bot {
         return clientSimulator.getCrossHairTarget();
     }
 
-    public Logger getLogger(String name) {
+    public Logger createLogger(String name) {
         if (!debug) return NOPLogger.NOP_LOGGER;
         return LoggerFactory.getLogger("BOT-" + name);
     }
@@ -267,7 +252,7 @@ public class Bot {
     public void setDebug(boolean debug) {
         this.debug = debug;
         for (BladeAction action : blade.getActions()) {
-            action.logger = getLogger(action.getClass().getSimpleName());
+            action.logger = createLogger(action.getClass().getSimpleName());
         }
     }
 

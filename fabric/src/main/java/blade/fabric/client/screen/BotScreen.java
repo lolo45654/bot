@@ -6,7 +6,7 @@ import blade.debug.DebugFrame;
 import blade.debug.planner.ScorePlannerDebug;
 import blade.impl.ConfigKeys;
 import blade.planner.score.ScorePlanner;
-import blade.util.blade.BladeAction;
+import blade.utils.blade.BladeAction;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.client.GameNarrator;
 import net.minecraft.client.Minecraft;
@@ -121,10 +121,11 @@ public class BotScreen extends Screen {
         @Override
         public void render(GuiGraphics guiGraphics, int i, int j, int k, int l, int m, int n, int o, boolean bl, float f) {
             DebugFrame frame = blade.getLastFrame();
-            ScorePlannerDebug planner = frame.getPlanner();
+            ScorePlannerDebug planner = frame.planner();
+            if (planner == null) return;
             int color = -1;
-            if (planner.getActionTaken() == action) color = YELLOW;
-            ScorePlanner.Score score = frame.getPlanner().getScores().get(action);
+            if (planner.action() == action) color = YELLOW;
+            ScorePlanner.Score score = planner.scores().get(action);
             if (score == null || !score.satisfied()) color = RED;
             List<FormattedCharSequence> label = font.split(Component.literal(action.toString()), 175);
             if (!label.isEmpty()) {

@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import java.util.List;
 
 @Mixin(DebugScreenOverlay.class)
-public class GuiMixin {
+public class DebugScreenOverlayMixin {
     @ModifyArg(method = "drawGameInformation",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/DebugScreenOverlay;renderLines(Lnet/minecraft/client/gui/GuiGraphics;Ljava/util/List;Z)V"), index = 1)
     public List<String> onRenderLeft(List<String> list) {

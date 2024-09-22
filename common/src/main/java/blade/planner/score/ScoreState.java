@@ -8,28 +8,27 @@ import java.util.Map;
 import java.util.Set;
 
 public class ScoreState {
-    public static final Set<StateKey> KEYS = new HashSet<>();
-
     private final Map<StateKey, Double> values = new HashMap<>();
+    private final Set<StateKey> keys = new HashSet<>();
 
     public ScoreState() {
         updateValues();
     }
 
     public void updateValues() {
-        for (StateKey key : KEYS) {
+        for (StateKey key : keys) {
             if (values.containsKey(key)) continue;
             values.put(key, 0.0);
         }
     }
 
     public double getValue(StateKey key) {
-        KEYS.add(key);
+        keys.add(key);
         return values.computeIfAbsent(key, o -> 0.0);
     }
 
     public void setValue(StateKey key, double value) {
-        KEYS.add(key);
+        keys.add(key);
         values.put(key, value);
     }
 
@@ -45,14 +44,14 @@ public class ScoreState {
 
     public ScoreState difference(ScoreState other) {
         ScoreState diff = new ScoreState();
-        for (StateKey key : KEYS) {
+        for (StateKey key : keys) {
             diff.values.put(key, getValue(key) - other.getValue(key));
         }
         return diff;
     }
 
     public void produce(Bot bot) {
-        for (StateKey key : KEYS) {
+        for (StateKey key : keys) {
             Double produced = key.produce(bot);
             if (produced == null) continue;
             values.put(key, produced);

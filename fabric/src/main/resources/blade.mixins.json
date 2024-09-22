@@ -7,13 +7,16 @@
     "ClientboundPlayerInfoUpdatePacketAccessor",
     "ClientPacketListenerMixin",
     "ClientSuggestionProviderMixin",
+    "CommandSourceStackAccessor",
+    "ConnectionAccessor",
     "DeathScreenMixin",
-    "GuiMixin",
+    "DebugScreenOverlayMixin",
     "KeyMappingAccessor",
+    "LivingEntityAccessor",
     "MinecraftMixin",
-    "PauseScreenMixin"
-  ],
-  "client": [
+    "PauseScreenMixin",
+    "PlayerListMixin",
+    "ServerPlayerAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

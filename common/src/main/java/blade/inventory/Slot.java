@@ -1,12 +1,11 @@
 package blade.inventory;
 
-import java.util.Objects;
-
 /**
  * Helper class using the network slot.
- * <a href="https://wiki.vg/Inventory#Player_Inventory">https://wiki.vg/Inventory#Player_Inventory</a>
+ *
+ * @see <a href="https://wiki.vg/Inventory#Player_Inventory">https://wiki.vg/Inventory#Player_Inventory</a>
  */
-public class Slot {
+public record Slot(int index) {
     public static Slot ofMain(int index) {
         return new Slot(index + 9);
     }
@@ -32,33 +31,23 @@ public class Slot {
 
     public static final int MAX_INDEX = 46;
 
-    private final int index;
-
-    public Slot(int index) {
-        this.index = index;
-    }
-
-    public int getIndex() {
-        return index;
-    }
-
-    public int getArmorIndex() {
+    public int armorIndex() {
         return index - 5;
     }
 
-    public int getHotbarIndex() {
+    public int hotbarIndex() {
         return index - 36;
     }
 
-    public int getMainIndex() {
+    public int mainIndex() {
         return index - 9;
     }
 
-    public int getVanillaIndex() {
+    public int vanillaIndex() {
         if (isOffHand()) return 40;
-        if (isArmor()) return getArmorIndex() + 36;
-        if (isHotbar()) return getHotbarIndex();
-        return getMainIndex() + 9;
+        if (isArmor()) return armorIndex() + 36;
+        if (isHotbar()) return hotbarIndex();
+        return mainIndex() + 9;
     }
 
     @Override
@@ -67,11 +56,6 @@ public class Slot {
         if (o == null || getClass() != o.getClass()) return false;
         Slot slot = (Slot) o;
         return index == slot.index;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(index);
     }
 
     public boolean isArmor() {

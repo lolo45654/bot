@@ -6,8 +6,8 @@ import blade.inventory.BotInventory;
 import blade.inventory.Slot;
 import blade.inventory.SlotFlag;
 import blade.planner.score.ScoreState;
-import blade.util.BotMath;
-import blade.util.blade.BladeAction;
+import blade.utils.BotMath;
+import blade.utils.blade.BladeAction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.effect.MobEffect;
@@ -21,7 +21,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
-import static blade.impl.action.attack.Attack.isPvPSatisfied;
+import static blade.impl.action.attack.Attack.isAttackSatisfied;
 import static blade.impl.action.attack.Attack.lookAtEnemy;
 
 public class ConsumeHealingPotion extends BladeAction implements Attack {
@@ -71,11 +71,10 @@ public class ConsumeHealingPotion extends BladeAction implements Attack {
 
         inventory.closeInventory();
         ItemStack potionStack = inventory.getItem(potionSlot);
-        inventory.setSelectedSlot(potionSlot.getHotbarIndex());
+        inventory.setSelectedSlot(potionSlot.hotbarIndex());
         
         if (potionStack.is(Items.SPLASH_POTION)) {
-            float time = ConfigKeys.getDifficultyReversedCubic(bot) * 1.2f;
-            bot.lookRealistic(0.0f, 90.0f, tick / time, bot.getBlade().get(ConfigKeys.DIFFICULTY) * 0.2f);
+            bot.setRotationTarget(0, 90, ConfigKeys.getDifficultyReversedCubic(bot) * 200);
             if (bot.getVanillaPlayer().getXRot() < 80.0f) return;
 
             bot.setSneak(true);
@@ -92,7 +91,7 @@ public class ConsumeHealingPotion extends BladeAction implements Attack {
 
     @Override
     public boolean isSatisfied() {
-        return isPvPSatisfied(bot);
+        return isAttackSatisfied(bot);
     }
 
     @Override

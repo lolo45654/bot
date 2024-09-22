@@ -16,7 +16,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(PauseScreen.class)
 public abstract class PauseScreenMixin extends Screen {
-    @Shadow @Final private boolean showPauseMenu;
+    @Shadow @Final
+    private boolean showPauseMenu;
 
     protected PauseScreenMixin(Component component) {
         super(component);

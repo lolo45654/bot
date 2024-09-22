@@ -1,22 +1,22 @@
 package blade.impl.action.attack.crystal;
 
+import blade.debug.visual.VisualBox;
+import blade.debug.visual.VisualText;
 import blade.impl.ConfigKeys;
 import blade.impl.StateKeys;
 import blade.impl.util.CrystalPosition;
 import blade.inventory.Slot;
 import blade.inventory.SlotFlag;
 import blade.planner.score.ScoreState;
-import blade.util.BotMath;
-import blade.util.blade.BladeAction;
+import blade.utils.BotMath;
+import blade.utils.blade.BladeAction;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
-import static blade.impl.action.attack.Attack.isPvPSatisfied;
-import static blade.impl.action.attack.crystal.Crystal.getCrystalScore;
+import static blade.impl.action.attack.Attack.isAttackSatisfied;
 
 public class PlaceObsidian extends BladeAction implements Crystal {
     private CrystalPosition crystalPos = null;
@@ -30,24 +30,29 @@ public class PlaceObsidian extends BladeAction implements Crystal {
         Slot obsidianSlot = getObsidianSlot();
         if (obsidianSlot == null) return;
         if (obsidianSlot.isHotbar()) {
-            bot.getInventory().setSelectedSlot(obsidianSlot.getHotbarIndex());
+            bot.getInventory().setSelectedSlot(obsidianSlot.hotbarIndex());
         }
 
-        float time = ConfigKeys.getDifficultyReversedCubic(bot) * 0.3f;
+        bot.getBlade().addVisualDebug(new VisualBox(new AABB(crystalPos.obsidian()), 0.3f, 0.8f, 0.3f));
+        bot.getBlade().addVisualDebug(new VisualText(Vec3.atCenterOf(crystalPos.obsidian().above()), String.format("C: %.3f", crystalPos.confidence())));
+
         Vec3 lookAt = crystalPos.placeAgainst();
         Vec3 eyePos = bot.getVanillaPlayer().getEyePosition();
         Vec3 direction = lookAt.subtract(eyePos);
         float yaw = BotMath.getYaw(direction);
         float pitch = BotMath.getPitch(direction);
-        bot.lookRealistic(yaw, pitch, (tick % time) / time, 0);
-        if (tick >= time) {
+        bot.setRotationTarget(yaw, pitch, bot.getBlade().get(ConfigKeys.DIFFICULTY) * 100);
+
+        if (bot.getCrossHairTarget() instanceof BlockHitResult blockHitResult && blockHitResult.getBlockPos().relative(blockHitResult.getDirection()).equals(crystalPos.obsidian())) {
             bot.interact();
         }
     }
 
     @Override
     public boolean isSatisfied() {
-        return isPvPSatisfied(bot) && (crystalPos = CrystalPosition.get(bot, crystalPos)) != null;
+        crystalPos = CrystalPosition.get(bot, crystalPos);
+        return isAttackSatisfied(bot) && getObsidianSlot() != null && crystalPos != null &&
+                bot.getVanillaPlayer().level().getBlockState(crystalPos.obsidian()).isAir();
     }
 
     @Override
@@ -58,18 +63,11 @@ public class PlaceObsidian extends BladeAction implements Crystal {
     @Override
     public double getScore() {
         LivingEntity target = bot.getBlade().get(ConfigKeys.TARGET);
-        Player player = bot.getVanillaPlayer();
-        Level world = bot.getVanillaPlayer().level();
-        Vec3 eyePos = player.getEyePosition();
-        Vec3 closestPoint = BotMath.getClosestPoint(eyePos, target.getBoundingBox());
-        double distSq = closestPoint.distanceToSqr(eyePos);
-        BlockState obsidian = world.getBlockState(crystalPos.obsidian());
+        double targetY = target.getDeltaMovement().y;
 
-        return getCrystalScore(bot) +
-                (distSq > 3 * 3 ? -8 : (Math.min(distSq, 3))) +
-                (Math.max(Math.min(crystalPos.confidence() / 3, 3), 0)) +
-                (getObsidianSlot() == null ? -8 : 0) +
-                (obsidian.isAir() ? 0 : -12);
+        return state.getValue(StateKeys.CRYSTAL_MODE) / 2 +
+                (Math.max(Math.min(crystalPos.confidence(), 1), 0)) +
+                Math.min(targetY * 4, 0.4);
     }
 
     @Override

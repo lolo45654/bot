@@ -27,14 +27,14 @@ public class BotDebugOverlay {
         lines.add("[BOT]");
         lines.add(String.join(" ", computeKeys(client)));
         DebugFrame frame = blade.getLastFrame();
-        if (frame != null) {
-            ScorePlannerDebug planner = frame.getPlanner();
-            ScoreAction actionTaken = planner.getActionTaken();
-            Map<ScoreAction, ScorePlanner.Score> scores = planner.getScores();
+        ScorePlannerDebug planner;
+        if (frame != null && (planner = frame.planner()) != null) {
+            ScoreAction actionTaken = planner.action();
+            Map<ScoreAction, ScorePlanner.Score> scores = planner.scores();
             ScorePlanner.Score defScore = new ScorePlanner.Score(-1, -1, -1, true);
             ScorePlanner.Score score = scores.getOrDefault(actionTaken, defScore);
             lines.add("GOAL: " + blade.getGoal());
-            lines.add("E: " + frame.getErrors().size() + " T: " + planner.getTemperature());
+            lines.add(String.format("E: %s T: %.3f", frame.errors().size(), planner.temperature()));
             lines.add("A: " + actionTaken + " " + score.toString());
 
             int additionalActions = 4;

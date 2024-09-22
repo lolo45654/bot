@@ -1,9 +1,11 @@
-package blade.util;
+package blade.utils;
 
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class BotMath {
@@ -44,5 +46,43 @@ public class BotMath {
 
     public static Vec3 getClosestPoint(Vec3 from, AABB boundingBox) {
         return new Vec3(Mth.clamp(from.x, boundingBox.minX, boundingBox.maxX), Mth.clamp(from.y, boundingBox.minY, boundingBox.maxY), Mth.clamp(from.z, boundingBox.minZ, boundingBox.maxZ));
+    }
+
+    public static Rotation rotationBezier(List<Rotation> points, float t) {
+        if (points.size() < 2) {
+            throw new IllegalArgumentException("Too little points.");
+        }
+
+        points = new ArrayList<>(points);
+        List<Rotation> nextPoints = new ArrayList<>();
+        while (points.size() > 1) {
+            nextPoints.clear();
+            for (int i = 0; i < points.size() - 1; i++) {
+                Rotation current = points.get(i);
+                Rotation next = points.get(i + 1);
+                nextPoints.add(new Rotation(interpolateYaw(current.yaw(), next.yaw(), t), interpolate(current.pitch(), next.pitch(), t)));
+            }
+            points.clear();
+            points.addAll(nextPoints);
+        }
+
+        return points.getFirst();
+    }
+
+    public static float interpolateYaw(float p1, float p2, float t) {
+        if (Math.abs(p1 - p2) > 180) {
+            // p1 = -150
+            // p2 = 160
+            // t = 0.5
+            // raw interpolation = 185
+            // wrapped interpolation = -175
+            // return -175
+            return ((1 - t) * (p1 % 360) + t * (p2 % 360) + 180) % 360 - 180;
+        }
+        return (1 - t) * p1 + t * p2;
+    }
+
+    public static float interpolate(float p1, float p2, float t) {
+        return (1 - t) * p1 + t * p2;
     }
 }

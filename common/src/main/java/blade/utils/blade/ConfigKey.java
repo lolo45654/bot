@@ -1,4 +1,4 @@
-package blade.util.blade;
+package blade.utils.blade;
 
 public class ConfigKey<T> {
     public static <T> ConfigKey<T> key(String name, T defaultValue) {

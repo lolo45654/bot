@@ -5,13 +5,13 @@ import blade.impl.StateKeys;
 import blade.inventory.Slot;
 import blade.inventory.SlotFlag;
 import blade.planner.score.ScoreState;
-import blade.util.BotMath;
-import blade.util.blade.BladeAction;
+import blade.utils.BotMath;
+import blade.utils.blade.BladeAction;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.Vec3;
 
-import static blade.impl.action.attack.Attack.isPvPSatisfied;
+import static blade.impl.action.attack.Attack.isAttackSatisfied;
 
 public class PearlTowardsEnemy extends BladeAction implements Crystal {
     public Slot getPearlSlot() {
@@ -22,11 +22,11 @@ public class PearlTowardsEnemy extends BladeAction implements Crystal {
     public void onTick() {
         Slot pearlSlot = getPearlSlot();
         if (pearlSlot == null) return;
-        bot.getInventory().setSelectedSlot(pearlSlot.getHotbarIndex());
+        bot.getInventory().setSelectedSlot(pearlSlot.hotbarIndex());
         float time = ConfigKeys.getDifficultyReversed(bot) * 0.3f;
         Vec3 direction = bot.getBlade().get(ConfigKeys.TARGET).position().subtract(bot.getVanillaPlayer().getEyePosition());
         if (tick < time) {
-            bot.lookRealistic(BotMath.getYaw(direction), BotMath.getPitch(direction), tick / time, 0.3f);
+            bot.setRotationTarget(BotMath.getYaw(direction), BotMath.getPitch(direction), bot.getBlade().get(ConfigKeys.DIFFICULTY) * 700);
         }
         if (tick >= time) {
             bot.interact();
@@ -35,7 +35,9 @@ public class PearlTowardsEnemy extends BladeAction implements Crystal {
 
     @Override
     public boolean isSatisfied() {
-        return isPvPSatisfied(bot);
+        return isAttackSatisfied(bot) &&
+                !bot.getVanillaPlayer().getCooldowns().isOnCooldown(Items.ENDER_PEARL) &&
+                getPearlSlot() != null;
     }
 
     @Override
@@ -47,9 +49,7 @@ public class PearlTowardsEnemy extends BladeAction implements Crystal {
     public double getScore() {
         LivingEntity target = bot.getBlade().get(ConfigKeys.TARGET);
         double distSq = target.distanceToSqr(bot.getVanillaPlayer());
-        double distScore = Math.min(Math.max(distSq - 14 * 14, 0) / (14 * 14), 3);
-        return distScore +
-                (getPearlSlot() == null ? -8 : 0) +
-                (bot.getVanillaPlayer().getCooldowns().isOnCooldown(Items.ENDER_PEARL) ? -4 : 0);
+
+        return Math.min(Math.max(distSq - 8 * 8, 0) / (6 * 6), 5);
     }
 }

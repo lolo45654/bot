@@ -2,11 +2,12 @@ package blade.paper;
 
 import blade.Bot;
 import blade.platform.ServerPlatform;
-import blade.util.ClientSimulator;
-import blade.util.fake.FakeConnection;
-import blade.util.fake.FakePlayer;
+import blade.utils.fake.FakePlayer;
+import io.netty.channel.Channel;
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import org.bukkit.Bukkit;
@@ -16,6 +17,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -23,20 +27,23 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 public class PaperPlatform implements ServerPlatform {
-    public static JavaPlugin PLUGIN;
-    public static final List<Bot> BOTS = new ArrayList<>();
-    public static final ScheduledExecutorService EXECUTOR = Executors.newScheduledThreadPool(2);
+    private final JavaPlugin plugin;
+    private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(2);
+    private final List<Bot> bots = new ArrayList<>();
+    private final Field ServerPlayer$spawnInvulnerableTime;
+    private final Method LivingEntity$updatingUsingItem;
+    private final Field Connection$channel;
 
-    public void register(JavaPlugin plugin) {
-        PLUGIN = plugin;
+    public PaperPlatform(JavaPlugin plugin) {
+        this.plugin = plugin;
 
         try {
-            FakePlayer.ServerPlayer$spawnInvulnerableTime = ServerPlayer.class.getDeclaredField("cS");
-            FakePlayer.ServerPlayer$spawnInvulnerableTime.setAccessible(true);
-            ClientSimulator.LivingEntity$updatingUsingItem = LivingEntity.class.getDeclaredMethod("J");
-            ClientSimulator.LivingEntity$updatingUsingItem.setAccessible(true);
-            FakeConnection.Connection$channel = Connection.class.getDeclaredField("n");
-            FakeConnection.Connection$channel.setAccessible(true);
+            ServerPlayer$spawnInvulnerableTime = ServerPlayer.class.getDeclaredField("cS");
+            ServerPlayer$spawnInvulnerableTime.setAccessible(true);
+            LivingEntity$updatingUsingItem = LivingEntity.class.getDeclaredMethod("J");
+            LivingEntity$updatingUsingItem.setAccessible(true);
+            Connection$channel = Connection.class.getDeclaredField("n");
+            Connection$channel.setAccessible(true);
         } catch (NoSuchFieldException | NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
@@ -44,7 +51,7 @@ public class PaperPlatform implements ServerPlatform {
         Bukkit.getPluginManager().registerEvents(new Listener() {
             @EventHandler
             public void onJoin(PlayerJoinEvent event) {
-                for (Bot bot : BOTS) {
+                for (Bot bot : bots) {
                     if (bot.getVanillaPlayer() instanceof FakePlayer fakePlayer) {
                         fakePlayer.update(((CraftPlayer) event.getPlayer()).getHandle());
                     }
@@ -54,8 +61,8 @@ public class PaperPlatform implements ServerPlatform {
     }
 
     public void addBot(Bot bot) {
-        BOTS.add(bot);
-        bot.getVanillaPlayer().getBukkitEntity().getScheduler().runAtFixedRate(PLUGIN, task -> {
+        bots.add(bot);
+        bot.getVanillaPlayer().getBukkitEntity().getScheduler().runAtFixedRate(plugin, task -> {
             bot.doTick();
             if (bot.isDestroyed()) {
                 bot.destroy();
@@ -64,16 +71,9 @@ public class PaperPlatform implements ServerPlatform {
         }, null, 1L, 1L);
     }
 
-    public void removeAll() {
-        ArrayList<Bot> bots = new ArrayList<>(BOTS);
-        for (Bot bot : bots) {
-            bot.destroy();
-        }
-    }
-
     @Override
     public ScheduledExecutorService getExecutor() {
-        return EXECUTOR;
+        return executor;
     }
 
     @Override
@@ -87,7 +87,44 @@ public class PaperPlatform implements ServerPlatform {
     }
 
     @Override
-    public void destroyBot(Bot bot) {
-        BOTS.remove(bot);
+    public void removeBot(Bot bot) {
+        bots.remove(bot);
+    }
+
+    @Override
+    public List<Bot> getBots() {
+        return bots;
+    }
+
+    @Override
+    public void setSpawnInvulnerableTime(ServerPlayer instance, int time) {
+        try {
+            ServerPlayer$spawnInvulnerableTime.set(instance, time);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void setChannel(Connection instance, Channel channel) {
+        try {
+            Connection$channel.set(instance, channel);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void tickUsingItem(LivingEntity instance) {
+        try {
+            LivingEntity$updatingUsingItem.invoke(instance);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public int getPermissionLevel(CommandSourceStack source) {
+        return source.source instanceof ServerPlayer player ? MinecraftServer.getServer().getProfilePermissions(player.gameProfile) : 0;
     }
 }

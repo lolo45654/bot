@@ -4,12 +4,12 @@ import blade.impl.ConfigKeys;
 import blade.impl.StateKeys;
 import blade.impl.util.AttackUtil;
 import blade.planner.score.ScoreState;
-import blade.util.BotMath;
-import blade.util.blade.BladeAction;
+import blade.utils.BotMath;
+import blade.utils.blade.BladeAction;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 
-import static blade.impl.action.attack.Attack.isPvPSatisfied;
+import static blade.impl.action.attack.Attack.isAttackSatisfied;
 import static blade.impl.action.attack.Attack.lookAtEnemy;
 
 public class StrafeLeft extends BladeAction implements Sword {
@@ -23,7 +23,7 @@ public class StrafeLeft extends BladeAction implements Sword {
 
     @Override
     public boolean isSatisfied() {
-        return isPvPSatisfied(bot);
+        return isAttackSatisfied(bot);
     }
 
     @Override
@@ -44,10 +44,10 @@ public class StrafeLeft extends BladeAction implements Sword {
         Vec3 closestPoint = BotMath.getClosestPoint(eyePos, target.getBoundingBox());
         double distSq = closestPoint.distanceToSqr(eyePos);
 
-        return Sword.getSwordScore(bot) +
-                (1 - Math.min(distSq / (24 * 24), 1)) * 0.4 +
+        return state.getValue(StateKeys.SWORD_MODE) +
+                (1 - Math.min(distSq / (24 * 24), 1)) * 0.3 +
                 AttackUtil.isAttacking(target, bot.getVanillaPlayer()) / 2 +
-                Math.min(tick / 3.0, 0.3) +
+                Math.min(tick / 3.0, 0.2) +
                 bot.getRandom().nextDouble() * 0.2;
     }
 }

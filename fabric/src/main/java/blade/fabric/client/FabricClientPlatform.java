@@ -2,11 +2,13 @@ package blade.fabric.client;
 
 import blade.Bot;
 import blade.platform.ClientPlatform;
+import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -26,8 +28,13 @@ public class FabricClientPlatform implements ClientPlatform {
     }
 
     @Override
-    public void destroyBot(Bot bot) {
+    public void removeBot(Bot bot) {
         this.bot = null;
+    }
+
+    @Override
+    public List<Bot> getBots() {
+        return ImmutableList.of(bot);
     }
 
     public Bot getBot() {
@@ -39,6 +46,7 @@ public class FabricClientPlatform implements ClientPlatform {
     }
 
     public void onRespawn() {
+        if (bot == null) return;
         Bot newBot = new Bot(Minecraft.getInstance().player, this);
         newBot.copy(bot);
         this.bot = newBot;

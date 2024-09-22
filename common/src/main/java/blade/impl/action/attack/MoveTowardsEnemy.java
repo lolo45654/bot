@@ -3,8 +3,8 @@ package blade.impl.action.attack;
 import blade.impl.ConfigKeys;
 import blade.impl.StateKeys;
 import blade.planner.score.ScoreState;
-import blade.util.BotMath;
-import blade.util.blade.BladeAction;
+import blade.utils.BotMath;
+import blade.utils.blade.BladeAction;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 
@@ -31,7 +31,7 @@ public class MoveTowardsEnemy extends BladeAction implements Attack {
 
     @Override
     public boolean isSatisfied() {
-        return isPvPSatisfied(bot);
+        return isAttackSatisfied(bot);
     }
 
     @Override
@@ -47,6 +47,6 @@ public class MoveTowardsEnemy extends BladeAction implements Attack {
         double distSq = closestPoint.distanceToSqr(eyePos);
         double reach = getReach(bot);
 
-        return distSq <= reach * reach ? -8 : Math.min(distSq / (8 * 8), 3) + 1.5;
+        return distSq <= reach * reach ? -8 : Math.min(distSq / (8 * 8), 2.5) + 1.0;
     }
 }
