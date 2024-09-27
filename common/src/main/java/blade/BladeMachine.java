@@ -1,11 +1,13 @@
 package blade;
 
+import blade.ai.AIManager;
 import blade.debug.BladeDebug;
 import blade.debug.DebugFrame;
 import blade.debug.ReportError;
 import blade.debug.planner.ScorePlannerDebug;
 import blade.debug.visual.VisualDebug;
 import blade.impl.BladeImpl;
+import blade.impl.StateKeys;
 import blade.planner.score.ScorePlanner;
 import blade.planner.score.ScoreState;
 import blade.utils.blade.BladeAction;
@@ -29,6 +31,7 @@ public class BladeMachine {
     protected final BladeDebug report = new BladeDebug(new ArrayList<>());
     protected final Map<ConfigKey<?>, Object> config = new HashMap<>();
     protected final List<BladeAction> actions = new ArrayList<>();
+    protected final AIManager aiManager;
 
     protected BladeGoal goal = null;
     protected BladeAction previousAction;
@@ -37,6 +40,7 @@ public class BladeMachine {
 
     public BladeMachine(Bot bot) {
         this.bot = bot;
+        this.aiManager = new AIManager(bot);
         registerDefault();
     }
 
@@ -46,6 +50,7 @@ public class BladeMachine {
         ScoreState stateCopy = null;
         ScorePlannerDebug plannerDebug = null;
         Throwable error = null;
+        double reward = 0.0;
         visuals = new ArrayList<>();
         try {
             for (BladeAction action : actions) {
@@ -57,7 +62,7 @@ public class BladeMachine {
             produceState();
             stateCopy = state.copy();
 
-            BladeAction action = planner.plan(actions, goal, state);
+            BladeAction action = planner.plan(actions, aiManager, goal, state);
             plannerDebug = planner.getLastDebug();
             if (action == null) {
                 previousAction = null;
@@ -70,11 +75,13 @@ public class BladeMachine {
             action.onTick();
             action.postTick();
             previousAction = action;
+            reward = goal.getReward();
+            aiManager.learn(reward, state, plannerDebug.scores());
         } catch (Throwable throwable) {
             LOGGER.warn("Uncaught exception in Blade.", throwable);
             error = throwable;
         } finally {
-            frame = new DebugFrame(error == null ? ImmutableList.of() : ImmutableList.of(ReportError.from(error)), stateCopy, plannerDebug, ImmutableList.copyOf(visuals));
+            frame = new DebugFrame(error == null ? ImmutableList.of() : ImmutableList.of(ReportError.from(error)), stateCopy, plannerDebug, ImmutableList.copyOf(visuals), reward);
             report.addTick(frame);
         }
     }
@@ -111,7 +118,12 @@ public class BladeMachine {
         return frame;
     }
 
+    public AIManager getAIManager() {
+        return aiManager;
+    }
+
     public void registerDefault() {
+        StateKeys.register(state);
         BladeImpl.register(this);
     }
 
@@ -141,5 +153,6 @@ public class BladeMachine {
         previousAction = otherBlade.previousAction;
         frame = otherBlade.frame;
         planner.copy(otherBlade.planner);
+        aiManager.copy(otherBlade.aiManager, actions);
     }
 }

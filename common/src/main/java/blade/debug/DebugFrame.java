@@ -6,5 +6,5 @@ import blade.planner.score.ScoreState;
 
 import java.util.List;
 
-public record DebugFrame(List<ReportError> errors, ScoreState state, ScorePlannerDebug planner, List<VisualDebug> visuals) {
+public record DebugFrame(List<ReportError> errors, ScoreState state, ScorePlannerDebug planner, List<VisualDebug> visuals, double reward) {
 }

@@ -41,6 +41,6 @@ public class SelectTotem extends BladeAction implements Totem {
 
         return state.getValue(StateKeys.CRYSTAL_MODE) / 3 +
                 Math.min(Math.max(deltaY, 0), 1) +
-                AttackUtil.isAttacking(target, bot.getVanillaPlayer());
+                AttackUtil.isAttacking(target, bot.getVanillaPlayer()) / 1.5;
     }
 }

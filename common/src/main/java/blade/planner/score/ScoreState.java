@@ -57,4 +57,8 @@ public class ScoreState {
             values.put(key, produced);
         }
     }
+
+    public Set<StateKey> getKeys() {
+        return keys;
+    }
 }

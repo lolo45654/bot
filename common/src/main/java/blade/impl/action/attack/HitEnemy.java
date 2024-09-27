@@ -46,6 +46,7 @@ public class HitEnemy extends BladeAction implements Attack {
     @Override
     public boolean isSatisfied() {
         LivingEntity target = bot.getBlade().get(ConfigKeys.TARGET);
+        if (target == null) return false;
         Player player = bot.getVanillaPlayer();
         Vec3 eyePos = player.getEyePosition();
         Vec3 closestPoint = BotMath.getClosestPoint(eyePos, target.getBoundingBox());

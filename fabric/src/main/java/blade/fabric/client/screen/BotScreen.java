@@ -2,6 +2,7 @@ package blade.fabric.client.screen;
 
 import blade.BladeMachine;
 import blade.Bot;
+import blade.ai.AIManager;
 import blade.debug.DebugFrame;
 import blade.debug.planner.ScorePlannerDebug;
 import blade.impl.ConfigKeys;
@@ -45,7 +46,7 @@ public class BotScreen extends Screen {
 
     @Override
     protected void init() {
-        tabs = new BotTab[] { new ActionsTab(bot), new SettingsTab(bot) };
+        tabs = new BotTab[] { new SettingsTab(bot), new ActionsTab(bot) };
         tabNavigationBar = addRenderableWidget(TabNavigationBar.builder(tabManager, width).addTabs(tabs).build());
         tabNavigationBar.selectTab(0, false);
         repositionElements();
@@ -163,10 +164,10 @@ public class BotScreen extends Screen {
         public SettingsTab(Bot bot) {
             super(TITLE);
             layout.defaultCellSetting().padding(4, 4, 4, 0);
-            layout.addChild(new AbstractSliderButton(0, 0, 80, 20, Component.literal(String.format("Difficulty: %.1f", bot.getBlade().get(ConfigKeys.DIFFICULTY))), bot.getBlade().get(ConfigKeys.DIFFICULTY)) {
+            layout.addChild(new AbstractSliderButton(0, 0, 90, 20, Component.literal(String.format("Difficulty: %.1f", bot.getBlade().get(ConfigKeys.DIFFICULTY))), bot.getBlade().get(ConfigKeys.DIFFICULTY)) {
                 @Override
                 protected void updateMessage() {
-                    setMessage(Component.literal(String.format("Difficulty: %.1f", value)));
+                    setMessage(Component.literal(String.format("Difficulty: %.2f", value)));
                 }
 
                 @Override
@@ -174,10 +175,10 @@ public class BotScreen extends Screen {
                     bot.getBlade().set(ConfigKeys.DIFFICULTY, (float) value);
                 }
             }, 1, 1);
-            layout.addChild(new AbstractSliderButton(0, 0, 80, 20, Component.literal(String.format("Temperature: %.1f", bot.getBlade().getPlanner().getTemperature())), bot.getBlade().getPlanner().getTemperature()) {
+            layout.addChild(new AbstractSliderButton(0, 0, 90, 20, Component.literal(String.format("Temperature: %.1f", bot.getBlade().getPlanner().getTemperature())), bot.getBlade().getPlanner().getTemperature()) {
                 @Override
                 protected void updateMessage() {
-                    setMessage(Component.literal(String.format("Temperature: %.1f", value)));
+                    setMessage(Component.literal(String.format("Temperature: %.2f", value)));
                 }
 
                 @Override
@@ -188,11 +189,15 @@ public class BotScreen extends Screen {
             layout.addChild(Button.builder(Component.literal("Destroy"), btn -> {
                 bot.destroy();
                 Minecraft.getInstance().setScreen(null);
-            }).size(60, 20).build(), 2, 1);
+            }).size(90, 20).build(), 2, 1);
             layout.addChild(Button.builder(Component.literal("Debug: " + (bot.isDebug() ? "On" : "Off")), btn -> {
                 bot.setDebug(!bot.isDebug());
                 btn.setMessage(Component.literal("Debug: " + (bot.isDebug() ? "On" : "Off")));
-            }).size(60, 20).build(), 2, 2);
+            }).size(90, 20).build(), 2, 2);
+            layout.addChild(Button.builder(Component.literal("AI: " + (bot.getBlade().getAIManager().getState())), btn -> {
+                bot.getBlade().getAIManager().setState(bot.getBlade().getAIManager().getState().next());
+                btn.setMessage(Component.literal("AI: " + (bot.getBlade().getAIManager().getState())));
+            }).size(90, 20).build(), 3, 1);
             FrameLayout.alignInRectangle(layout, 0, 0, BotScreen.this.width, BotScreen.this.height, 0.5F, 0.25F);
         }
 

@@ -5,10 +5,14 @@ import blade.debug.planner.ScorePlannerDebug;
 import blade.impl.action.attack.Attack;
 import blade.inventory.BotInventory;
 import blade.inventory.Slot;
+import blade.planner.score.ScoreState;
 import blade.planner.score.StateKey;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 
 public class StateKeys {
     public static final StateKey BOT_HEALTH = StateKey.key("bot_health", bot -> {
@@ -24,7 +28,11 @@ public class StateKeys {
 
     public static final StateKey HAS_TARGET = StateKey.key("has_target", bot -> bot.getBlade().get(ConfigKeys.TARGET) == null ? 0 : 1);
 
-    public static final StateKey TARGET_DISTANCE_SQRT = StateKey.key("target_distance_squared", bot -> bot.getBlade().get(ConfigKeys.TARGET).distanceToSqr(bot.getVanillaPlayer()));
+    public static final StateKey TARGET_DISTANCE_SQRT = StateKey.key("target_distance_squared", bot -> {
+        LivingEntity target = bot.getBlade().get(ConfigKeys.TARGET);
+        if (target == null) return 0;
+        return target.distanceToSqr(bot.getVanillaPlayer());
+    });
 
     public static final StateKey HAS_OBSIDIAN = StateKey.key("has_obsidian", bot -> bot.getInventory().findFirst(stack -> stack.is(Items.OBSIDIAN)) != null ? 1 : 0);
 
@@ -70,4 +78,16 @@ public class StateKeys {
         score += inv.findFirst(stack -> stack.is(Items.GOLDEN_APPLE)) != null ? 1 : 0;
         return score / 4;
     });
+
+    public static void register(ScoreState state) {
+        for (Field field : StateKeys.class.getFields()) {
+            if (field.getType() != StateKey.class) continue;
+            if (!Modifier.isStatic(field.getModifiers())) continue;
+            if (!field.canAccess(null)) continue;
+            try {
+                state.getValue((StateKey) field.get(null));
+            } catch (IllegalAccessException ignored) {
+            }
+        }
+    }
 }

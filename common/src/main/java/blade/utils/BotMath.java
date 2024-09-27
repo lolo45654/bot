@@ -85,4 +85,13 @@ public class BotMath {
     public static float interpolate(float p1, float p2, float t) {
         return (1 - t) * p1 + t * p2;
     }
+
+    public static double sigmoid(double x) {
+        return 1 / (1 + Math.exp(-x));
+    }
+
+    public static double sigmoidDerivative(double x) {
+        double sigmoid = sigmoid(x);
+        return sigmoid * (1.0 - sigmoid);
+    }
 }

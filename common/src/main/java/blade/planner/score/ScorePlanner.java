@@ -1,5 +1,6 @@
 package blade.planner.score;
 
+import blade.ai.AIManager;
 import blade.debug.planner.ScorePlannerDebug;
 import blade.utils.blade.BladeGoal;
 import org.jetbrains.annotations.NotNull;
@@ -13,7 +14,7 @@ public class ScorePlanner {
     private ScorePlannerDebug lastDebug = null;
 
     @SuppressWarnings("unchecked")
-    public <Action extends ScoreAction> @Nullable Action plan(@NotNull List<Action> actions, @NotNull BladeGoal goal, @NotNull ScoreState state) {
+    public <Action extends ScoreAction> @Nullable Action plan(@NotNull List<Action> actions, @Nullable AIManager aiManager, @NotNull BladeGoal goal, @NotNull ScoreState state) {
         Objects.requireNonNull(goal);
         Map<Action, Score> scores = new HashMap<>();
         double totalWeight = 0.0;
@@ -26,7 +27,11 @@ public class ScorePlanner {
             }
             ScoreState actionState = state.copy();
             action.getResult(actionState);
-            double score = Math.max(action.getScore(), 0);
+            double score = Math.max(switch (aiManager == null ? AIManager.State.DISABLED : aiManager.getState()) {
+                case DISABLED, ONLY_LEARN -> action.getScore();
+                case ONLY_AI -> aiManager.getOrCreate(action).predict(state);
+                case BOTH -> aiManager.getOrCreate(action).predict(state) + action.getScore();
+            }, 0);
             double scoreWithGoal = score + Math.max(goal.getScore(actionState, state.difference(actionState)), 0);
             double weight = temperature <= 0.0 ? 0.0 : Math.pow(Math.E, scoreWithGoal / temperature);
             scores.put(action, new Score(score, scoreWithGoal, weight, true));

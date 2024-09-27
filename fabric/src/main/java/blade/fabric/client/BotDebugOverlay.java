@@ -29,6 +29,7 @@ public class BotDebugOverlay {
         DebugFrame frame = blade.getLastFrame();
         ScorePlannerDebug planner;
         if (frame != null && (planner = frame.planner()) != null) {
+            lines.add(String.format("REWARD: %.3f", frame.reward()));
             ScoreAction actionTaken = planner.action();
             Map<ScoreAction, ScorePlanner.Score> scores = planner.scores();
             ScorePlanner.Score defScore = new ScorePlanner.Score(-1, -1, -1, true);
