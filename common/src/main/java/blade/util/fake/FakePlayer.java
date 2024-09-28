@@ -178,6 +178,10 @@ public class FakePlayer extends ServerPlayer {
         return false;
     }
 
+    @Override
+    public void onInsideBlock(BlockState blockState) {
+    }
+
     public enum MovementSide {
         SERVER,
         CLIENT,
