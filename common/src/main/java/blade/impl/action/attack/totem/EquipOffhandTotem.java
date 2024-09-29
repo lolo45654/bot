@@ -25,7 +25,7 @@ public class EquipOffhandTotem extends BladeAction implements Totem {
         if (tick == 0) {
             inv.openInventory();
         }
-        if (tick >= ConfigKeys.getDifficultyReversedCubic(bot) * 4) {
+        if (tick >= ConfigKeys.getDifficultyReversedCubic(bot) * 6) {
             inv.move(totemSlot, Slot.ofOffhand());
         }
     }
