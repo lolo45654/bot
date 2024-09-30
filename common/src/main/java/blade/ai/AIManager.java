@@ -31,8 +31,6 @@ public class AIManager {
                 entry.getValue().learn(reward, learningRate);
             }
         }
-        for (AI ai : neuralNetworks.values()) {
-        }
     }
 
     public void setLearningRate(double learningRate) {
