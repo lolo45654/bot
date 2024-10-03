@@ -1,17 +1,15 @@
-package blade.ai;
+package blade;
 
-import blade.Bot;
+import blade.ai.AI;
 import blade.planner.score.ScoreAction;
 import blade.planner.score.ScorePlanner;
 import blade.planner.score.ScoreState;
+import blade.planner.score.StateKey;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.WeakHashMap;
+import java.util.*;
 
 public class AIManager {
-    public static final int[] DEFAULT_HIDDEN_LAYERS = new int[] { 48, 48, 24 };
+    public static final int[] DEFAULT_HIDDEN_LAYERS = new int[] { 192, 192, 128 };
 
     private final Map<ScoreAction, AI> neuralNetworks = new WeakHashMap<>();
     private final Bot bot;
@@ -26,7 +24,7 @@ public class AIManager {
         if (state == State.DISABLED) return;
         for (Map.Entry<ScoreAction, AI> entry : neuralNetworks.entrySet()) {
             if (state == State.ONLY_LEARN) {
-                entry.getValue().learn(reward, botState, scores.get(entry.getKey()).score(), learningRate);
+                entry.getValue().learn(reward, produceInputs(botState), scores.get(entry.getKey()).score(), learningRate);
             } else {
                 entry.getValue().learn(reward, learningRate);
             }
@@ -42,7 +40,14 @@ public class AIManager {
     }
 
     public AI getOrCreate(ScoreAction action) {
-        return neuralNetworks.computeIfAbsent(action, $ -> AI.of(bot, 0, action.getHiddenLayers()));
+        return neuralNetworks.computeIfAbsent(action, $ -> {
+            int[] hidden = action.getHiddenLayers();
+            int[] layerNodes = new int[hidden.length + 2];
+            layerNodes[0] = bot.getBlade().getState().getKeys().size();
+            System.arraycopy(hidden, 0, layerNodes, 1, hidden.length);
+            layerNodes[layerNodes.length - 1] = 1;
+            return AI.of(layerNodes);
+        });
     }
 
     public State getState() {
@@ -63,6 +68,21 @@ public class AIManager {
         }
     }
 
+    public double produceScore(ScoreAction action, ScoreState state) {
+        return getOrCreate(action).predict(produceInputs(state))[0];
+    }
+
+    public double[] produceInputs(ScoreState state, double... additional) {
+        List<StateKey> keys = new ArrayList<>(state.getKeys());
+        keys.sort(Comparator.comparing(StateKey::getName, String.CASE_INSENSITIVE_ORDER));
+        double[] inputs = new double[keys.size() + additional.length];
+        for (int i = 0; i < keys.size(); i++) {
+            inputs[i] = state.getValue(keys.get(i));
+        }
+        System.arraycopy(additional, 0, inputs, keys.size(), additional.length);
+        return inputs;
+    }
+
     public enum State {
         DISABLED,
         ONLY_LEARN,
@@ -72,8 +92,7 @@ public class AIManager {
 
         public State next() {
             State[] values = values();
-            int index = Arrays.binarySearch(values, this);
-            return values[index >= values.length - 1 ? 0 : index + 1];
+            return values[(ordinal() + 1) % values.length];
         }
     }
 }

@@ -12,7 +12,6 @@ import java.util.function.Supplier;
 
 public class KillTargetGoal extends BladeGoal {
     private final Supplier<LivingEntity> target;
-    private double prevReward = 0;
 
     public KillTargetGoal(Supplier<LivingEntity> target) {
         this.target = target;
@@ -32,13 +31,10 @@ public class KillTargetGoal extends BladeGoal {
         double reward = 0;
         float ourHealthRatio = bot.getVanillaPlayer().getHealth() / bot.getVanillaPlayer().getMaxHealth();
         float targetHealthRatio = target.getHealth() / target.getMaxHealth();
-        reward += (targetHealthRatio - ourHealthRatio) * 3;
-        reward += (double) target.invulnerableTime / target.invulnerableDuration;
-        reward += Math.min(target.distanceToSqr(bot.getVanillaPlayer()) / 48, 1);
+        reward += 0 - (targetHealthRatio - ourHealthRatio);
+        if (target.isDeadOrDying()) reward += 100;
 
-        double r = reward - prevReward;
-        prevReward = reward;
-        return r;
+        return reward;
     }
 
     @Override

@@ -2,7 +2,6 @@ package blade.fabric.client.screen;
 
 import blade.BladeMachine;
 import blade.Bot;
-import blade.ai.AIManager;
 import blade.debug.DebugFrame;
 import blade.debug.planner.ScorePlannerDebug;
 import blade.impl.ConfigKeys;

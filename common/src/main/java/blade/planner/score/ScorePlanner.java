@@ -1,6 +1,6 @@
 package blade.planner.score;
 
-import blade.ai.AIManager;
+import blade.AIManager;
 import blade.debug.planner.ScorePlannerDebug;
 import blade.utils.blade.BladeGoal;
 import org.jetbrains.annotations.NotNull;
@@ -29,8 +29,8 @@ public class ScorePlanner {
             action.getResult(actionState);
             double score = Math.max(switch (aiManager == null ? AIManager.State.DISABLED : aiManager.getState()) {
                 case DISABLED, ONLY_LEARN -> action.getScore();
-                case ONLY_AI -> aiManager.getOrCreate(action).predict(state);
-                case BOTH -> aiManager.getOrCreate(action).predict(state) + action.getScore();
+                case ONLY_AI -> aiManager.produceScore(action, state);
+                case BOTH -> aiManager.produceScore(action, state) + action.getScore();
             }, 0);
             double scoreWithGoal = score + Math.max(goal.getScore(actionState, state.difference(actionState)), 0);
             double weight = temperature <= 0.0 ? 0.0 : Math.pow(Math.E, scoreWithGoal / temperature);

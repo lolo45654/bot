@@ -1,6 +1,6 @@
 package blade.planner.score;
 
-import blade.ai.AIManager;
+import blade.AIManager;
 
 public interface ScoreAction {
     boolean isSatisfied();

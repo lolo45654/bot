@@ -1,7 +1,7 @@
 package blade.utils.blade;
 
 import blade.Bot;
-import blade.ai.AIManager;
+import blade.AIManager;
 import blade.planner.score.ScoreAction;
 import blade.planner.score.ScoreState;
 import org.slf4j.Logger;

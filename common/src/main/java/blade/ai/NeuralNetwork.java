@@ -1,8 +1,8 @@
 package blade.ai;
 
-import blade.utils.BotMath;
-
+import java.util.Arrays;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public record NeuralNetwork(Layer[] layers) {
     public static NeuralNetwork ofRandom(Random random, int... layerNodes) {
@@ -34,7 +34,7 @@ public record NeuralNetwork(Layer[] layers) {
                     }
                 }
                 sum += layer.biases()[node];
-                layer.outputs()[node] = BotMath.sigmoid(sum);
+                layer.outputs()[node] = AIMath.sigmoid(sum);
             }
             lastLayer = layer;
         }
@@ -56,13 +56,14 @@ public record NeuralNetwork(Layer[] layers) {
         for (int layerIdx = layers.length - 1; layerIdx >= 0; layerIdx--) {
             Layer layer = layers[layerIdx];
             double[] nextError = new double[layer.weights().length];
+            Arrays.fill(nextError, 0);
 
             for (int node = 0; node < layer.nodes(); node++) {
                 double gradient = error[node];
 
                 for (int inputNode = 0; inputNode < layer.weights().length; inputNode++) {
                     try {
-                        nextError[inputNode] += layer.weights()[inputNode][node] * gradient;
+                        nextError[inputNode] += layer.weights()[inputNode][node] * gradient * learningRate;
                         layer.weights()[inputNode][node] += learningRate * gradient * layer.inputs()[inputNode];
                     } catch (ArrayIndexOutOfBoundsException ex) {
                         throw new IllegalStateException(String.format("last size: %s, current size: %s, layer idx: %s, inputNode: %s, node: %s", lastLayer.nodes(), layer.weights().length, layerIdx, inputNode, node), ex);
@@ -75,5 +76,9 @@ public record NeuralNetwork(Layer[] layers) {
             error = nextError;
             lastLayer = layer;
         }
+    }
+
+    public void printInfo() {
+        System.out.printf("Layers: %s + %s%n", layers[0].weights().length, Arrays.stream(layers).map(Layer::nodes).map(String::valueOf).collect(Collectors.joining(" + ")));
     }
 }

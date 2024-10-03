@@ -1,13 +1,8 @@
 package blade.ai;
 
-import blade.Bot;
-import blade.planner.score.ScoreState;
-import blade.planner.score.StateKey;
-
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.Arrays;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public final class AI {
     public final NeuralNetwork actor;
@@ -15,7 +10,7 @@ public final class AI {
     private double[] lastInputs;
     private double lastReward = 0;
     private double lastPredictedReward = 0;
-    private double gamma = 0.6;
+    private double gamma = 0.9;
 
     public AI(NeuralNetwork actor, NeuralNetwork critic, double[] lastInputs) {
         this.actor = actor;
@@ -27,29 +22,15 @@ public final class AI {
         this.gamma = gamma;
     }
 
-    public static AI of(Bot bot, int additionalInputs, int... hidden) {
-        int[] layerNodes = new int[hidden.length + 2];
-        layerNodes[0] = bot.getBlade().getState().getKeys().size() + additionalInputs;
-        System.arraycopy(hidden, 0, layerNodes, 1, hidden.length);
-        layerNodes[layerNodes.length - 1] = 1;
+    public static AI of(int... layerNodes) {
+        if (layerNodes.length < 2) throw new IllegalArgumentException("at least 1 layers");
         Random random = new Random();
         return new AI(NeuralNetwork.ofRandom(random, layerNodes), NeuralNetwork.ofRandom(random, layerNodes), null);
     }
 
-    public double predict(ScoreState state, double... additional) {
-        List<StateKey> keys = new ArrayList<>(state.getKeys());
-        keys.sort(Comparator.comparing(StateKey::getName, String.CASE_INSENSITIVE_ORDER));
-        double[] inputs = new double[keys.size() + additional.length];
-        for (int i = 0; i < keys.size(); i++) {
-            inputs[i] = state.getValue(keys.get(i));
-        }
-        System.arraycopy(additional, 0, inputs, keys.size() - 1, additional.length);
-        return predict(inputs);
-    }
-
-    public double predict(double[] inputs) {
+    public double[] predict(double[] inputs) {
         lastInputs = inputs;
-        return actor.predict(inputs)[0];
+        return actor.predict(inputs);
     }
 
     public void learn(double reward, double learningRate) {
@@ -62,12 +43,47 @@ public final class AI {
         lastPredictedReward = predictedReward;
     }
 
-    public void learn(double reward, ScoreState state, double score, double learningRate) {
-        predict(state);
+    public void learn(double reward, double[] inputs, double score, double learningRate) {
+        predict(inputs);
         double predictedReward = critic.predict(lastInputs)[0];
         critic.learnFromTarget(new double[] { lastReward + gamma * predictedReward }, learningRate);
         actor.learnFromTarget(new double[] { score }, learningRate);
         lastReward = reward;
         lastPredictedReward = predictedReward;
+    }
+
+    public void printInfo() {
+        System.out.println("--- Actor:");
+        actor.printInfo();
+        System.out.println("--- Critic:");
+        critic.printInfo();
+    }
+
+    public static void main(String[] args) {
+        AI ai = AI.of(3, 192, 192, 192, 1);
+        ai.printInfo();
+
+        System.out.println("\n".repeat(2));
+
+        double previousAction = 0;
+        for (int i = 0; i < 10000; i++) {
+            double[] state = { Math.random(), Math.random(), Math.random() };
+            double action = ai.predict(state)[0];
+
+            // double reward = action < 0.5 ? 1 : -1;
+            // double reward = action > 0.5 ? 1 : -1;
+            double reward = action > 0.4 && action < 0.6 ? 1 : Math.min(Math.abs(action - 0.4), Math.abs(action - 0.6)) / 2;
+
+            previousAction = reward;
+
+            ai.learn(reward, 0.01);
+            if (i % 1000 == 0) {
+                System.out.printf("Action: %.3f\t\tReward: %.3f%n", action, reward);
+            }
+        }
+
+        System.out.println("\n".repeat(2));
+
+        ai.printInfo();
     }
 }
