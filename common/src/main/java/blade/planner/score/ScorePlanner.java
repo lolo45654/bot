@@ -1,6 +1,6 @@
 package blade.planner.score;
 
-import blade.AIManager;
+import blade.BotAI;
 import blade.debug.planner.ScorePlannerDebug;
 import blade.utils.blade.BladeGoal;
 import org.jetbrains.annotations.NotNull;
@@ -14,7 +14,7 @@ public class ScorePlanner {
     private ScorePlannerDebug lastDebug = null;
 
     @SuppressWarnings("unchecked")
-    public <Action extends ScoreAction> @Nullable Action plan(@NotNull List<Action> actions, @Nullable AIManager aiManager, @NotNull BladeGoal goal, @NotNull ScoreState state) {
+    public <Action extends ScoreAction> @Nullable Action plan(@NotNull List<Action> actions, @Nullable BotAI botAi, @NotNull BladeGoal goal, @NotNull ScoreState state) {
         Objects.requireNonNull(goal);
         Map<Action, Score> scores = new HashMap<>();
         double totalWeight = 0.0;
@@ -27,10 +27,10 @@ public class ScorePlanner {
             }
             ScoreState actionState = state.copy();
             action.getResult(actionState);
-            double score = Math.max(switch (aiManager == null ? AIManager.State.DISABLED : aiManager.getState()) {
+            double score = Math.max(switch (botAi == null ? BotAI.State.DISABLED : botAi.getState()) {
                 case DISABLED, ONLY_LEARN -> action.getScore();
-                case ONLY_AI -> aiManager.produceScore(action, state);
-                case BOTH -> aiManager.produceScore(action, state) + action.getScore();
+                case ONLY_AI -> botAi.produceScore(action, state);
+                case BOTH -> botAi.produceScore(action, state) + action.getScore();
             }, 0);
             double scoreWithGoal = score + Math.max(goal.getScore(actionState, state.difference(actionState)), 0);
             double weight = temperature <= 0.0 ? 0.0 : Math.pow(Math.E, scoreWithGoal / temperature);

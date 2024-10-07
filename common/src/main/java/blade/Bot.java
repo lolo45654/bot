@@ -1,13 +1,12 @@
 package blade;
 
-import blade.inventory.BotClientInventory;
 import blade.inventory.BotInventory;
+import blade.movement.BotRotation;
 import blade.platform.ClientPlatform;
 import blade.platform.Platform;
 import blade.platform.ServerPlatform;
 import blade.scheduler.BotScheduler;
 import blade.utils.ClientSimulator;
-import blade.utils.RotationManager;
 import blade.utils.blade.BladeAction;
 import blade.utils.fake.FakePlayer;
 import com.mojang.blaze3d.platform.InputConstants;
@@ -25,14 +24,15 @@ import java.util.Random;
 @SuppressWarnings("UnusedReturnValue")
 public class Bot {
     private static final Logger LOGGER = LoggerFactory.getLogger(Bot.class);
+
+    public final boolean isClient;
     protected final Player vanillaPlayer;
     protected final Platform platform;
     protected final BotScheduler scheduler;
     protected final Random random = new Random();
     protected final BotInventory inventory;
     protected final ClientSimulator clientSimulator;
-    protected final RotationManager rotationManager = new RotationManager();
-    public final boolean isClient;
+    protected final BotRotation rotation = new BotRotation();
     protected final BladeMachine blade = new BladeMachine(this);
     protected boolean jumped = false;
     protected boolean debug = false;
@@ -42,7 +42,7 @@ public class Bot {
         this.vanillaPlayer = vanillaPlayer;
         this.platform = platform;
         this.scheduler = new BotScheduler(this, platform.getExecutor());
-        this.inventory = isClient ? new BotClientInventory(this) : new BotInventory(this);
+        this.inventory = new BotInventory(this);
         if (isClient) clientSimulator = null;
         else clientSimulator = new ClientSimulator((ServerPlatform) platform, (ServerPlayer) vanillaPlayer, inventory::hasInventoryOpen);
     }
@@ -86,7 +86,7 @@ public class Bot {
     }
 
     public void updateRotation() {
-        rotationManager.update(this);
+        rotation.update(this);
     }
 
     public Random getRandom() {
@@ -97,8 +97,8 @@ public class Bot {
         return blade;
     }
 
-    public void setRotationTarget(float targetYaw, float targetPitch, float speed) {
-        rotationManager.setTarget(vanillaPlayer.getYRot(), vanillaPlayer.getXRot(), targetYaw, targetPitch, speed);
+    public void rotate(float targetYaw, float targetPitch, float speed) {
+        rotation.setTarget(targetYaw, targetPitch, speed);
     }
 
     public void jump() {
@@ -196,11 +196,15 @@ public class Bot {
 
     public void setYaw(float yaw) {
         if (inventory.hasInventoryOpen()) return;
+        if (Float.isNaN(yaw) || Float.isInfinite(yaw)) yaw = 0f;
+        yaw = Math.min(Math.max(yaw, -180f), 180f);
         vanillaPlayer.setYRot(yaw);
     }
 
     public void setPitch(float pitch) {
         if (inventory.hasInventoryOpen()) return;
+        if (Float.isNaN(pitch) || Float.isInfinite(pitch)) pitch = 0f;
+        pitch = Math.min(Math.max(pitch, -90f), 90f);
         vanillaPlayer.setXRot(pitch);
     }
 

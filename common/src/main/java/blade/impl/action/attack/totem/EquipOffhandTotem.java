@@ -13,16 +13,17 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
 
 import static blade.impl.action.attack.Attack.isAttackSatisfied;
-import static blade.impl.action.attack.totem.Totem.getInventoryTotemSlot;
-import static blade.impl.action.attack.totem.Totem.isTotemSatisfied;
+import static blade.impl.action.attack.totem.Totem.*;
 
 public class EquipOffhandTotem extends BladeAction implements Totem {
     @Override
     public void onTick() {
         BotInventory inv = bot.getInventory();
+        Slot hotBarTotemSlot = getHotBarTotemSlot(bot);
         Slot totemSlot = getInventoryTotemSlot(bot);
         if (totemSlot == null) return;
         if (tick == 0) {
+            inv.setSelectedSlot(hotBarTotemSlot.hotbarIndex());
             inv.openInventory();
         }
         if (tick >= ConfigKeys.getDifficultyReversedCubic(bot) * 6) {

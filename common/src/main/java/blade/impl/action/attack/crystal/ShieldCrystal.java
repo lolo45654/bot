@@ -51,7 +51,7 @@ public class ShieldCrystal extends BladeAction implements Shield {
         Vec3 direction = pos.subtract(eyePos);
         float yaw = BotMath.getYaw(direction);
         float pitch = BotMath.getPitch(direction);
-        bot.setRotationTarget(yaw, pitch, ConfigKeys.getDifficultyReversedCubic(bot) * 400);
+        bot.rotate(yaw, pitch, ConfigKeys.getDifficultyReversedCubic(bot) * 400);
 
         bot.interact(true);
         bot.setSprint(false);

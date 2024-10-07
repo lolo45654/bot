@@ -3,10 +3,14 @@ package blade.impl;
 import blade.debug.DebugFrame;
 import blade.debug.planner.ScorePlannerDebug;
 import blade.impl.action.attack.Attack;
+import blade.impl.util.AnchorPosition;
+import blade.impl.util.AttackUtil;
+import blade.impl.util.CrystalPosition;
 import blade.inventory.BotInventory;
 import blade.inventory.Slot;
 import blade.planner.score.ScoreState;
 import blade.planner.score.StateKey;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
@@ -78,6 +82,57 @@ public class StateKeys {
         score += inv.findFirst(stack -> stack.is(Items.GOLDEN_APPLE)) != null ? 1 : 0;
         return score / 4;
     });
+
+    public static final StateKey ANCHOR_CONFIDENCE = StateKey.key("anchor_confidence", bot -> {
+        AnchorPosition position = AnchorPosition.get(bot, null);
+        return position == null ? 0 : position.confidence();
+    });
+
+    public static final StateKey CRYSTAL_CONFIDENCE = StateKey.key("crystal_confidence", bot -> {
+        CrystalPosition position = CrystalPosition.get(bot, null);
+        return position == null ? 0 : position.confidence();
+    });
+
+    public static final StateKey WEAKNESS_EFFECT = StateKey.key("weakness_effect", bot -> bot.getVanillaPlayer().hasEffect(MobEffects.WEAKNESS) ? 1 : 0);
+
+    public static final StateKey STRENGTH_EFFECT = StateKey.key("strength_effect", bot -> bot.getVanillaPlayer().hasEffect(MobEffects.DAMAGE_BOOST) ? 1 : 0);
+
+    public static final StateKey BOT_BLOCKING = StateKey.key("using_shield", bot -> {
+        Player player = bot.getVanillaPlayer();
+        return player.isUsingItem() && player.getUseItem().is(Items.SHIELD) ? 1 : 0;
+    });
+
+    public static final StateKey TARGET_DELTA_Y = StateKey.key("target_delta_y", bot -> {
+        LivingEntity target = bot.getBlade().get(ConfigKeys.TARGET);
+        if (target == null) return 0;
+        return Math.min(Math.max(target.getDeltaMovement().y, 0), 1);
+    });
+
+    public static final StateKey TARGET_ATTACKING_BOT = StateKey.key("target_attacking_bot", bot -> {
+        LivingEntity target = bot.getBlade().get(ConfigKeys.TARGET);
+        if (target == null) return 0;
+        return AttackUtil.isAttacking(target, bot.getVanillaPlayer());
+    });
+
+    public static final StateKey BOT_ATTACKING_TARGET = StateKey.key("bot_attacking_target", bot -> {
+        LivingEntity target = bot.getBlade().get(ConfigKeys.TARGET);
+        if (target == null) return 0;
+        return AttackUtil.isAttacking(bot.getVanillaPlayer(), target);
+    });
+
+    public static final StateKey TARGET_BLOCKING = StateKey.key("target_blocking", bot -> {
+        LivingEntity target = bot.getBlade().get(ConfigKeys.TARGET);
+        if (target == null) return 0;
+        return target.isBlocking() ? 1 : 0;
+    });
+
+    public static final StateKey BOT_REACH = StateKey.key("bot_reach", bot -> bot.getVanillaPlayer().entityInteractionRange() / 8);
+
+    public static final StateKey RANDOM = StateKey.key("random", bot -> Math.random());
+
+    public static final StateKey FOOD_LEVEL = StateKey.key("food_level", bot -> bot.getVanillaPlayer().getFoodData().getFoodLevel() / 20.0);
+
+    public static final StateKey SATURATION_LEVEL = StateKey.key("saturation_level", bot -> bot.getVanillaPlayer().getFoodData().getSaturationLevel() / 20.0);
 
     public static void register(ScoreState state) {
         for (Field field : StateKeys.class.getFields()) {

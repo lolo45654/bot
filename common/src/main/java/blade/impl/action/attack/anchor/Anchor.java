@@ -5,8 +5,8 @@ import blade.impl.action.attack.Attack;
 
 public interface Anchor extends Attack {
     static void register(BladeMachine blade) {
-        blade.addAction(new PlaceAnchor());
-        blade.addAction(new ChargeAnchor());
-        blade.addAction(new ExplodeAnchor());
+        blade.registerAction(new PlaceAnchor());
+        blade.registerAction(new ChargeAnchor());
+        blade.registerAction(new ExplodeAnchor());
     }
 }

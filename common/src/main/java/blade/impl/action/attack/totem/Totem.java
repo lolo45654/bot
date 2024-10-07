@@ -9,9 +9,9 @@ import net.minecraft.world.item.Items;
 
 public interface Totem extends Attack {
     static void register(BladeMachine blade) {
-        blade.addAction(new SelectTotem());
-        blade.addAction(new EquipOffhandTotem());
-        blade.addAction(new EquipHotBarTotem());
+        blade.registerAction(new SelectTotem());
+        blade.registerAction(new EquipOffhandTotem());
+        blade.registerAction(new EquipHotBarTotem());
     }
 
     static boolean isTotemSatisfied(Bot bot) {

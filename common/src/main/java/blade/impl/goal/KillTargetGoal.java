@@ -31,7 +31,7 @@ public class KillTargetGoal extends BladeGoal {
         double reward = 0;
         float ourHealthRatio = bot.getVanillaPlayer().getHealth() / bot.getVanillaPlayer().getMaxHealth();
         float targetHealthRatio = target.getHealth() / target.getMaxHealth();
-        reward += 0 - (targetHealthRatio - ourHealthRatio);
+        reward += (0 - (targetHealthRatio - ourHealthRatio)) / 4;
         if (target.isDeadOrDying()) reward += 100;
 
         return reward;

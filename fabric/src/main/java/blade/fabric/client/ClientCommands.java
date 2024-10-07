@@ -3,6 +3,7 @@ package blade.fabric.client;
 import blade.BladeMachine;
 import blade.Bot;
 import blade.impl.goal.KillTargetGoal;
+import blade.impl.goal.OpenEndedGoal;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -36,6 +37,16 @@ public class ClientCommands {
                             return 0;
                         }))
                 .then(literal("enable")
+                        .then(literal("open_ended")
+                                .executes(ctx -> {
+                                    Bot bot = new Bot(Minecraft.getInstance().player, BotClientMod.PLATFORM);
+                                    BladeMachine blade = bot.getBlade();
+                                    blade.setGoal(new OpenEndedGoal(bot));
+                                    BotClientMod.PLATFORM.setBot(bot);
+                                    ctx.getSource().sendFeedback(Component.literal("Started the bot"));
+                                    BotClientMod.LOGGER.info("Started open ended bot");
+                                    return Command.SINGLE_SUCCESS;
+                                }))
                         .then(literal("kill")
                                 .then(argument("target", CEntityArgument.entity())
                                         .executes(ctx -> {

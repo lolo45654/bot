@@ -3,6 +3,7 @@ package blade.impl.util;
 import blade.Bot;
 import blade.impl.ConfigKeys;
 import blade.utils.BlockUtils;
+import blade.utils.ClipUtils;
 import blade.utils.ExplosionUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
@@ -71,7 +72,7 @@ public record AnchorPosition(BlockPos anchorPos, BlockState anchorState, Vec3 pl
         } else if (!anchorState.is(Blocks.RESPAWN_ANCHOR)) return false;
 
         placeAgainst.setValue(BlockUtils.getPlaceAgainst(world, target, botHeadPos, anchorPos));
-        return placeAgainst.getValue() != null && placeAgainst.getValue().distanceToSqr(botHeadPos) < reach * reach;
+        return placeAgainst.getValue() != null && placeAgainst.getValue().distanceToSqr(botHeadPos) < reach * reach && ClipUtils.hasLineOfSight(world, botHeadPos, placeAgainst.getValue());
     }
 
     public static double getScore(Level world, LivingEntity target, BlockPos anchorPos, BlockState anchorState, boolean charged) {

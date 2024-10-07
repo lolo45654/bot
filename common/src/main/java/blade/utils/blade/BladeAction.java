@@ -1,7 +1,7 @@
 package blade.utils.blade;
 
 import blade.Bot;
-import blade.AIManager;
+import blade.BotAI;
 import blade.planner.score.ScoreAction;
 import blade.planner.score.ScoreState;
 import org.slf4j.Logger;
@@ -37,7 +37,7 @@ public abstract class BladeAction implements ScoreAction {
     }
 
     public int[] getHiddenLayers() {
-        return AIManager.DEFAULT_HIDDEN_LAYERS;
+        return BotAI.DEFAULT_HIDDEN_LAYERS;
     }
 
     @Override

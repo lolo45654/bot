@@ -12,7 +12,7 @@ public interface Platform {
     void removeBot(Bot bot);
 
     /**
-     * All bots that are active in the platform, returned type can be immutable.
+     * All bots that are active in the platform, returned type may be immutable.
      */
     List<Bot> getBots();
 

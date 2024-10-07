@@ -40,7 +40,7 @@ public class PlaceAnchor extends BladeAction implements Anchor {
         Vec3 direction = lookAt.subtract(eyePos);
         float yaw = BotMath.getYaw(direction);
         float pitch = BotMath.getPitch(direction);
-        bot.setRotationTarget(yaw, pitch, bot.getBlade().get(ConfigKeys.DIFFICULTY) * 100);
+        bot.rotate(yaw, pitch, bot.getBlade().get(ConfigKeys.DIFFICULTY) * 100);
 
         if (bot.getCrossHairTarget() instanceof BlockHitResult blockHitResult && blockHitResult.getBlockPos().relative(blockHitResult.getDirection()).equals(anchorPos.anchorPos())) {
             bot.interact();

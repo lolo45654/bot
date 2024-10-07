@@ -8,12 +8,12 @@ import blade.impl.action.attack.MoveTowardsEnemy;
 
 public interface Sword extends Attack {
     static void register(BladeMachine blade) {
-        blade.addAction(new HitEnemy());
-        blade.addAction(new BackOff());
-        blade.addAction(new Jump());
-        blade.addAction(new MoveTowardsEnemy());
-        blade.addAction(new ConsumeHealing());
-        blade.addAction(new StrafeRight());
-        blade.addAction(new StrafeLeft());
+        blade.registerAction(new HitEnemy());
+        blade.registerAction(new BackOff());
+        blade.registerAction(new Jump());
+        blade.registerAction(new MoveTowardsEnemy());
+        blade.registerAction(new ConsumeHealing());
+        blade.registerAction(new StrafeRight());
+        blade.registerAction(new StrafeLeft());
     }
 }

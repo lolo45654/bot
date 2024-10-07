@@ -1,6 +1,6 @@
 package blade.planner.score;
 
-import blade.AIManager;
+import blade.BotAI;
 
 public interface ScoreAction {
     boolean isSatisfied();
@@ -10,6 +10,6 @@ public interface ScoreAction {
     double getScore();
 
     default int[] getHiddenLayers() {
-        return AIManager.DEFAULT_HIDDEN_LAYERS;
+        return BotAI.DEFAULT_HIDDEN_LAYERS;
     }
 }

@@ -1,31 +1,51 @@
 package blade.ai;
 
-import java.util.Arrays;
+import java.nio.ByteBuffer;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 public final class AI {
     public final NeuralNetwork actor;
     public final NeuralNetwork critic;
     private double[] lastInputs;
+    private double[] lastPolicy;
     private double lastReward = 0;
-    private double lastPredictedReward = 0;
-    private double gamma = 0.9;
+    private double lastPredictedValue = 0;
+    private double gamma = 0.99;
+    private double epsilon = 0.2;
 
-    public AI(NeuralNetwork actor, NeuralNetwork critic, double[] lastInputs) {
+    public AI(NeuralNetwork actor, NeuralNetwork critic) {
         this.actor = actor;
         this.critic = critic;
-        this.lastInputs = lastInputs;
+    }
+
+    public static AI of(int... layerNodes) {
+        if (layerNodes.length < 2) throw new IllegalArgumentException("at least 1 layers");
+        Random random = new Random();
+        int[] criticLayers = layerNodes.clone();
+        criticLayers[criticLayers.length - 1] = 1;
+        return new AI(NeuralNetwork.ofRandom(random, layerNodes), NeuralNetwork.ofRandom(random, criticLayers));
+    }
+
+    public static AI read(ByteBuffer buffer) {
+        AI ai = new AI(NeuralNetwork.read(buffer), NeuralNetwork.read(buffer));
+        ai.setGamma(buffer.getDouble());
+        ai.setEpsilon(buffer.getDouble());
+        return ai;
+    }
+
+    public void write(ByteBuffer buffer) {
+        actor.write(buffer);
+        critic.write(buffer);
+        buffer.putDouble(gamma);
+        buffer.putDouble(epsilon);
     }
 
     public void setGamma(double gamma) {
         this.gamma = gamma;
     }
 
-    public static AI of(int... layerNodes) {
-        if (layerNodes.length < 2) throw new IllegalArgumentException("at least 1 layers");
-        Random random = new Random();
-        return new AI(NeuralNetwork.ofRandom(random, layerNodes), NeuralNetwork.ofRandom(random, layerNodes), null);
+    public void setEpsilon(double epsilon) {
+        this.epsilon = epsilon;
     }
 
     public double[] predict(double[] inputs) {
@@ -35,21 +55,35 @@ public final class AI {
 
     public void learn(double reward, double learningRate) {
         if (lastInputs == null) return;
-        double predictedReward = critic.predict(lastInputs)[0];
-        double tdError = lastReward + gamma * predictedReward - lastPredictedReward;
-        critic.learnFromTarget(new double[] { lastReward + gamma * predictedReward }, learningRate);
-        actor.learnFromError(new double[] { 2 * (reward - predictedReward) * tdError }, learningRate);
+        double predictedValue = critic.predict(lastInputs)[0];
+        double advantage = lastReward + gamma * predictedValue - lastPredictedValue;
+
+        double[] newPolicy = actor.layers()[actor.layers().length - 1].outputs();
+        if (lastPolicy == null) {
+            lastPolicy = newPolicy;
+        }
+
+        double[] gradients = new double[lastPolicy.length];
+        for (int i = 0; i < gradients.length; i++) {
+            double ratio = newPolicy[i] / lastPolicy[i];
+            double clippedRatio = Math.max(1 - epsilon, Math.min(1 + epsilon, ratio));
+            gradients[i] = Math.min(ratio * advantage, clippedRatio * advantage);
+        }
+
+        actor.learnFromError(gradients, learningRate);
+        critic.learnFromTarget(new double[] { lastReward + gamma * predictedValue }, learningRate);
         lastReward = reward;
-        lastPredictedReward = predictedReward;
+        lastPredictedValue = predictedValue;
+        lastPolicy = newPolicy;
     }
 
-    public void learn(double reward, double[] inputs, double score, double learningRate) {
+    public void learn(double reward, double[] inputs, double[] target, double learningRate) {
         predict(inputs);
-        double predictedReward = critic.predict(lastInputs)[0];
-        critic.learnFromTarget(new double[] { lastReward + gamma * predictedReward }, learningRate);
-        actor.learnFromTarget(new double[] { score }, learningRate);
+        double predictedValue = critic.predict(lastInputs)[0];
+        critic.learnFromTarget(new double[] { lastReward + gamma * predictedValue }, learningRate);
+        actor.learnFromTarget(target, learningRate);
         lastReward = reward;
-        lastPredictedReward = predictedReward;
+        lastPredictedValue = predictedValue;
     }
 
     public void printInfo() {
@@ -72,9 +106,9 @@ public final class AI {
 
             // double reward = action < 0.5 ? 1 : -1;
             // double reward = action > 0.5 ? 1 : -1;
-            double reward = action > 0.4 && action < 0.6 ? 1 : Math.min(Math.abs(action - 0.4), Math.abs(action - 0.6)) / 2;
+            double reward = action > 0.4 && action < 0.6 ? 1 : Math.min(1 - Math.abs(action - 0.4), 1 - Math.abs(action - 0.6)) / 2;
 
-            previousAction = reward;
+            previousAction = action;
 
             ai.learn(reward, 0.01);
             if (i % 1000 == 0) {

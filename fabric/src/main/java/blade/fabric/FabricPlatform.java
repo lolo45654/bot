@@ -6,7 +6,6 @@ import blade.platform.ServerPlatform;
 import blade.utils.fake.FakePlayer;
 import io.netty.channel.Channel;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
-import net.fabricmc.fabric.impl.event.interaction.FakePlayerNetworkHandler;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
@@ -20,12 +19,12 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 public class FabricPlatform implements ServerPlatform {
-    private final ScheduledExecutorService EXECUTOR = Executors.newScheduledThreadPool(2);
-    private final List<Bot> BOTS = new ArrayList<>();
+    private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(2);
+    private final List<Bot> bots = new ArrayList<>();
 
     public FabricPlatform() {
         ServerTickEvents.END_SERVER_TICK.register(server -> {
-            List<Bot> bots = new ArrayList<>(BOTS);
+            List<Bot> bots = new ArrayList<>(this.bots);
             for (Bot bot : bots) {
                 bot.doTick();
             }
@@ -34,12 +33,12 @@ public class FabricPlatform implements ServerPlatform {
 
     @Override
     public void addBot(Bot bot) {
-        BOTS.add(bot);
+        bots.add(bot);
     }
 
     @Override
     public ScheduledExecutorService getExecutor() {
-        return EXECUTOR;
+        return executor;
     }
 
     @Override
@@ -70,16 +69,16 @@ public class FabricPlatform implements ServerPlatform {
 
     @Override
     public void removeBot(Bot bot) {
-        BOTS.remove(bot);
+        bots.remove(bot);
     }
 
     @Override
     public List<Bot> getBots() {
-        return BOTS;
+        return bots;
     }
 
     public void tick() {
-        for (Bot bot : new ArrayList<>(BOTS)) {
+        for (Bot bot : new ArrayList<>(bots)) {
             bot.doTick();
             if (bot.isDestroyed()) {
                 bot.destroy();

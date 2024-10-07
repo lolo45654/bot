@@ -2,22 +2,22 @@ package blade.inventory;
 
 import blade.Bot;
 import com.google.common.collect.ImmutableList;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.inventory.InventoryScreen;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
 
-/**
- * Abstraction over vanilla inventory.
- * @see BotClientInventory
- */
 public class BotInventory {
     protected final Bot bot;
     protected final Inventory inventory;
@@ -68,14 +68,22 @@ public class BotInventory {
 
     public void openInventory() {
         inventoryOpen = true;
+        if (!bot.isClient) return;
+        Minecraft client = Minecraft.getInstance();
+        if (client.screen != null) return;
+        client.setScreen(new InventoryScreen(bot.getVanillaPlayer()));
     }
 
     public void closeInventory() {
         inventoryOpen = false;
+        if (!bot.isClient) return;
+        Minecraft client = Minecraft.getInstance();
+        if (!(client.screen instanceof InventoryScreen)) return;
+        client.setScreen(null);
     }
 
     public boolean hasInventoryOpen() {
-        return inventoryOpen;
+        return inventoryOpen || (bot.isClient && Minecraft.getInstance().screen instanceof InventoryScreen);
     }
 
     /**
@@ -87,7 +95,11 @@ public class BotInventory {
     }
 
     public void moveInternally(Slot from, Slot to) {
-        if (bot.isClient) throw new UnsupportedOperationException("use BotClientInventory");
+        if (bot.isClient) {
+            LocalPlayer player = (LocalPlayer) bot.getVanillaPlayer();
+            Minecraft.getInstance().gameMode.handleInventoryMouseClick(player.containerMenu.containerId, from.vanillaIndex(), to.vanillaIndex(), ClickType.SWAP, player);
+            return;
+        }
 
         int fromVanillaIndex = from.vanillaIndex();
         int toVanillaIndex = to.vanillaIndex();
@@ -104,7 +116,10 @@ public class BotInventory {
      * Drops the main hand item.
      */
     public void drop(boolean entireStack) {
-        if (bot.isClient) throw new UnsupportedOperationException("use BotClientInventory");
+        if (bot.isClient) {
+            ((LocalPlayer) bot.getVanillaPlayer()).drop(entireStack);
+            return;
+        }
 
         ((ServerPlayer) bot.getVanillaPlayer()).drop(entireStack);
     }

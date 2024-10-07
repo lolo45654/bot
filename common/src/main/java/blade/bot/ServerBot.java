@@ -35,7 +35,6 @@ public class ServerBot extends Bot implements IServerBot {
     private Vec3 prevPosition = null;
     private Instant lastPopped = null;
 
-
     public ServerBot(Player vanillaPlayer, Platform platform, ServerPlayer spawner, ServerBotSettings settings) {
         super(vanillaPlayer, platform);
         this.spawner = spawner;

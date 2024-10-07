@@ -78,7 +78,7 @@ public class ConsumePotion extends BladeAction implements Attack {
         inventory.setSelectedSlot(potionSlot.hotbarIndex());
         
         if (potionStack.is(Items.SPLASH_POTION)) {
-            bot.setRotationTarget(0, 90, ConfigKeys.getDifficultyReversedCubic(bot) * 200);
+            bot.rotate(0, 90, ConfigKeys.getDifficultyReversedCubic(bot) * 200);
             if (bot.getVanillaPlayer().getXRot() < 80.0f) return;
 
             bot.setSneak(true);

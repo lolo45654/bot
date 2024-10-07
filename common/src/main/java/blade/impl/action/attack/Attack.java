@@ -21,12 +21,12 @@ public interface Attack {
         Sword.register(blade);
         Shield.register(blade);
 
-        blade.addAction(new ConsumePotion(MobEffects.DAMAGE_BOOST, 1.0));
-        blade.addAction(new ConsumePotion(MobEffects.DAMAGE_RESISTANCE, 0.7));
-        blade.addAction(new ConsumePotion(MobEffects.MOVEMENT_SPEED, 0.3));
-        blade.addAction(new ConsumePotion(MobEffects.FIRE_RESISTANCE, 1.0));
-        blade.addAction(new ConsumePotion(MobEffects.INVISIBILITY, 0.3));
-        blade.addAction(new ConsumeHealingPotion(MobEffects.HEAL, 1.0));
+        blade.registerAction(new ConsumePotion(MobEffects.DAMAGE_BOOST, 1.0));
+        blade.registerAction(new ConsumePotion(MobEffects.DAMAGE_RESISTANCE, 0.7));
+        blade.registerAction(new ConsumePotion(MobEffects.MOVEMENT_SPEED, 0.3));
+        blade.registerAction(new ConsumePotion(MobEffects.FIRE_RESISTANCE, 1.0));
+        blade.registerAction(new ConsumePotion(MobEffects.INVISIBILITY, 0.3));
+        blade.registerAction(new ConsumeHealingPotion(MobEffects.HEAL, 1.0));
     }
 
     static void lookAt(Bot bot, int tick, Vec3 pos) {
@@ -40,7 +40,7 @@ public interface Attack {
         Vec3 direction = closestPoint.subtract(eyePos);
         float yaw = BotMath.getYaw(direction);
         float pitch = BotMath.getPitch(direction);
-        bot.setRotationTarget(yaw, pitch, ConfigKeys.getDifficultyReversedCubic(bot) * 150);
+        bot.rotate(yaw, pitch, ConfigKeys.getDifficultyReversedCubic(bot) * 150);
     }
 
     static boolean isAttackSatisfied(Bot bot) {

@@ -114,9 +114,10 @@ public class ServerCommands {
                         })))
                 .executes(handleException(ctx -> {
                     if (gui == null) {
-                        ctx.getSource().sendFailure(Component.literal("Sorry, the gui doesn't work yet."));
+                        ctx.getSource().sendFailure(Component.literal("Sorry, this platform doesn't have a gui."));
                         return -1;
                     }
+
                     ServerPlayer sender = ctx.getSource().getPlayerOrException();
                     for (Bot b : platform.getBots()) {
                         if (b instanceof IServerBot bot && bot.getSpawner().getUUID().equals(sender.getUUID())) {
@@ -167,13 +168,13 @@ public class ServerCommands {
                                             for (int i = 0; i < fromInv.getContainerSize(); i++) {
                                                 toInv.setItem(i, fromInv.getItem(i).copy());
                                             }
-                                            ctx.getSource().sendSuccess(() -> Component.literal("Spawned a killing bot copying sender"), false);
+                                            ctx.getSource().sendSuccess(() -> Component.literal("Spawned a Bot"), false);
                                             return 0;
                                         })))
                                 .executes(handleException(ctx -> {
                                     Bot bot = kill.get(ctx);
                                     if (bot == null) return -1;
-                                    ctx.getSource().sendSuccess(() -> Component.literal("Spawned a killing bot"), false);
+                                    ctx.getSource().sendSuccess(() -> Component.literal("Spawned a Bot"), false);
                                     return 0;
                                 }))))
                 .then(literal("test")
@@ -189,7 +190,7 @@ public class ServerCommands {
             try {
                 return command.run(ctx);
             } catch (Throwable throwable) {
-                LOGGER.error("Running command failed", throwable);
+                if (!(throwable instanceof CommandSyntaxException)) LOGGER.error("Running command failed", throwable);
                 throw throwable;
             }
         };

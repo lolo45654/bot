@@ -30,7 +30,7 @@ public class BladeMachine {
     protected final BladeDebug report = new BladeDebug(new ArrayList<>());
     protected final Map<ConfigKey<?>, Object> config = new HashMap<>();
     protected final List<BladeAction> actions = new ArrayList<>();
-    protected final AIManager aiManager;
+    protected final BotAI botAi;
 
     protected BladeGoal goal = null;
     protected BladeAction previousAction;
@@ -39,7 +39,7 @@ public class BladeMachine {
 
     public BladeMachine(Bot bot) {
         this.bot = bot;
-        this.aiManager = new AIManager(bot);
+        this.botAi = new BotAI(bot);
         registerDefault();
     }
 
@@ -61,7 +61,7 @@ public class BladeMachine {
             produceState();
             stateCopy = state.copy();
 
-            BladeAction action = planner.plan(actions, aiManager, goal, state);
+            BladeAction action = planner.plan(actions, botAi, goal, state);
             plannerDebug = planner.getLastDebug();
             if (action == null) {
                 previousAction = null;
@@ -75,7 +75,7 @@ public class BladeMachine {
             action.postTick();
             previousAction = action;
             reward = goal.getReward();
-            aiManager.learn(reward, state, plannerDebug.scores());
+            botAi.learn(reward, state, plannerDebug.scores());
         } catch (Throwable throwable) {
             LOGGER.warn("Uncaught exception in Blade.", throwable);
             error = throwable;
@@ -97,10 +97,6 @@ public class BladeMachine {
         this.goal = goal;
     }
 
-    public void addAction(BladeAction action) {
-        actions.add(action);
-    }
-
     public List<BladeAction> getActions() {
         return actions;
     }
@@ -117,8 +113,12 @@ public class BladeMachine {
         return frame;
     }
 
-    public AIManager getAIManager() {
-        return aiManager;
+    public BotAI getAIManager() {
+        return botAi;
+    }
+
+    public void registerAction(BladeAction action) {
+        actions.add(action);
     }
 
     public void registerDefault() {
@@ -152,6 +152,6 @@ public class BladeMachine {
         previousAction = otherBlade.previousAction;
         frame = otherBlade.frame;
         planner.copy(otherBlade.planner);
-        aiManager.copy(otherBlade.aiManager, actions);
+        botAi.copy(otherBlade.botAi, actions);
     }
 }

@@ -1,5 +1,6 @@
 package blade.ai;
 
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -14,6 +15,21 @@ public record NeuralNetwork(Layer[] layers) {
             layers[i - 1] = Layer.ofRandom(lastNodes, nodes, random);
         }
         return new NeuralNetwork(layers);
+    }
+
+    public static NeuralNetwork read(ByteBuffer buffer) {
+        Layer[] layers = new Layer[buffer.getInt()];
+        for (int i = 0; i < layers.length; i++) {
+            layers[i] = Layer.read(buffer);
+        }
+        return new NeuralNetwork(layers);
+    }
+
+    public void write(ByteBuffer buffer) {
+        buffer.putInt(layers.length);
+        for (Layer layer : layers) {
+            layer.write(buffer);
+        }
     }
 
     public double[] predict(double[] inputs) {

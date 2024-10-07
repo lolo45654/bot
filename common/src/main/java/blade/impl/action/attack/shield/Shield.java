@@ -9,8 +9,8 @@ import net.minecraft.world.item.Items;
 
 public interface Shield extends Attack {
     static void register(BladeMachine blade) {
-        blade.addAction(new UseShield());
-        blade.addAction(new BreakShield());
+        blade.registerAction(new UseShield());
+        blade.registerAction(new BreakShield());
     }
 
     static Slot getShieldSlot(Bot bot) {

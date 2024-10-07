@@ -41,7 +41,7 @@ public class PlaceObsidian extends BladeAction implements Crystal {
         Vec3 direction = lookAt.subtract(eyePos);
         float yaw = BotMath.getYaw(direction);
         float pitch = BotMath.getPitch(direction);
-        bot.setRotationTarget(yaw, pitch, bot.getBlade().get(ConfigKeys.DIFFICULTY) * 100);
+        bot.rotate(yaw, pitch, bot.getBlade().get(ConfigKeys.DIFFICULTY) * 100);
 
         if (bot.getCrossHairTarget() instanceof BlockHitResult blockHitResult && blockHitResult.getBlockPos().relative(blockHitResult.getDirection()).equals(crystalPos.obsidian())) {
             bot.interact();

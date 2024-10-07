@@ -12,14 +12,13 @@ import net.minecraft.client.GameNarrator;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.AbstractSliderButton;
-import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.ContainerObjectSelectionList;
+import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.components.tabs.GridLayoutTab;
 import net.minecraft.client.gui.components.tabs.TabManager;
 import net.minecraft.client.gui.components.tabs.TabNavigationBar;
 import net.minecraft.client.gui.layouts.FrameLayout;
+import net.minecraft.client.gui.layouts.GridLayout;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -36,6 +35,7 @@ public class BotScreen extends Screen {
     @Nullable
     private TabNavigationBar tabNavigationBar;
     private final Bot bot;
+    private boolean pause = true;
     private BotTab[] tabs;
 
     public BotScreen(Bot bot) {
@@ -48,6 +48,21 @@ public class BotScreen extends Screen {
         tabs = new BotTab[] { new SettingsTab(bot), new ActionsTab(bot) };
         tabNavigationBar = addRenderableWidget(TabNavigationBar.builder(tabManager, width).addTabs(tabs).build());
         tabNavigationBar.selectTab(0, false);
+
+        Checkbox pause = addRenderableWidget(Checkbox.builder(Component.literal("Pause"), font)
+                .pos(5, 5)
+                .selected(true)
+                .onValueChange((checkbox, v) -> this.pause = v)
+                .maxWidth(60)
+                .build());
+        pause.setPosition(5, (24 - pause.getHeight()) / 2);
+
+        Button destroy = addRenderableWidget(Button.builder(Component.literal("Destroy"), btn -> {
+            bot.destroy();
+            Minecraft.getInstance().setScreen(null);
+        }).size(70, 20).build());
+        destroy.setPosition(width - destroy.getWidth() - 5, (24 - destroy.getHeight()) / 2);
+
         repositionElements();
     }
 
@@ -66,7 +81,7 @@ public class BotScreen extends Screen {
 
     @Override
     public boolean isPauseScreen() {
-        return false;
+        return pause;
     }
 
     public abstract static class BotTab extends GridLayoutTab {
@@ -162,8 +177,9 @@ public class BotScreen extends Screen {
 
         public SettingsTab(Bot bot) {
             super(TITLE);
+            GridLayout.RowHelper rowHelper = layout.createRowHelper(2);
             layout.defaultCellSetting().padding(4, 4, 4, 0);
-            layout.addChild(new AbstractSliderButton(0, 0, 90, 20, Component.literal(String.format("Difficulty: %.1f", bot.getBlade().get(ConfigKeys.DIFFICULTY))), bot.getBlade().get(ConfigKeys.DIFFICULTY)) {
+            rowHelper.addChild(new AbstractSliderButton(0, 0, 90, 20, Component.literal(String.format("Difficulty: %.1f", bot.getBlade().get(ConfigKeys.DIFFICULTY))), bot.getBlade().get(ConfigKeys.DIFFICULTY)) {
                 @Override
                 protected void updateMessage() {
                     setMessage(Component.literal(String.format("Difficulty: %.2f", value)));
@@ -173,8 +189,8 @@ public class BotScreen extends Screen {
                 protected void applyValue() {
                     bot.getBlade().set(ConfigKeys.DIFFICULTY, (float) value);
                 }
-            }, 1, 1);
-            layout.addChild(new AbstractSliderButton(0, 0, 90, 20, Component.literal(String.format("Temperature: %.1f", bot.getBlade().getPlanner().getTemperature())), bot.getBlade().getPlanner().getTemperature()) {
+            });
+            rowHelper.addChild(new AbstractSliderButton(0, 0, 90, 20, Component.literal(String.format("Temperature: %.1f", bot.getBlade().getPlanner().getTemperature())), bot.getBlade().getPlanner().getTemperature()) {
                 @Override
                 protected void updateMessage() {
                     setMessage(Component.literal(String.format("Temperature: %.2f", value)));
@@ -184,19 +200,15 @@ public class BotScreen extends Screen {
                 protected void applyValue() {
                     bot.getBlade().getPlanner().setTemperature(value);
                 }
-            }, 1, 2);
-            layout.addChild(Button.builder(Component.literal("Destroy"), btn -> {
-                bot.destroy();
-                Minecraft.getInstance().setScreen(null);
-            }).size(90, 20).build(), 2, 1);
-            layout.addChild(Button.builder(Component.literal("Debug: " + (bot.isDebug() ? "On" : "Off")), btn -> {
-                bot.setDebug(!bot.isDebug());
-                btn.setMessage(Component.literal("Debug: " + (bot.isDebug() ? "On" : "Off")));
-            }).size(90, 20).build(), 2, 2);
-            layout.addChild(Button.builder(Component.literal("AI: " + (bot.getBlade().getAIManager().getState())), btn -> {
+            });
+            rowHelper.addChild(CycleButton.booleanBuilder(Component.literal("On"), Component.literal("Off"))
+                    .withInitialValue(bot.isDebug())
+                    .create(0, 0, 90, 20, Component.literal("Debug"), (btn, v) -> bot.setDebug(v)));
+            rowHelper.addChild(Button.builder(Component.literal("AI: " + (bot.getBlade().getAIManager().getState())), btn -> {
                 bot.getBlade().getAIManager().setState(bot.getBlade().getAIManager().getState().next());
                 btn.setMessage(Component.literal("AI: " + (bot.getBlade().getAIManager().getState())));
-            }).size(90, 20).build(), 3, 1);
+            }).size(90, 20).build());
+            layout.arrangeElements();
             FrameLayout.alignInRectangle(layout, 0, 0, BotScreen.this.width, BotScreen.this.height, 0.5F, 0.25F);
         }
 
