@@ -12,6 +12,7 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.logging.LogUtils;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.EntityArgument;
@@ -42,6 +43,7 @@ import static net.minecraft.commands.arguments.coordinates.Vec3Argument.vec3;
 public class ServerCommands {
     private static final int PRIMARY = 0xFFCBD5;
     private static final Logger LOGGER = LogUtils.getLogger();
+    private static final SimpleCommandExceptionType UNHANDLED_EXCEPTION_ERROR = new SimpleCommandExceptionType(Component.literal("An exception occurred while executing this command."));
 
     public static void register(ServerPlatform platform, Server server, @NotNull Permission permission, @Nullable Gui gui, @NotNull CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(literal("bot")
@@ -190,8 +192,9 @@ public class ServerCommands {
             try {
                 return command.run(ctx);
             } catch (Throwable throwable) {
-                if (!(throwable instanceof CommandSyntaxException)) LOGGER.error("Running command failed", throwable);
-                throw throwable;
+                if (throwable instanceof CommandSyntaxException) throw throwable;
+                LOGGER.error("Running command failed", throwable);
+                throw UNHANDLED_EXCEPTION_ERROR.create();
             }
         };
     }

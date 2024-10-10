@@ -4,7 +4,6 @@ import blade.Bot;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
@@ -96,8 +95,7 @@ public class BotInventory {
 
     public void moveInternally(Slot from, Slot to) {
         if (bot.isClient) {
-            LocalPlayer player = (LocalPlayer) bot.getVanillaPlayer();
-            Minecraft.getInstance().gameMode.handleInventoryMouseClick(player.containerMenu.containerId, from.vanillaIndex(), to.vanillaIndex(), ClickType.SWAP, player);
+            Minecraft.getInstance().gameMode.handleInventoryMouseClick(bot.getVanillaPlayer().containerMenu.containerId, from.vanillaIndex(), to.vanillaIndex(), ClickType.SWAP, bot.getVanillaPlayer());
             return;
         }
 
@@ -117,7 +115,7 @@ public class BotInventory {
      */
     public void drop(boolean entireStack) {
         if (bot.isClient) {
-            ((LocalPlayer) bot.getVanillaPlayer()).drop(entireStack);
+            Minecraft.getInstance().player.drop(entireStack);
             return;
         }
 
