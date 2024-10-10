@@ -1,9 +1,9 @@
 package blade.inventory;
 
 import blade.Bot;
+import blade.utils.ClientUtils;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
@@ -68,21 +68,17 @@ public class BotInventory {
     public void openInventory() {
         inventoryOpen = true;
         if (!bot.isClient) return;
-        Minecraft client = Minecraft.getInstance();
-        if (client.screen != null) return;
-        client.setScreen(new InventoryScreen(bot.getVanillaPlayer()));
+        ClientUtils.openInventory();
     }
 
     public void closeInventory() {
         inventoryOpen = false;
         if (!bot.isClient) return;
-        Minecraft client = Minecraft.getInstance();
-        if (!(client.screen instanceof InventoryScreen)) return;
-        client.setScreen(null);
+        ClientUtils.closeInventory();
     }
 
     public boolean hasInventoryOpen() {
-        return inventoryOpen || (bot.isClient && Minecraft.getInstance().screen instanceof InventoryScreen);
+        return inventoryOpen || (bot.isClient && ClientUtils.hasInventoryOpen());
     }
 
     /**
